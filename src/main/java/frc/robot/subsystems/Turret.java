@@ -6,17 +6,23 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.ExternalFeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
+import frc.robot.LimelightIO;
 
 public class Turret extends SubsystemBase {
 
@@ -25,11 +31,17 @@ public class Turret extends SubsystemBase {
   private final TalonFX m_flywheelMotor2;
   private final TalonFX m_hoodMotor;
 
+  private final LimelightIO limelight;
+
   private final TalonFXSConfiguration m_turretConfig;
   private final TalonFXConfiguration m_flywheelConfig, m_hoodConfig;
 
+  private final VelocityVoltage velRequest, fly_velRequest;
+
   /** Creates a new ExampleSubsystem. */
-  public Turret() {
+  public Turret(){
+    limelight = new LimelightIO("limelight-turret");
+
     m_turretMotor = new TalonFXS(Constants.TurretConstants.m_turretMotorId,Constants.TurretConstants.turretCanbus);
     m_flywheelMotor1 = new TalonFX(Constants.TurretConstants.m_flywheelMotor1,Constants.TurretConstants.turretCanbus);
     m_flywheelMotor2 = new TalonFX(Constants.TurretConstants.m_flywheelMotor2,Constants.TurretConstants.turretCanbus);
@@ -49,6 +61,9 @@ public class Turret extends SubsystemBase {
     m_turretConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_turret_velocity;
     m_turretConfig.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_turret_acceleration;
     m_turretConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    m_turretConfig.ExternalFeedback.SensorToMechanismRatio = 0; //motor rotations per turret rotation = total_gear_ratio
+
+    velRequest = new VelocityVoltage(0).withSlot(0);
 
     m_flywheelConfig = new TalonFXConfiguration();
     m_flywheelConfig.Slot0.kP = Constants.TurretConstants.k_turret_p;
@@ -61,6 +76,8 @@ public class Turret extends SubsystemBase {
     m_flywheelConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_turret_velocity;
     m_flywheelConfig.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_turret_acceleration;
     m_flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+    fly_velRequest = new VelocityVoltage(0);
 
     m_hoodConfig = new TalonFXConfiguration();
     m_hoodConfig.Slot0.kP = Constants.TurretConstants.k_hood_p;
@@ -119,4 +136,48 @@ public class Turret extends SubsystemBase {
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
   }
+
+  public void moveTurret() {
+    if (!limelight.hasTarget()) {
+      m_turretMotor.setControl(velRequest.withVelocity(0));
+      return;
+    }
+
+    double tx = Constants.TurretConstants.k_tx_sign * limelight.txDeg();
+
+    if (Math.abs(tx) <= Constants.TurretConstants.k_turret_deadband) {
+      m_turretMotor.setControl(velRequest.withVelocity(0));
+      return;
+    }
+
+    double cmdRps = Constants.TurretConstants.k_ll_kP * tx;
+
+    cmdRps = MathUtil.clamp(
+        cmdRps,
+        -Constants.TurretConstants.k_max_rps,
+        +Constants.TurretConstants.k_max_rps);
+
+    if (Math.abs(cmdRps) < Constants.TurretConstants.k_min_rps) {
+      cmdRps = Math.copySign(Constants.TurretConstants.k_min_rps, cmdRps);
+    }
+
+    m_turretMotor.setControl(velRequest.withVelocity(cmdRps));
+  }
+
+
+  public void stopTurret(){
+    m_turretMotor.setControl(velRequest.withVelocity(0));
+  }
+
+  public void runFlywheel(double velocity){
+    m_flywheelMotor1.setControl(fly_velRequest.withVelocity(velocity));
+    m_flywheelMotor2.setControl(new Follower(Constants.TurretConstants.m_flywheelMotor1, MotorAlignmentValue.Aligned));
+  }
+
+  public void stopFlywheel(){
+    m_flywheelMotor1.setControl(fly_velRequest.withVelocity(0));
+    m_flywheelMotor2.setControl(fly_velRequest.withVelocity(0));
+  }
+
+
 }
