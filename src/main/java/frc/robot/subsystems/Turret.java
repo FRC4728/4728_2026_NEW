@@ -132,11 +132,6 @@ public class Turret extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
-
   public void moveTurret() {
     if (!limelight.hasTarget()) {
       m_turretMotor.setControl(velRequest.withVelocity(0));
@@ -154,7 +149,7 @@ public class Turret extends SubsystemBase {
 
     cmdRps = MathUtil.clamp(
         cmdRps,
-        -Constants.TurretConstants.k_max_rps,
+        -Constants.TurretConstants.k_min_rps,
         +Constants.TurretConstants.k_max_rps);
 
     if (Math.abs(cmdRps) < Constants.TurretConstants.k_min_rps) {
