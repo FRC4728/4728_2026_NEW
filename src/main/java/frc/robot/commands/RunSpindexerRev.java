@@ -11,10 +11,10 @@ import frc.robot.subsystems.Indexer;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ReverseSpindexer extends Command {
+public class RunSpindexerRev extends Command {
   Indexer indexer;
 
-  public ReverseSpindexer(Indexer indexer){
+  public RunSpindexerRev(Indexer indexer){
     this.indexer = indexer;
     addRequirements(indexer);
   }
