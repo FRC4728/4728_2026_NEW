@@ -18,7 +18,7 @@ public class LimelightIO {
         return tv.getDouble(0.0) == 1.0;
     }
 
-    public double txDeg(){
+    public double getX(){
         return tx.getDouble(0.0);
     }
 

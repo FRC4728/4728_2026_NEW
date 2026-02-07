@@ -51,6 +51,6 @@ public class Kicker extends SubsystemBase {
     m_kickerMotor.setControl(k_velRequest.withVelocity(velocity));
   }
   public void stopKicker(){
-    m_intakeMotor.setControl(k_velRequest.withVelocity(0));
+    m_kickerMotor.setControl(k_velRequest.withVelocity(0));
   }
 }

@@ -32,11 +32,9 @@ public final class Constants {
     public static double k_turret_a = 0.0;
     public static double k_turret_acceleration = 100;
     public static double k_turret_velocity = 100;
-    public static double k_tx_sign = +1.0;
-    public static double k_max_rps = 0.10;
-    public static double k_min_rps = 0.06;
     public static double k_ll_kP = 0.02;
-    public static double k_turret_deadband = 0.75;
+    public static double k_turret_deadband_top = 0.75;
+    public static double k_turret_deadband_bottom = 0.75;
 
     public static double k_flywheel_p = 0.1;
     public static double k_flywheel_i = 0.0;

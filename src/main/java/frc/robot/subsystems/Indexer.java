@@ -57,7 +57,7 @@ public class Indexer extends SubsystemBase {
     m_indexerMotor.setControl(i_velRequest.withVelocity(velocity));
   }
 
-  public void stop(){
+  public void stopIndexer(){
     m_indexerMotor.setControl(i_velRequest.withVelocity(0));
   }
 }

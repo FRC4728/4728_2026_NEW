@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.ExternalFeedbackSensorSourceValue;
@@ -37,6 +38,7 @@ public class Turret extends SubsystemBase {
   private final TalonFXConfiguration m_flywheelConfig, m_hoodConfig;
 
   private final VelocityVoltage velRequest, fly_velRequest;
+  private final VoltageOut voltReq;
 
   /** Creates a new ExampleSubsystem. */
   public Turret(){
@@ -64,6 +66,7 @@ public class Turret extends SubsystemBase {
     m_turretConfig.ExternalFeedback.SensorToMechanismRatio = 0; //motor rotations per turret rotation = total_gear_ratio
 
     velRequest = new VelocityVoltage(0).withSlot(0);
+    voltReq = new VoltageOut(0);
 
     m_flywheelConfig = new TalonFXConfiguration();
     m_flywheelConfig.Slot0.kP = Constants.TurretConstants.k_turret_p;
@@ -134,29 +137,13 @@ public class Turret extends SubsystemBase {
 
   public void moveTurret() {
     if (!limelight.hasTarget()) {
-      m_turretMotor.setControl(velRequest.withVelocity(0));
+      m_turretMotor.setControl(voltReq.withOutput(0));
       return;
     }
-
-    double tx = Constants.TurretConstants.k_tx_sign * limelight.txDeg();
-
-    if (Math.abs(tx) <= Constants.TurretConstants.k_turret_deadband) {
-      m_turretMotor.setControl(velRequest.withVelocity(0));
+    else {
+      m_turretMotor.setControl(voltReq.withOutput(Constants.TurretConstants.k_ll_kP * MathUtil.clamp(limelight.getX(),Constants.TurretConstants.k_turret_deadband_bottom,Constants.TurretConstants.k_turret_deadband_top)));
       return;
     }
-
-    double cmdRps = Constants.TurretConstants.k_ll_kP * tx;
-
-    cmdRps = MathUtil.clamp(
-        cmdRps,
-        -Constants.TurretConstants.k_min_rps,
-        +Constants.TurretConstants.k_max_rps);
-
-    if (Math.abs(cmdRps) < Constants.TurretConstants.k_min_rps) {
-      cmdRps = Math.copySign(Constants.TurretConstants.k_min_rps, cmdRps);
-    }
-
-    m_turretMotor.setControl(velRequest.withVelocity(cmdRps));
   }
 
 
