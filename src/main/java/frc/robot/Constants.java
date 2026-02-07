@@ -19,7 +19,7 @@ public final class Constants {
 
   public static class TurretConstants {
     public static String turretCanbus = "rio";
-    public static int m_turretMotorId = 50;
+    public static int m_turretMotorId = 40;
     public static int m_flywheelMotor1 = 51;
     public static int m_flywheelMotor2 = 52;
     public static int m_hoodMotor = 53;
@@ -33,8 +33,8 @@ public final class Constants {
     public static double k_turret_acceleration = 100;
     public static double k_turret_velocity = 100;
     public static double k_ll_kP = 0.02;
-    public static double k_turret_deadband_top = 0.75;
-    public static double k_turret_deadband_bottom = 0.75;
+    public static double k_turret_deadband_top = 20;
+    public static double k_turret_deadband_bottom = -20;
 
     public static double k_flywheel_p = 0.1;
     public static double k_flywheel_i = 0.0;

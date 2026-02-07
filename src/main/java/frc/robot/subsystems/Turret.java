@@ -18,7 +18,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -27,14 +29,14 @@ import frc.robot.LimelightIO;
 
 public class Turret extends SubsystemBase {
 
-  private final TalonFXS m_turretMotor;
+  private final TalonFX m_turretMotor;
   private final TalonFX m_flywheelMotor1;
   private final TalonFX m_flywheelMotor2;
   private final TalonFX m_hoodMotor;
 
   private final LimelightIO limelight;
 
-  private final TalonFXSConfiguration m_turretConfig;
+  private final TalonFXConfiguration m_turretConfig;
   private final TalonFXConfiguration m_flywheelConfig, m_hoodConfig;
 
   private final VelocityVoltage velRequest, fly_velRequest;
@@ -44,15 +46,13 @@ public class Turret extends SubsystemBase {
   public Turret(){
     limelight = new LimelightIO("limelight-turret");
 
-    m_turretMotor = new TalonFXS(Constants.TurretConstants.m_turretMotorId,Constants.TurretConstants.turretCanbus);
+    m_turretMotor = new TalonFX(Constants.TurretConstants.m_turretMotorId,Constants.TurretConstants.turretCanbus);
     m_flywheelMotor1 = new TalonFX(Constants.TurretConstants.m_flywheelMotor1,Constants.TurretConstants.turretCanbus);
     m_flywheelMotor2 = new TalonFX(Constants.TurretConstants.m_flywheelMotor2,Constants.TurretConstants.turretCanbus);
     m_hoodMotor = new TalonFX(Constants.TurretConstants.m_hoodMotor,Constants.TurretConstants.turretCanbus);
     
     //turret motor configurator
-    m_turretConfig = new TalonFXSConfiguration();
-    m_turretConfig.ExternalFeedback.ExternalFeedbackSensorSource = ExternalFeedbackSensorSourceValue.Commutation;
-    m_turretConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+    m_turretConfig = new TalonFXConfiguration();
     m_turretConfig.Slot0.kP = Constants.TurretConstants.k_turret_p;
     m_turretConfig.Slot0.kI = Constants.TurretConstants.k_turret_i;
     m_turretConfig.Slot0.kD = Constants.TurretConstants.k_turret_d;
@@ -63,7 +63,6 @@ public class Turret extends SubsystemBase {
     m_turretConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_turret_velocity;
     m_turretConfig.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_turret_acceleration;
     m_turretConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    m_turretConfig.ExternalFeedback.SensorToMechanismRatio = 0; //motor rotations per turret rotation = total_gear_ratio
 
     velRequest = new VelocityVoltage(0).withSlot(0);
     voltReq = new VoltageOut(0);
@@ -132,23 +131,16 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Limelight tX",LimelightHelpers.getTX("limelight-turret"));
+    SmartDashboard.putNumber("Limelight Targets",LimelightHelpers.getTargetCount("limelight-turret"));
     // This method will be called once per scheduler run
   }
 
-  public void moveTurret() {
-    if (!limelight.hasTarget()) {
-      m_turretMotor.setControl(voltReq.withOutput(0));
-      return;
-    }
-    else {
-      m_turretMotor.setControl(voltReq.withOutput(Constants.TurretConstants.k_ll_kP * MathUtil.clamp(limelight.getX(),Constants.TurretConstants.k_turret_deadband_bottom,Constants.TurretConstants.k_turret_deadband_top)));
-      return;
-    }
+  public void moveTurretVoltage(double voltage) {
+      m_turretMotor.setControl(voltReq.withOutput(voltage));
   }
-
-
-  public void stopTurret(){
-    m_turretMotor.setControl(velRequest.withVelocity(0));
+  public void stopTurretVoltage(){
+    m_turretMotor.setControl(voltReq.withOutput(0));
   }
 
   public void runFlywheel(double velocity){
