@@ -18,7 +18,8 @@ public final class Constants {
   }
 
   public static class TurretConstants {
-    public static String turretCanbus = "canivore";
+    public static String turretCanbus = "rio";
+    public static String ringGearCanbus = "canivore";
     public static int m_turretMotorId = 40;
     public static int m_flywheelMotor1 = 51;
     public static int m_flywheelMotor2 = 52;

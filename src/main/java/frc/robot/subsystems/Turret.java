@@ -46,7 +46,7 @@ public class Turret extends SubsystemBase {
   public Turret(){
     limelight = new LimelightIO("limelight-turret");
 
-    m_turretMotor = new TalonFX(Constants.TurretConstants.m_turretMotorId,Constants.TurretConstants.turretCanbus);
+    m_turretMotor = new TalonFX(Constants.TurretConstants.m_turretMotorId,Constants.TurretConstants.ringGearCanbus);
     m_flywheelMotor1 = new TalonFX(Constants.TurretConstants.m_flywheelMotor1,Constants.TurretConstants.turretCanbus);
     m_flywheelMotor2 = new TalonFX(Constants.TurretConstants.m_flywheelMotor2,Constants.TurretConstants.turretCanbus);
     m_hoodMotor = new TalonFX(Constants.TurretConstants.m_hoodMotor,Constants.TurretConstants.turretCanbus);
