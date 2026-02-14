@@ -11,13 +11,14 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.RunIntakeIn;
 import frc.robot.commands.RunKickerUp;
+import frc.robot.commands.RunShooter;
 import frc.robot.commands.RunSpindexer;
+import frc.robot.commands.Score;
 import frc.robot.commands.AutoAlignTurret;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -25,10 +26,12 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.TurretShooter;
 
 public class RobotContainer {
     private Intake intake = new Intake();
     private Turret turret = new Turret();
+    private TurretShooter shooter = new TurretShooter();
     private Kicker kicker = new Kicker();
     private Indexer indexer = new Indexer();
     private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -88,9 +91,11 @@ public class RobotContainer {
 
         joystick2.a().whileTrue(new AutoAlignTurret(turret));
 
-        joystick.x().onTrue(new RunIntakeIn(intake));
-        joystick.y().onTrue(new RunKickerUp(kicker));
-        joystick.b().onTrue(new RunSpindexer(indexer));
+        joystick.x().whileTrue(new RunIntakeIn(intake));
+        joystick.y().whileTrue(new RunKickerUp(kicker));
+        joystick.b().whileTrue(new RunSpindexer(indexer));
+        joystick.a().whileTrue(new RunShooter(shooter));
+        joystick.rightBumper().whileTrue(new Score(intake,indexer,kicker,shooter));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
