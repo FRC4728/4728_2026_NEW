@@ -4,7 +4,10 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
@@ -17,6 +20,8 @@ public class Intake extends SubsystemBase {
 
   private final TalonFX m_intakeMotor;
   private final TalonFXConfiguration m_intakeConfig;
+
+  private final VelocityVoltage in_velRequest;
 
 
   /** Creates a new ExampleSubsystem. */
@@ -35,32 +40,12 @@ public class Intake extends SubsystemBase {
     m_intakeConfig.MotionMagic.MotionMagicAcceleration = Constants.intakeConstants.k_intake_acceleration;
     m_intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
+    m_intakeConfig.CurrentLimits.StatorCurrentLimit = Constants.intakeConstants.k_currentLimit;
+
+    in_velRequest = new VelocityVoltage(0);
+
     m_intakeMotor.getConfigurator().apply(m_intakeConfig);
 
-  }
-
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
-  }
-
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
   }
 
   @Override
@@ -71,5 +56,13 @@ public class Intake extends SubsystemBase {
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+  }
+
+  public void runIntake(double velocity){
+    m_intakeMotor.setControl(in_velRequest.withVelocity(velocity));
+  }
+
+  public void stopIntake(){
+    m_intakeMotor.setControl(in_velRequest.withVelocity(0));
   }
 }
