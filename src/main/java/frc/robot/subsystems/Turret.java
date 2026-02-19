@@ -47,6 +47,7 @@ public class Turret extends SubsystemBase {
     
     //turret motor configurator
     m_turretConfig = new TalonFXConfiguration();
+    
     m_turretConfig.Slot0.kP = Constants.TurretConstants.k_turret_p;
     m_turretConfig.Slot0.kI = Constants.TurretConstants.k_turret_i;
     m_turretConfig.Slot0.kD = Constants.TurretConstants.k_turret_d;

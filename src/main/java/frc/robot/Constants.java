@@ -19,11 +19,11 @@ public final class Constants {
 
   public static class TurretConstants {
     public static String turretCanbus = "rio";
-    public static String ringGearCanbus = "canivore";
-    public static int m_turretMotorId = 40;
-    public static int m_flywheelMotor1 = 51;
-    public static int m_flywheelMotor2 = 52;
-    public static int m_hoodMotor = 53;
+    public static String ringGearCanbus = "canivore2";
+    public static int m_turretMotorId = 30;
+    public static int m_flywheelMotor1 = 34;
+    public static int m_flywheelMotor2 = 35;
+    public static int m_hoodMotor = 36;
 
     public static double k_turret_p = 0.1;
     public static double k_turret_i = 0.0;
@@ -59,8 +59,8 @@ public final class Constants {
   }
 
   public static class indexerConstants {
-    public static String indexerCanbus = "canivore";
-    public static int m_indexerMotor = 54;
+    public static String indexerCanbus = "canivore2";
+    public static int m_indexerMotor = 31;
     public static double k_indexer_p = 0.1;
     public static double k_indexer_i = 0.0;
     public static double k_indexer_d = 0.0;
@@ -72,8 +72,8 @@ public final class Constants {
   }
 
   public static class intakeConstants {
-    public static String intakeCanbus = "canivore";
-    public static int m_intakeMotor = 55;
+    public static String intakeCanbus = "canivore2";
+    public static int m_intakeMotor = 33;
     public static double k_intake_p = 0.1;
     public static double k_intake_i = 0.0;
     public static double k_intake_d = 0.0;
@@ -87,8 +87,8 @@ public final class Constants {
   }
 
   public static class ClimberConstants {
-    public static String climberCanbus = "canivore";
-    public static int m_climberMotor = 56; 
+    public static String climberCanbus = "canivore2";
+    public static int m_climberMotor = 100; 
     public static double k_climber_p = 0.1;
     public static double k_climber_i = 0.0;
     public static double k_climber_d = 0.0;
@@ -100,8 +100,8 @@ public final class Constants {
   }
 
   public static class KickerConstants {
-    public static String kickerCanbus = "canivore"; 
-    public static int m_kickerMotor = 57;
+    public static String kickerCanbus = "canivore2"; 
+    public static int m_kickerMotor = 32;
     public static double k_kicker_p = 0.1;
     public static double k_kicker_i = 0.0;
     public static double k_kicker_d = 0.0;
