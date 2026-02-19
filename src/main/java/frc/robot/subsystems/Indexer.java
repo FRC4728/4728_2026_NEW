@@ -38,7 +38,7 @@ public class Indexer extends SubsystemBase {
     m_indexerConfig.MotionMagic.MotionMagicAcceleration = Constants.indexerConstants.k_indexer_acceleration;
     m_indexerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    i_velRequest = new VelocityVoltage(0.0);
+    i_velRequest = new VelocityVoltage(0.0).withSlot(0);
 
     m_indexerMotor.getConfigurator().apply(m_indexerConfig);
   }

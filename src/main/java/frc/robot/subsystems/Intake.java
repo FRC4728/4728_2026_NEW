@@ -42,7 +42,7 @@ public class Intake extends SubsystemBase {
 
     m_intakeConfig.CurrentLimits.StatorCurrentLimit = Constants.intakeConstants.k_currentLimit;
 
-    in_velRequest = new VelocityVoltage(0);
+    in_velRequest = new VelocityVoltage(0).withSlot(0);
 
     m_intakeMotor.getConfigurator().apply(m_intakeConfig);
 
