@@ -39,7 +39,7 @@ public class Kicker extends SubsystemBase {
 
     m_kickerMotor.getConfigurator().apply(m_kickerConfig);
 
-    k_velRequest = new VelocityVoltage(0);
+    k_velRequest = new VelocityVoltage(0).withSlot(0);
 
   }
 
