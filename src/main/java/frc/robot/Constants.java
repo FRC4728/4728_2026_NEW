@@ -61,11 +61,11 @@ public final class Constants {
   public static class indexerConstants {
     public static String indexerCanbus = "canivore2";
     public static int m_indexerMotor = 31;
-    public static double k_indexer_p = 0.1;
+    public static double k_indexer_p = 0.2;
     public static double k_indexer_i = 0.0;
     public static double k_indexer_d = 0.0;
     public static double k_indexer_s = 0.0;
-    public static double k_indexer_v = 0.0;
+    public static double k_indexer_v = 0.125;
     public static double k_indexer_a = 0.0;
     public static double k_indexer_acceleration = 100;
     public static double k_indexer_velocity = 100;
