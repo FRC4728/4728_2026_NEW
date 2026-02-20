@@ -82,7 +82,7 @@ public final class Constants {
     public static double k_intake_a = 0.0;
     public static double k_intake_acceleration = 100;
     public static double k_intake_velocity = 100;
-    public static double k_currentLimit = 1;
+    public static double k_currentLimit = 100;
 
   }
 
