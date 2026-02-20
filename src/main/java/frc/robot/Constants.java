@@ -38,11 +38,12 @@ public final class Constants {
     public static double k_turret_deadband_bottom = -20;
     public static double k_turret_gearRatio = 1;
 
-    // Soft limits: 0.0 = hard stop, 0.75 = 270 degrees of travel
+    // Soft limits: 0.0 = hard stop, 0.25 = 90 degrees of travel
+    // Update k_maxRotations to 0.75 and k_turretCenterRotations to 0.375 when 270 degree travel is ready
     public static double k_minRotations = 0.0;
-    public static double k_maxRotations = 0.75;
-    // Center of travel (135 degrees from hard stop = forward-facing)
-    public static double k_turretCenterRotations = 0.375;
+    public static double k_maxRotations = 0.25;
+    // Center of travel (45 degrees from hard stop)
+    public static double k_turretCenterRotations = 0.125;
 
     // Aiming
     public static double k_aimToleranceDegrees = 1.5;

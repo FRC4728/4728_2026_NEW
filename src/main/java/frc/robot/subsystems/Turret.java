@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -12,7 +8,6 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -69,7 +64,6 @@ public class Turret extends SubsystemBase {
     voltReq   = new VoltageOut(0);
 
     // Angle offset LUT: distance (m) -> degrees to offset from TX
-    // All zeros to start -- tune each point during practice sessions
     m_angleOffsetTable.put(1.5, 0.0);
     m_angleOffsetTable.put(2.0, 0.0);
     m_angleOffsetTable.put(2.5, 0.0);
@@ -79,7 +73,7 @@ public class Turret extends SubsystemBase {
     m_angleOffsetTable.put(4.5, 0.0);
     m_angleOffsetTable.put(5.0, 0.0);
 
-    // Shooter RPM LUT: distance (m) -> flywheel RPM -- tune these!
+    // Shooter RPM LUT: distance (m) -> flywheel RPM
     m_shooterRPMTable.put(1.5, 2000.0);
     m_shooterRPMTable.put(2.0, 2400.0);
     m_shooterRPMTable.put(2.5, 2800.0);
@@ -97,20 +91,36 @@ public class Turret extends SubsystemBase {
   }
 
   // ---------------------------------------------------------------------------
-  // DISTANCE CALCULATION — corrects for POI crosshair vertical offset
+  // HOMING
   // ---------------------------------------------------------------------------
 
   /**
-   * Returns distance to the hub center in meters, correcting for the vertical
-   * POI offset on the Limelight crosshair so TY always reflects the true
-   * AprilTag center rather than the offset aim point.
-   * Returns -1 if no target is visible.
+   * Zeros the CANcoder at the current position.
+   * Call this on robot enable while the turret is resting on its hard stop.
+   * After calling this, position 0.0 = hard stop, 0.75 = 270 degrees of travel.
+   * The turret center (forward-facing) will be at k_turretCenterRotations.
    */
+  public void zeroTurretAtHardStop() {
+    m_turretMotor.setPosition(0.0);
+    SmartDashboard.putBoolean("Turret/Zeroed", true);
+  }
+
+  /**
+   * Moves the turret to the center of its travel range (forward-facing position).
+   * Call this after zeroing to confirm the center position is correct.
+   */
+  public Command homeTurretCommand() {
+    return runOnce(() -> setTurretPosition(Constants.TurretConstants.k_turretCenterRotations))
+        .withName("HomeTurret");
+  }
+
+  // ---------------------------------------------------------------------------
+  // DISTANCE CALCULATION
+  // ---------------------------------------------------------------------------
+
   public double getDistanceMeters() {
     if (!hasTarget()) return -1.0;
 
-    // getTY() returns angle to the POI crosshair, not the raw tag center.
-    // Subtracting the vertical POI offset recovers the true tag-center TY.
     double rawTY            = LimelightHelpers.getTY("limelight-turret");
     double correctedTY      = rawTY - Constants.TurretConstants.k_poiVerticalOffsetDeg;
     double angleToTargetRad = Math.toRadians(
@@ -144,7 +154,7 @@ public class Turret extends SubsystemBase {
     if (distanceMeters < 0) return;
 
     double lutAngleOffsetDeg = m_angleOffsetTable.get(distanceMeters);
-    double flightTimeSec     = distanceMeters / Constants.TurretConstants.k_noteExitVelocityMPS;
+    double flightTimeSec     = distanceMeters / Constants.TurretConstants.k_fuelExitVelocityMPS;
 
     double turretHeadingDeg = getTurretPositionRotations() * 360.0;
     double txFieldRad       = Math.toRadians(tx + turretHeadingDeg);
