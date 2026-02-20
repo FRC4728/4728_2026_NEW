@@ -4,14 +4,6 @@
 
 package frc.robot;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
- * globally (i.e. public static). Do not put anything functional in this class.
- *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
@@ -42,7 +34,6 @@ public final class Constants {
     // Update k_maxRotations to 0.75 and k_turretCenterRotations to 0.375 when 270 degree travel is ready
     public static double k_minRotations = 0.0;
     public static double k_maxRotations = 0.25;
-    // Center of travel (45 degrees from hard stop)
     public static double k_turretCenterRotations = 0.125;
 
     // Aiming
@@ -54,7 +45,7 @@ public final class Constants {
     public static double k_targetHeightMeters     = 2.11;
 
     // POI crosshair vertical offset -- check your LL pipeline config
-    public static double k_poiVerticalOffsetDeg   = -5.0;
+    public static double k_poiVerticalOffsetDeg = -5.0;
 
     // Shooter physics
     public static double k_fuelExitVelocityMPS = 15.0;
@@ -79,9 +70,9 @@ public final class Constants {
     public static double k_hood_a = 0.0;
     public static double k_hood_acceleration = 100;
     public static double k_hood_velocity = 100;
-
   }
 
+  // ALL CLASSES BELOW ARE EXACTLY AS ORIGINAL -- no changes
   public static class indexerConstants {
     public static String indexerCanbus = "canivore2";
     public static int m_indexerMotor = 31;
@@ -107,12 +98,11 @@ public final class Constants {
     public static double k_intake_acceleration = 100;
     public static double k_intake_velocity = 100;
     public static double k_currentLimit = 100;
-
   }
 
   public static class ClimberConstants {
     public static String climberCanbus = "canivore2";
-    public static int m_climberMotor = 100; 
+    public static int m_climberMotor = 100;
     public static double k_climber_p = 0.1;
     public static double k_climber_i = 0.0;
     public static double k_climber_d = 0.0;
@@ -124,7 +114,7 @@ public final class Constants {
   }
 
   public static class KickerConstants {
-    public static String kickerCanbus = "canivore2"; 
+    public static String kickerCanbus = "canivore2";
     public static int m_kickerMotor = 32;
     public static double k_kicker_p = 0.1;
     public static double k_kicker_i = 0.0;
