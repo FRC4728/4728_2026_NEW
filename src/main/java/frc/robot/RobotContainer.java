@@ -25,14 +25,14 @@ import frc.robot.subsystems.TurretShooter;
 
 public class RobotContainer {
 
-    private final Intake    intake    = new Intake();
-    private final Turret    turret    = new Turret();
-    private final TurretShooter shooter = new TurretShooter();
-    private final Kicker    kicker    = new Kicker();
-    private final Indexer   indexer   = new Indexer();
+    private Intake intake          = new Intake();
+    private Turret turret          = new Turret();
+    private TurretShooter shooter  = new TurretShooter();
+    private Kicker kicker          = new Kicker();
+    private Indexer indexer        = new Indexer();
 
-    private final double MaxSpeed       = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+    private double MaxSpeed       = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1)
@@ -66,21 +66,22 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        // Drivetrain
-        //joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-        //joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
+        // Drivetrain -- restored from original
+        joystick.leftBumper().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystick.leftBumper().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        ));
+        joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        // Turret auto-align (joystick2 left bumper)
-        joystick2.leftBumper().whileTrue(new AutoAlignTurret(turret, drivetrain));
-
-        // Mechanisms
+        // Mechanisms -- restored original button layout
         joystick.x().whileTrue(new RunIntakeIn(intake));
         joystick.y().whileTrue(new RunKickerUp(kicker));
         joystick.b().whileTrue(new RunSpindexer(indexer));
         joystick.a().whileTrue(new RunShooter(shooter));
+        joystick.rightBumper().whileTrue(new Score(intake, indexer, kicker, shooter));
 
-        // Score
-        joystick.leftTrigger().whileTrue(new Score(intake, indexer, kicker, shooter));
+        // Turret auto-align on joystick2 A (commented out until CommandSwerveDrivetrain is updated)
+        // joystick2.a().whileTrue(new AutoAlignTurret(turret, drivetrain));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
