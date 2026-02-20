@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
@@ -15,7 +11,6 @@ public class Robot extends TimedRobot {
 
     private final RobotContainer m_robotContainer;
 
-    /* log and replay timestamp and joystick data */
     private final HootAutoReplay m_timeAndJoystickReplay = new HootAutoReplay()
         .withTimestampReplay()
         .withJoystickReplay();
@@ -27,7 +22,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         m_timeAndJoystickReplay.update();
-        CommandScheduler.getInstance().run(); 
+        CommandScheduler.getInstance().run();
     }
 
     @Override
@@ -41,8 +36,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        // Zero turret at hard stop before auto
+        m_robotContainer.getTurret().zeroTurretAtHardStop();
 
+        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().schedule(m_autonomousCommand);
         }
@@ -56,8 +53,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        // Zero turret at hard stop every time teleop starts
+        m_robotContainer.getTurret().zeroTurretAtHardStop();
+
         if (m_autonomousCommand != null) {
-            CommandScheduler.getInstance().cancel(m_autonomousCommand);
+            m_autonomousCommand.cancel();
         }
     }
 

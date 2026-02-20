@@ -54,10 +54,10 @@ public final class Constants {
     public static double k_targetHeightMeters     = 2.11;
 
     // POI crosshair vertical offset -- check your LL pipeline config
-    public static double k_poiVerticalOffsetDeg   = 0.0;
+    public static double k_poiVerticalOffsetDeg   = -5.0;
 
     // Shooter physics
-    public static double k_noteExitVelocityMPS = 15.0;
+    public static double k_fuelExitVelocityMPS = 15.0;
 
     // Flywheel at-speed tolerance (RPM)
     public static double k_flywheel_atSpeedToleranceRPM = 100.0;
