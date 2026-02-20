@@ -1,3 +1,7 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
@@ -24,7 +28,6 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.TurretShooter;
 
 public class RobotContainer {
-
     private Intake intake          = new Intake();
     private Turret turret          = new Turret();
     private TurretShooter shooter  = new TurretShooter();
@@ -35,8 +38,7 @@ public class RobotContainer {
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1)
-            .withRotationalDeadband(MaxAngularRate * 0.1)
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point    = new SwerveRequest.PointWheelsAt();
@@ -56,8 +58,8 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             drivetrain.applyRequest(() ->
                 drive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
-                     .withVelocityY(-joystick.getLeftX() * MaxSpeed)
-                     .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
+                    .withVelocityY(-joystick.getLeftX() * MaxSpeed)
+                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate)
             )
         );
 
@@ -66,21 +68,19 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        // Drivetrain -- restored from original
         joystick.leftBumper().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.leftBumper().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        // Mechanisms -- restored original button layout
         joystick.x().whileTrue(new RunIntakeIn(intake));
         joystick.y().whileTrue(new RunKickerUp(kicker));
         joystick.b().whileTrue(new RunSpindexer(indexer));
         joystick.a().whileTrue(new RunShooter(shooter));
         joystick.rightBumper().whileTrue(new Score(intake, indexer, kicker, shooter));
 
-        // Turret auto-align on joystick2 A (commented out until CommandSwerveDrivetrain is updated)
+        // Uncomment when CommandSwerveDrivetrain.java has getCurrentChassisSpeeds() added
         // joystick2.a().whileTrue(new AutoAlignTurret(turret, drivetrain));
 
         drivetrain.registerTelemetry(logger::telemeterize);
