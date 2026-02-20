@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-//import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.TurretShooter;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -27,7 +26,7 @@ public class RunShooter extends Command {
 
   @Override
   public void execute(){
-    shooter.runFlywheel(500);
+    shooter.runFlywheel(3000);
   }
 
   @Override
@@ -37,6 +36,6 @@ public class RunShooter extends Command {
 
   @Override
   public boolean isFinished(){
-    return true;
+    return false;
   }
 }

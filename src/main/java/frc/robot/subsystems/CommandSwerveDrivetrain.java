@@ -12,6 +12,7 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
@@ -255,6 +256,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         });
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
+
+    /**
+     * Returns the robot's current field-relative chassis speeds.
+     * Pass this into Turret.aimWithCompensation() for shoot-on-the-move compensation.
+     */
+    public ChassisSpeeds getCurrentChassisSpeeds() {
+    return getState().Speeds;
+}
 
     /**
      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate

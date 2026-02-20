@@ -27,7 +27,7 @@ public class RunSpindexer extends Command {
   @Override
   public void execute(){
     //theoretically run indexer whatever direction it's supposed to go
-    indexer.runIndexer(500);
+    indexer.runIndexer(50);
   }
 
   @Override
@@ -37,6 +37,6 @@ public class RunSpindexer extends Command {
 
   @Override
   public boolean isFinished(){
-    return true;
+    return false;
   }
 }

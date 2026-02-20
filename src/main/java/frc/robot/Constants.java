@@ -19,11 +19,11 @@ public final class Constants {
 
   public static class TurretConstants {
     public static String turretCanbus = "rio";
-    public static String ringGearCanbus = "canivore";
-    public static int m_turretMotorId = 40;
-    public static int m_flywheelMotor1 = 51;
-    public static int m_flywheelMotor2 = 52;
-    public static int m_hoodMotor = 53;
+    public static String ringGearCanbus = "canivore2";
+    public static int m_turretMotorId = 30;
+    public static int m_flywheelMotor1 = 34;
+    public static int m_flywheelMotor2 = 35;
+    public static int m_hoodMotor = 36;
 
     public static double k_turret_p = 0.1;
     public static double k_turret_i = 0.0;
@@ -37,6 +37,27 @@ public final class Constants {
     public static double k_turret_deadband_top = 20;
     public static double k_turret_deadband_bottom = -20;
     public static double k_turret_gearRatio = 1;
+
+    // Soft limits (CANcoder rotations) -- example: ±135 degrees
+    public static double k_maxRotations = 0.375;
+    public static double k_minRotations = -0.375;
+
+    // Aiming
+    public static double k_aimToleranceDegrees = 1.5;
+
+    // Limelight geometry -- measure on your robot!
+    public static double k_limelightMountAngleDeg = 30.0;
+    public static double k_limelightHeightMeters  = 0.50;
+    public static double k_targetHeightMeters     = 2.11;
+
+    // POI crosshair vertical offset -- check your LL pipeline config
+    public static double k_poiVerticalOffsetDeg   = 0.0;
+
+    // Shooter physics
+    public static double k_noteExitVelocityMPS = 15.0;
+
+    // Flywheel at-speed tolerance (RPM)
+    public static double k_flywheel_atSpeedToleranceRPM = 100.0;
 
     public static double k_flywheel_p = 0.1;
     public static double k_flywheel_i = 0.0;
@@ -59,21 +80,21 @@ public final class Constants {
   }
 
   public static class indexerConstants {
-    public static String indexerCanbus = "canivore";
-    public static int m_indexerMotor = 54;
-    public static double k_indexer_p = 0.1;
+    public static String indexerCanbus = "canivore2";
+    public static int m_indexerMotor = 31;
+    public static double k_indexer_p = 0.2;
     public static double k_indexer_i = 0.0;
     public static double k_indexer_d = 0.0;
     public static double k_indexer_s = 0.0;
-    public static double k_indexer_v = 0.0;
+    public static double k_indexer_v = 0.125;
     public static double k_indexer_a = 0.0;
     public static double k_indexer_acceleration = 100;
-    public static double k_indexer_velocity = 100;
+    public static double k_indexer_velocity = 500;
   }
 
   public static class intakeConstants {
-    public static String intakeCanbus = "canivore";
-    public static int m_intakeMotor = 55;
+    public static String intakeCanbus = "canivore2";
+    public static int m_intakeMotor = 33;
     public static double k_intake_p = 0.1;
     public static double k_intake_i = 0.0;
     public static double k_intake_d = 0.0;
@@ -82,13 +103,13 @@ public final class Constants {
     public static double k_intake_a = 0.0;
     public static double k_intake_acceleration = 100;
     public static double k_intake_velocity = 100;
-    public static double k_currentLimit = 1;
+    public static double k_currentLimit = 100;
 
   }
 
   public static class ClimberConstants {
-    public static String climberCanbus = "canivore";
-    public static int m_climberMotor = 56; 
+    public static String climberCanbus = "canivore2";
+    public static int m_climberMotor = 100; 
     public static double k_climber_p = 0.1;
     public static double k_climber_i = 0.0;
     public static double k_climber_d = 0.0;
@@ -100,8 +121,8 @@ public final class Constants {
   }
 
   public static class KickerConstants {
-    public static String kickerCanbus = "canivore"; 
-    public static int m_kickerMotor = 57;
+    public static String kickerCanbus = "canivore2"; 
+    public static int m_kickerMotor = 32;
     public static double k_kicker_p = 0.1;
     public static double k_kicker_i = 0.0;
     public static double k_kicker_d = 0.0;
