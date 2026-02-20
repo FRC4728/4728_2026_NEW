@@ -121,13 +121,12 @@ public class TurretShooter extends SubsystemBase {
 
   public void runFlywheel(double velocity){
     m_flywheelMotor1.setControl(fly_velRequest.withVelocity(velocity));
-    m_flywheelMotor2.setControl(new Follower(Constants.TurretConstants.m_flywheelMotor1, MotorAlignmentValue.Aligned));
+    m_flywheelMotor2.setControl(fly_velRequest.withVelocity(-velocity));
   }
 
   public void stopFlywheel(){
     m_flywheelMotor1.setControl(fly_velRequest.withVelocity(0));
     m_flywheelMotor2.setControl(fly_velRequest.withVelocity(0));
   }
-
 
 }
