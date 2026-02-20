@@ -26,7 +26,7 @@ public class RunShooter extends Command {
 
   @Override
   public void execute(){
-    shooter.runFlywheel(-500);
+    shooter.runFlywheel(-125);
   }
 
   @Override
