@@ -80,9 +80,13 @@ public class RobotContainer {
         joystick.a().whileTrue(new RunShooter(shooter));
 
         // Score
-        joystick.rightBumper().whileTrue(new Score(intake, indexer, kicker, shooter));
+        joystick.leftTrigger().whileTrue(new Score(intake, indexer, kicker, shooter));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+    }
+
+    public Turret getTurret() {
+        return turret;
     }
 
     public Command getAutonomousCommand() {

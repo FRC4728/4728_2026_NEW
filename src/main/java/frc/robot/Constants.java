@@ -38,9 +38,11 @@ public final class Constants {
     public static double k_turret_deadband_bottom = -20;
     public static double k_turret_gearRatio = 1;
 
-    // Soft limits (CANcoder rotations) -- example: ±135 degrees
-    public static double k_maxRotations = 0.375;
-    public static double k_minRotations = -0.375;
+    // Soft limits: 0.0 = hard stop, 0.75 = 270 degrees of travel
+    public static double k_minRotations = 0.0;
+    public static double k_maxRotations = 0.75;
+    // Center of travel (135 degrees from hard stop = forward-facing)
+    public static double k_turretCenterRotations = 0.375;
 
     // Aiming
     public static double k_aimToleranceDegrees = 1.5;
