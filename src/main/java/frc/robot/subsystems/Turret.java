@@ -39,6 +39,9 @@ public class Turret extends SubsystemBase {
   private final VelocityVoltage velRequest;
   private final VoltageOut voltReq;
 
+  private final double m_forwardSoftLimit = 10;
+  private final double m_reverseSoftLimit = 1.5;
+
   /** Creates a new ExampleSubsystem. */
   public Turret(){
     limelight = new LimelightIO("limelight-turret");
@@ -47,7 +50,15 @@ public class Turret extends SubsystemBase {
     
     //turret motor configurator
     m_turretConfig = new TalonFXConfiguration();
-    
+
+    //Configure forward soft limit
+    m_turretConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    m_turretConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = m_forwardSoftLimit;
+
+    //Configure reverse soft limit 
+    m_turretConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    m_turretConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = m_reverseSoftLimit; 
+
     m_turretConfig.Slot0.kP = Constants.TurretConstants.k_turret_p;
     m_turretConfig.Slot0.kI = Constants.TurretConstants.k_turret_i;
     m_turretConfig.Slot0.kD = Constants.TurretConstants.k_turret_d;
@@ -64,7 +75,6 @@ public class Turret extends SubsystemBase {
     velRequest = new VelocityVoltage(0).withSlot(0);
     voltReq = new VoltageOut(0);
 
-   
 
     try{
       m_turretMotor.getConfigurator().apply(m_turretConfig);
@@ -106,6 +116,7 @@ public class Turret extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+  
   public void moveTurretVoltage(double voltage) {
       m_turretMotor.setControl(voltReq.withOutput(voltage));
   }
