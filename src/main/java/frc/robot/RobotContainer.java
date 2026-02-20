@@ -74,8 +74,8 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.rightBumper().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.rightBumper().whileTrue(drivetrain.applyRequest(() ->
+        joystick.leftBumper().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystick.leftBumper().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 

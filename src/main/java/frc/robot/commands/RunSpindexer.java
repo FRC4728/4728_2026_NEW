@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+//import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Indexer;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -26,7 +27,7 @@ public class RunSpindexer extends Command {
   @Override
   public void execute(){
     //theoretically run indexer whatever direction it's supposed to go
-    indexer.runIndexer(50);
+    indexer.runIndexer(500);
   }
 
   @Override
