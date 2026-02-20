@@ -68,7 +68,7 @@ public final class Constants {
     public static double k_indexer_v = 0.125;
     public static double k_indexer_a = 0.0;
     public static double k_indexer_acceleration = 100;
-    public static double k_indexer_velocity = 100;
+    public static double k_indexer_velocity = 200;
   }
 
   public static class intakeConstants {
