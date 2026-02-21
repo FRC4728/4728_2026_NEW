@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.RunIntakeIn;
+import frc.robot.commands.RunIntakeOut;
 import frc.robot.commands.RunKickerUp;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.RunSpindexer;
@@ -99,13 +100,14 @@ public class RobotContainer {
 
         joystick.leftBumper().whileTrue(new RunIntakeIn(intake));
         joystick.rightBumper().whileTrue(new Score(intake,indexer,kicker,shooter));
+        joystick.b().whileTrue(new RunIntakeOut(intake));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     public Command getAutonomousCommand() {
         return null;
-        
+
     }
 }
 
