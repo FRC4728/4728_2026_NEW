@@ -36,7 +36,8 @@ public final class Constants {
     public static double k_ll_kP = 0.02;
     public static double k_turret_deadband_top = 20;
     public static double k_turret_deadband_bottom = -20;
-    public static double k_turret_gearRatio = 1;
+    public static double k_turret_gearRatio = 51.0204081633;
+    
 
     public static double k_flywheel_p = 0.1;
     public static double k_flywheel_i = 0.0;
