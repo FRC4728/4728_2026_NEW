@@ -25,7 +25,7 @@ public class RunKickerUp extends Command {
   @Override
   public void execute(){
     //theoretically run kicker 'up'
-    kicker.runKicker(-100);
+    kicker.runKicker(-125);
   }
 
   @Override
