@@ -66,7 +66,7 @@ public final class Constants {
     public static double k_indexer_i = 0.0;
     public static double k_indexer_d = 0.0;
     public static double k_indexer_s = 0.27;
-    public static double k_indexer_v = 0.125;
+    public static double k_indexer_v = 1.2; //X60 = 12/100Rps*5:1*2:1 =1.2
     public static double k_indexer_a = 0.0;
     public static double k_indexer_acceleration = 100;
     public static double k_indexer_velocity = 500;
@@ -75,11 +75,11 @@ public final class Constants {
   public static class intakeConstants {
     public static String intakeCanbus = "canivore2";
     public static int m_intakeMotor = 33;
-    public static double k_intake_p = 0.11;
+    public static double k_intake_p = 0.35;
     public static double k_intake_i = 0.0;
     public static double k_intake_d = 0.0;
     public static double k_intake_s = 0.2;
-    public static double k_intake_v = 0.56;
+    public static double k_intake_v = 0.56; // X60 = 12/100Rps*3:1*28:18 =0.56
     public static double k_intake_a = 0.01;
     public static double k_intake_acceleration = 100;
     public static double k_intake_velocity = 100;
