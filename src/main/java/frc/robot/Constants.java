@@ -42,7 +42,7 @@ public final class Constants {
     public static double k_flywheel_p = 0.1;
     public static double k_flywheel_i = 0.0;
     public static double k_flywheel_d = 0.0;
-    public static double k_flywheel_s = 0.0;
+    public static double k_flywheel_s = 0.17;
     public static double k_flywheel_v = 0.0;
     public static double k_flywheel_a = 0.0;
     public static double k_flywheel_acceleration = 100;
@@ -65,7 +65,7 @@ public final class Constants {
     public static double k_indexer_p = 0.2;
     public static double k_indexer_i = 0.0;
     public static double k_indexer_d = 0.0;
-    public static double k_indexer_s = 0.0;
+    public static double k_indexer_s = 0.27;
     public static double k_indexer_v = 0.125;
     public static double k_indexer_a = 0.0;
     public static double k_indexer_acceleration = 100;
@@ -75,15 +75,15 @@ public final class Constants {
   public static class intakeConstants {
     public static String intakeCanbus = "canivore2";
     public static int m_intakeMotor = 33;
-    public static double k_intake_p = 0.1;
+    public static double k_intake_p = 0.11;
     public static double k_intake_i = 0.0;
     public static double k_intake_d = 0.0;
-    public static double k_intake_s = 0.0;
-    public static double k_intake_v = 0.0;
-    public static double k_intake_a = 0.0;
+    public static double k_intake_s = 0.2;
+    public static double k_intake_v = 0.56;
+    public static double k_intake_a = 0.01;
     public static double k_intake_acceleration = 100;
     public static double k_intake_velocity = 100;
-    public static double k_currentLimit = 100;
+    public static double k_currentLimit = 40;
 
   }
 
@@ -106,7 +106,7 @@ public final class Constants {
     public static double k_kicker_p = 0.1;
     public static double k_kicker_i = 0.0;
     public static double k_kicker_d = 0.0;
-    public static double k_kicker_s = 0.0;
+    public static double k_kicker_s = 0.38;
     public static double k_kicker_v = 0.0;
     public static double k_kicker_a = 0.0;
     public static double k_kicker_acceleration = 100;
