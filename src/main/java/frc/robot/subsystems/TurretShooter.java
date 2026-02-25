@@ -1,3 +1,4 @@
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -52,18 +53,18 @@ public class TurretShooter extends SubsystemBase {
     voltReq = new VoltageOut(0);
 
     m_flywheelConfig = new TalonFXConfiguration();
-    m_flywheelConfig.Slot0.kP = Constants.TurretConstants.k_turret_p;
-    m_flywheelConfig.Slot0.kI = Constants.TurretConstants.k_turret_i;
-    m_flywheelConfig.Slot0.kD = Constants.TurretConstants.k_turret_d;
-    m_flywheelConfig.Slot0.kS = Constants.TurretConstants.k_turret_s;
-    m_flywheelConfig.Slot0.kV = Constants.TurretConstants.k_turret_v;
-    m_flywheelConfig.Slot0.kA = Constants.TurretConstants.k_turret_a;
+    m_flywheelConfig.Slot0.kP = Constants.TurretConstants.k_flywheel_p;
+    m_flywheelConfig.Slot0.kI = Constants.TurretConstants.k_flywheel_i;
+    m_flywheelConfig.Slot0.kD = Constants.TurretConstants.k_flywheel_d;
+    m_flywheelConfig.Slot0.kS = Constants.TurretConstants.k_flywheel_s;
+    m_flywheelConfig.Slot0.kV = Constants.TurretConstants.k_flywheel_v;
+    m_flywheelConfig.Slot0.kA = Constants.TurretConstants.k_flywheel_a;
     m_flywheelConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
-    m_flywheelConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_turret_velocity;
-    m_flywheelConfig.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_turret_acceleration;
+    m_flywheelConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_flywheel_velocity;
+    m_flywheelConfig.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_flywheel_acceleration;
     m_flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-    fly_velRequest = new VelocityVoltage(0);
+    fly_velRequest = new VelocityVoltage(0).withSlot(0);
 
     m_hoodConfig = new TalonFXConfiguration();
     m_hoodConfig.Slot0.kP = Constants.TurretConstants.k_hood_p;

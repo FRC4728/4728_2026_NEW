@@ -39,12 +39,12 @@ public final class Constants {
     public static double k_turret_gearRatio = 51.0204081633;
     
 
-    public static double k_flywheel_p = 0.1;
+    public static double k_flywheel_p = 0.38;
     public static double k_flywheel_i = 0.0;
     public static double k_flywheel_d = 0.0;
     public static double k_flywheel_s = 0.17;
-    public static double k_flywheel_v = 0.0;
-    public static double k_flywheel_a = 0.0;
+    public static double k_flywheel_v = 0.133333; //2 X60 = 12/100*20/18*26 = 0.1333
+    public static double k_flywheel_a = 0.01;
     public static double k_flywheel_acceleration = 100;
     public static double k_flywheel_velocity = 100;
 
@@ -67,7 +67,7 @@ public final class Constants {
     public static double k_indexer_d = 0.0;
     public static double k_indexer_s = 0.27;
     public static double k_indexer_v = 1.2; //X60 = 12/100Rps*5:1*2:1 =1.2
-    public static double k_indexer_a = 0.0;
+    public static double k_indexer_a = 0.01;
     public static double k_indexer_acceleration = 100;
     public static double k_indexer_velocity = 500;
   }
@@ -103,12 +103,12 @@ public final class Constants {
   public static class KickerConstants {
     public static String kickerCanbus = "canivore2"; 
     public static int m_kickerMotor = 32;
-    public static double k_kicker_p = 0.1;
+    public static double k_kicker_p = 0.50;
     public static double k_kicker_i = 0.0;
     public static double k_kicker_d = 0.0;
     public static double k_kicker_s = 0.38;
-    public static double k_kicker_v = 0.0;
-    public static double k_kicker_a = 0.0;
+    public static double k_kicker_v = 0.164; //X44 = 12/125.5*36:21 =0.164
+    public static double k_kicker_a = 0.01;
     public static double k_kicker_acceleration = 100;
     public static double k_kicker_velocity = 100;
   }
