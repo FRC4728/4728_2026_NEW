@@ -99,7 +99,7 @@ public class RobotContainer {
         joystick.a().whileTrue(new AutoAlignTurret(turret));
 
         joystick.leftBumper().whileTrue(new RunIntakeIn(intake));
-        joystick.rightBumper().whileTrue(new Score(intake,indexer,kicker,shooter));
+        joystick.rightBumper().whileTrue(new Score(intake,indexer,kicker,shooter,turret));
         joystick.b().whileTrue(new RunIntakeOut(intake));
 
         drivetrain.registerTelemetry(logger::telemeterize);
