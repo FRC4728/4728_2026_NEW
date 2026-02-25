@@ -38,12 +38,11 @@ public final class Constants {
     public static final double k_ll_alignDeadband = 1.5;    // degrees of tx within which turret is considered aligned
     public static final double k_turret_gearRatio = 51.0204081633;
 
-    // Turret travel: 270 degrees of physical range, with 5 degrees of buffer on each end
-    // Usable range: 5 to 265 degrees, in rotor rotations at 51.02:1
-    // 5   / 360 * 51.02 = 0.71 rotations
+    // Turret travel: 270 degrees of physical range, with 5 degrees of buffer on the forward end
+    // Hard stop physically handles the reverse end so reverse limit is set to 0
     // 265 / 360 * 51.02 = 37.57 rotations
     public static final double k_turret_forwardSoftLimit = 37.57; // ~265 degrees
-    public static final double k_turret_reverseSoftLimit = 0.71;  // ~5 degrees
+    public static final double k_turret_reverseSoftLimit = 0.0;   // hard stop handles this end
     
 
     public static final double k_flywheel_p = 0.38;
