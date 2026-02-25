@@ -98,7 +98,7 @@ public class RobotContainer {
 
         joystick.a().whileTrue(new AutoAlignTurret(turret));
 
-        joystick.leftBumper().whileFalse(new RunIntakeIn(intake));
+        joystick.leftBumper().whileTrue(new RunIntakeIn(intake));
         joystick.rightBumper().whileTrue(new Score(intake,indexer,kicker,shooter));
         joystick.b().whileTrue(new RunIntakeOut(intake));
 
@@ -110,4 +110,3 @@ public class RobotContainer {
 
     }
 }
-

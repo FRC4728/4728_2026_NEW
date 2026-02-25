@@ -5,60 +5,37 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.configs.TalonFXSConfiguration;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.hardware.TalonFXS;
-import com.ctre.phoenix6.signals.ExternalFeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
-import frc.robot.LimelightIO;
 
 public class Turret extends SubsystemBase {
 
   private final TalonFX m_turretMotor;
-
-  private final LimelightIO limelight;
-
   private final TalonFXConfiguration m_turretConfig;
-
-  private final VelocityVoltage velRequest;
   private final VoltageOut voltReq;
 
-  private final double m_forwardSoftLimit = 10;
-  private final double m_reverseSoftLimit = 1.5;
+  public Turret() {
+    m_turretMotor = new TalonFX(Constants.TurretConstants.m_turretMotorId, Constants.TurretConstants.ringGearCanbus);
 
-  /** Creates a new ExampleSubsystem. */
-  public Turret(){
-    limelight = new LimelightIO("limelight-turret");
-
-    m_turretMotor = new TalonFX(Constants.TurretConstants.m_turretMotorId,Constants.TurretConstants.ringGearCanbus);
-    
-    //turret motor configurator
     m_turretConfig = new TalonFXConfiguration();
 
-    //Configure forward soft limit
+    // Soft limits — 5 degrees of buffer on each end of the 270 degree range
+    // Hard stop is at 0, forward limit is ~265 degrees, reverse limit is ~5 degrees
     m_turretConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    m_turretConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = m_forwardSoftLimit;
-
-    //Configure reverse soft limit 
+    m_turretConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
     m_turretConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    m_turretConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = m_reverseSoftLimit; 
+    m_turretConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
 
+    // PID / feedforward gains
     m_turretConfig.Slot0.kP = Constants.TurretConstants.k_turret_p;
     m_turretConfig.Slot0.kI = Constants.TurretConstants.k_turret_i;
     m_turretConfig.Slot0.kD = Constants.TurretConstants.k_turret_d;
@@ -66,63 +43,56 @@ public class Turret extends SubsystemBase {
     m_turretConfig.Slot0.kV = Constants.TurretConstants.k_turret_v;
     m_turretConfig.Slot0.kA = Constants.TurretConstants.k_turret_a;
     m_turretConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
+
+    // Motion magic
     m_turretConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_turret_velocity;
     m_turretConfig.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_turret_acceleration;
-    m_turretConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    m_turretConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    m_turretConfig.Feedback.RotorToSensorRatio = Constants.TurretConstants.k_turret_gearRatio;
 
-    velRequest = new VelocityVoltage(0).withSlot(0);
+    // Use the built-in rotor sensor — no CANcoder needed
+    m_turretConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
+    m_turretConfig.Feedback.SensorToMechanismRatio = Constants.TurretConstants.k_turret_gearRatio;
+
+    m_turretConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
     voltReq = new VoltageOut(0);
 
-
-    try{
+    try {
       m_turretMotor.getConfigurator().apply(m_turretConfig);
+      // Zero the encoder at startup — robot must be placed against the hard stop before enabling
+      m_turretMotor.setPosition(0);
+    } catch (Exception e) {
+      DriverStation.reportWarning("Failed to configure Turret motor: " + e.toString(), true);
     }
-    catch(Exception e1){
-      DriverStation.reportWarning("Failed to configure Turret motor(s) "+e1.toString(),true);
-    }
-
-  }
-
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
-  }
-
-  /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
-   */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Limelight tX",LimelightHelpers.getTX("limelight-turret"));
-    SmartDashboard.putNumber("Limelight Targets",LimelightHelpers.getTargetCount("limelight-turret"));
-    // This method will be called once per scheduler run
+    // Turret telemetry for Elastic dashboard
+    SmartDashboard.putNumber("Turret/Position", m_turretMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Turret/Velocity", m_turretMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Turret/AppliedVoltage", m_turretMotor.getMotorVoltage().getValueAsDouble());
+
+    // Limelight telemetry
+    SmartDashboard.putNumber("Turret/LL_tX", LimelightHelpers.getTX("limelight-turret"));
+    SmartDashboard.putNumber("Turret/LL_Targets", LimelightHelpers.getTargetCount("limelight-turret"));
+    SmartDashboard.putBoolean("Turret/HasTarget", LimelightHelpers.getTV("limelight-turret"));
+    SmartDashboard.putBoolean("Turret/IsAligned", isAligned());
   }
 
-  
-  public void moveTurretVoltage(double voltage) {
-      m_turretMotor.setControl(voltReq.withOutput(voltage));
+  /**
+   * Returns true when the Limelight tx is within the alignment deadband.
+   * Use this to confirm the turret is on target before firing.
+   */
+  public boolean isAligned() {
+    return LimelightHelpers.getTV("limelight-turret")
+        && Math.abs(LimelightHelpers.getTX("limelight-turret")) < Constants.TurretConstants.k_ll_alignDeadband;
   }
-  public void stopTurretVoltage(){
+
+  public void moveTurretVoltage(double voltage) {
+    m_turretMotor.setControl(voltReq.withOutput(voltage));
+  }
+
+  public void stopTurretVoltage() {
     m_turretMotor.setControl(voltReq.withOutput(0));
   }
-
-
 }
