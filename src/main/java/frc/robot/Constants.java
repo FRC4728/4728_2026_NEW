@@ -34,7 +34,7 @@ public final class Constants {
     public static final double k_turret_acceleration = 100;
     public static final double k_turret_velocity = 100;
     public static final double k_ll_kP = 0.06;
-    public static final double k_ll_maxVoltage = 3.0;       // max voltage output during auto-align (tune this)
+    public static final double k_ll_maxVoltage = 6.0;       // max voltage output during auto-align (tune this)
     public static final double k_ll_alignDeadband = 1.5;    // degrees of tx within which turret is considered aligned
     public static final double k_turret_gearRatio = 51.0204081633;
 
@@ -76,6 +76,9 @@ public final class Constants {
     public static final double k_indexer_a = 0.01;
     public static final double k_indexer_acceleration = 100;
     public static final double k_indexer_velocity = 500;
+    public static final double k_jam_current = 40.0;  // stator amps above which indexer is considered jammed
+    public static final double k_unjam_velocity = -55.0; // reverse velocity to clear jam
+    public static final double k_unjam_duration = 0.5;   // seconds to run in reverse
   }
 
   public static class intakeConstants {

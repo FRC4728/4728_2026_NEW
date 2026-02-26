@@ -21,6 +21,7 @@ import frc.robot.commands.RunShooter;
 import frc.robot.commands.RunSpindexer;
 import frc.robot.commands.Score;
 import frc.robot.commands.AutoAlignTurret;
+import frc.robot.commands.UnjamIndexer;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
@@ -103,6 +104,8 @@ public class RobotContainer {
         joystick.b().whileTrue(new RunIntakeOut(intake));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
     }
 
     public Command getAutonomousCommand() {

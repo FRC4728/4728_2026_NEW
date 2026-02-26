@@ -11,21 +11,19 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 
 public class Indexer extends SubsystemBase {
 
   private final TalonFX m_indexerMotor;
   private final TalonFXConfiguration m_indexerConfig;
-
   private final VelocityVoltage i_velRequest;
 
-
-  /** Creates a new ExampleSubsystem. */
   public Indexer() {
-    m_indexerMotor = new TalonFX(Constants.indexerConstants.m_indexerMotor,Constants.indexerConstants.indexerCanbus);
+    m_indexerMotor = new TalonFX(Constants.indexerConstants.m_indexerMotor, Constants.indexerConstants.indexerCanbus);
+
     m_indexerConfig = new TalonFXConfiguration();
     m_indexerConfig.Slot0.kP = Constants.indexerConstants.k_indexer_p;
     m_indexerConfig.Slot0.kI = Constants.indexerConstants.k_indexer_i;
@@ -45,19 +43,32 @@ public class Indexer extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Indexer Velocity",m_indexerMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Indexer/Velocity", m_indexerMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Indexer/Current",  m_indexerMotor.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putBoolean("Indexer/IsJammed", isJammed());
   }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
+  /**
+   * Returns true when the indexer stator current exceeds the jam threshold.
+   * Only meaningful while the indexer is actually running.
+   */
+  public boolean isJammed() {
+    return m_indexerMotor.getStatorCurrent().getValueAsDouble() > Constants.indexerConstants.k_jam_current;
   }
 
-  public void runIndexer(double velocity){
+  /**
+   * Trigger that fires when the indexer is jammed.
+   * Bind this in RobotContainer to schedule the unjam command.
+   */
+  public Trigger getJamTrigger() {
+    return new Trigger(this::isJammed);
+  }
+
+  public void runIndexer(double velocity) {
     m_indexerMotor.setControl(i_velRequest.withVelocity(velocity));
   }
 
-  public void stopIndexer(){
+  public void stopIndexer() {
     m_indexerMotor.setControl(i_velRequest.withVelocity(0));
   }
 }
