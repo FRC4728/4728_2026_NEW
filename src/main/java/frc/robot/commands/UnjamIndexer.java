@@ -18,8 +18,9 @@ public class UnjamIndexer extends SequentialCommandGroup {
       new RunCommand(() -> indexer.runIndexer(Constants.indexerConstants.k_unjam_velocity), indexer)
         .withTimeout(Constants.indexerConstants.k_unjam_duration),
 
-      // Step 2: resume running forward automatically
-      new InstantCommand(() -> indexer.runIndexer(55), indexer)
+      // Step 2: stop — whatever button-bound command was running will resume
+      // on its own since it still holds the indexer requirement
+      new InstantCommand(() -> indexer.stopIndexer(), indexer)
     );
   }
 }

@@ -76,9 +76,9 @@ public final class Constants {
     public static final double k_indexer_a = 0.01;
     public static final double k_indexer_acceleration = 100;
     public static final double k_indexer_velocity = 500;
-    public static final double k_jam_current = 40.0;  // stator amps above which indexer is considered jammed
-    public static final double k_unjam_velocity = -55.0; // reverse velocity to clear jam
-    public static final double k_unjam_duration = 0.5;   // seconds to run in reverse
+    public static final double k_jam_current = 100.0;  // stator amps above which indexer is considered jammed
+    public static final double k_unjam_velocity = -25.0; // reverse velocity to clear jam
+    public static final double k_unjam_duration = 0.25;   // seconds to run in reverse
   }
 
   public static class intakeConstants {
