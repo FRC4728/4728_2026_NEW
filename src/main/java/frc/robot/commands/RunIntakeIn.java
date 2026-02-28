@@ -27,7 +27,7 @@ public class RunIntakeIn extends Command {
   @Override
   public void execute(){
     //theoretically run intake inwards??
-    intake.runIntake(-275);
+    intake.runIntake(-150);
   }
 
   @Override

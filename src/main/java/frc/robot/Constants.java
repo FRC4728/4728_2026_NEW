@@ -25,7 +25,7 @@ public final class Constants {
     public static final int m_flywheelMotor2 = 35;
     public static final int m_hoodMotor = 36;
 
-    public static final double k_turret_p = 0.1;
+    public static final double k_turret_p = 0.2;
     public static final double k_turret_i = 0.0;
     public static final double k_turret_d = 0.0;
     public static final double k_turret_s = 0.0;
@@ -45,7 +45,7 @@ public final class Constants {
     public static final double k_turret_reverseSoftLimit = 0.0;   // hard stop handles this end
     
 
-    public static final double k_flywheel_p = 0.38;
+    public static final double k_flywheel_p = 0.2;
     public static final double k_flywheel_i = 0.0;
     public static final double k_flywheel_d = 0.0;
     public static final double k_flywheel_s = 0.17;
@@ -84,7 +84,7 @@ public final class Constants {
   public static class intakeConstants {
     public static final String intakeCanbus = "canivore2";
     public static final int m_intakeMotor = 33;
-    public static final double k_intake_p = 0.35;
+    public static final double k_intake_p = 0.2;
     public static final double k_intake_i = 0.0;
     public static final double k_intake_d = 0.0;
     public static final double k_intake_s = 0.2;
@@ -111,7 +111,7 @@ public final class Constants {
   public static class KickerConstants {
     public static final String kickerCanbus = "canivore2";
     public static final int m_kickerMotor = 32;
-    public static final double k_kicker_p = 0.50;
+    public static final double k_kicker_p = 0.2;
     public static final double k_kicker_i = 0.0;
     public static final double k_kicker_d = 0.0;
     public static final double k_kicker_s = 0.38;
