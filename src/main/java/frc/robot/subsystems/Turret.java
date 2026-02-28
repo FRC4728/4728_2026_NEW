@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
@@ -44,6 +45,7 @@ public class Turret extends SubsystemBase {
 
     // Neutral mode
     cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     // Soft limits — 5 degrees of buffer on each end of the 270 degree range
     cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable    = true;
@@ -82,7 +84,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void moveTurretVoltage(double voltage) {
-    m_turretMotor.setControl(voltReq.withOutput(-voltage));//(voltage)
+    m_turretMotor.setControl(voltReq.withOutput(voltage));
   }
 
   public void stopTurretVoltage() {
