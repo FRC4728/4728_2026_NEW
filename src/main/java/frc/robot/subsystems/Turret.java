@@ -82,7 +82,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void moveTurretVoltage(double voltage) {
-    m_turretMotor.setControl(voltReq.withOutput(voltage));
+    m_turretMotor.setControl(voltReq.withOutput(-voltage));//(voltage)
   }
 
   public void stopTurretVoltage() {

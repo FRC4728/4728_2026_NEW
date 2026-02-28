@@ -29,7 +29,7 @@ public class AutoAlignTurret extends Command {
     double tx = LimelightHelpers.getTX("limelight-turret");
 
     double voltage = MathUtil.clamp(
-        tx * Constants.TurretConstants.k_ll_kP,
+        -tx * Constants.TurretConstants.k_ll_kP,
         -Constants.TurretConstants.k_ll_maxVoltage,
         Constants.TurretConstants.k_ll_maxVoltage
     );

@@ -33,8 +33,8 @@ public final class Constants {
     public static final double k_turret_a = 0.0;
     public static final double k_turret_acceleration = 100;
     public static final double k_turret_velocity = 100;
-    public static final double k_ll_kP = 0.06;
-    public static final double k_ll_maxVoltage = 6.0;       // max voltage output during auto-align (tune this)
+    public static final double k_ll_kP = 0.36;
+    public static final double k_ll_maxVoltage = 12;       // max voltage output during auto-align (tune this)
     public static final double k_ll_alignDeadband = 1.5;    // degrees of tx within which turret is considered aligned
     public static final double k_turret_gearRatio = 51.0204081633;
 
