@@ -5,8 +5,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
@@ -26,6 +29,8 @@ public class TurretShooter extends SubsystemBase {
 
   private final VelocityVoltage fly_velRequest;
   private final VelocityVoltage hood_velRequest;
+
+  private final MotionMagicVoltage hood_motionMagic;
 
   public TurretShooter() {
     m_flywheelMotor1 = new TalonFX(Constants.TurretConstants.m_flywheelMotor1, Constants.TurretConstants.turretCanbus);
@@ -54,8 +59,10 @@ public class TurretShooter extends SubsystemBase {
     m_hoodConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
     m_hoodConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_hood_velocity;
     m_hoodConfig.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_hood_acceleration;
-    m_hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    m_hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+    hood_motionMagic = new MotionMagicVoltage(0).withSlot(0);
+    m_hoodMotor.setPosition(0);
     fly_velRequest  = new VelocityVoltage(0).withSlot(0);
     hood_velRequest = new VelocityVoltage(0).withSlot(0);
 
@@ -79,16 +86,16 @@ public class TurretShooter extends SubsystemBase {
 
   public void runFlywheel(double velocity) {
     m_flywheelMotor1.setControl(fly_velRequest.withVelocity(-velocity));
-    m_flywheelMotor2.setControl(fly_velRequest.withVelocity(velocity));
+    m_flywheelMotor2.setControl(new Follower(Constants.TurretConstants.m_flywheelMotor1, MotorAlignmentValue.Opposed));
   }
 
   public void stopFlywheel() {
     m_flywheelMotor1.setControl(fly_velRequest.withVelocity(0));
-    m_flywheelMotor2.setControl(fly_velRequest.withVelocity(0));
+    m_flywheelMotor2.setControl(new Follower(Constants.TurretConstants.m_flywheelMotor1, MotorAlignmentValue.Opposed));
   }
 
-  public void runHood(double velocity) {
-    m_hoodMotor.setControl(hood_velRequest.withVelocity(velocity));
+  public void runHood(double position) {
+    m_hoodMotor.setControl(hood_motionMagic.withPosition(position));
   }
 
   public void stopHood() {

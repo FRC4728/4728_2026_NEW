@@ -25,18 +25,18 @@ public final class Constants {
     public static final int m_flywheelMotor2 = 35;
     public static final int m_hoodMotor = 36;
 
-    public static final double k_turret_p = 0.2;
+    public static final double k_turret_p = 5.5;
     public static final double k_turret_i = 0.0;
-    public static final double k_turret_d = 0.0;
-    public static final double k_turret_s = 0.0;
-    public static final double k_turret_v = 0.0;
-    public static final double k_turret_a = 0.0;
-    public static final double k_turret_acceleration = 100;
+    public static final double k_turret_d = 0.6;
+    public static final double k_turret_s = 0.25;
+    public static final double k_turret_v = 0.12;
+    public static final double k_turret_a = 0.01;
+    public static final double k_turret_acceleration = 200;
     public static final double k_turret_velocity = 100;
     public static final double k_ll_kP = 0.08;
     public static final double k_ll_maxVoltage = 6;       // max voltage output during auto-align (tune this)
     public static final double k_ll_alignDeadband = 1.5;    // degrees of tx within which turret is considered aligned
-    public static final double k_turret_gearRatio = 51.0204081633;
+    public static final double k_turret_gearRatio = 43.29;
 
     // Turret travel: 270 degrees of physical range, with 5 degrees of buffer on the forward end
     // Hard stop physically handles the reverse end so reverse limit is set to 0
@@ -54,12 +54,12 @@ public final class Constants {
     public static final double k_flywheel_acceleration = 100;
     public static final double k_flywheel_velocity = 100;
 
-    public static final double k_hood_p = 0.1;
-    public static final double k_hood_i = 0.0;
-    public static final double k_hood_d = 0.0;
-    public static final double k_hood_s = 0.0;
-    public static final double k_hood_v = 0.0;
-    public static final double k_hood_a = 0.0;
+    public static final double k_hood_p = 4.8;
+    public static final double k_hood_i = 0;
+    public static final double k_hood_d = 0.1;
+    public static final double k_hood_s = 0.25;
+    public static final double k_hood_v = 0.12;
+    public static final double k_hood_a = 0.01;
     public static final double k_hood_acceleration = 100;
     public static final double k_hood_velocity = 100;
 
@@ -92,7 +92,7 @@ public final class Constants {
     public static final double k_intake_a = 0.01;
     public static final double k_intake_acceleration = 100;
     public static final double k_intake_velocity = 100;
-    public static final double k_currentLimit = 40;
+    public static final double k_currentLimit = 75;
   }
 
   public static class ClimberConstants {

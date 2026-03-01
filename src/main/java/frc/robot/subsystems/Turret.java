@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -21,6 +22,7 @@ public class Turret extends SubsystemBase {
 
   private final TalonFX m_turretMotor;
   private final VoltageOut voltReq;
+  private final MotionMagicVoltage m_turretMotionMagic;
 
   public Turret() {
     m_turretMotor = new TalonFX(Constants.TurretConstants.m_turretMotorId, Constants.TurretConstants.ringGearCanbus);
@@ -61,6 +63,8 @@ public class Turret extends SubsystemBase {
     // Zero the encoder at startup — robot must be placed against the hard stop before enabling
     m_turretMotor.setPosition(0);
 
+    m_turretMotionMagic = new MotionMagicVoltage(0).withSlot(0);
+
     voltReq = new VoltageOut(0);
   }
 
@@ -89,5 +93,9 @@ public class Turret extends SubsystemBase {
 
   public void stopTurretVoltage() {
     m_turretMotor.setControl(voltReq.withOutput(0));
+  }
+
+  public void moveTurretPosition(Double position){
+    m_turretMotor.setControl(m_turretMotionMagic.withPosition(position));
   }
 }
