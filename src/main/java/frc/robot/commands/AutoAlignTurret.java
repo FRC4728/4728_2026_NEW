@@ -1,53 +1,64 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
-//import frc.robot.subsystems.Wrist;
 import frc.robot.subsystems.Turret;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class AutoAlignTurret extends Command {
-  Turret m_turret;
 
-  public AutoAlignTurret(Turret turret){
+  private final Turret m_turret;
+
+  public AutoAlignTurret(Turret turret) {
     m_turret = turret;
     addRequirements(m_turret);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     NetworkTableInstance.getDefault().getTable("limelight-turret").getEntry("pipeline").setDouble(0);
+    System.out.println("AutoAlignTurret: command started");
   }
 
   @Override
-  public void execute(){
-    if(LimelightHelpers.getTV("limelight-turret")){
-      m_turret.moveTurretVoltage(MathUtil.clamp(LimelightHelpers.getTX("limelight-turret")*Constants.TurretConstants.k_ll_kP,
-      Constants.TurretConstants.k_turret_deadband_bottom,Constants.TurretConstants.k_turret_deadband_top));
-    }
-    else{
-      DriverStation.reportError("No limelight target found!", false);
+  public void execute() {
+    boolean hasTarget = LimelightHelpers.getTV("limelight-turret");
+    double tx = LimelightHelpers.getTX("limelight-turret");
+
+    double voltage = MathUtil.clamp(
+        -tx * Constants.TurretConstants.k_ll_kP,
+        -Constants.TurretConstants.k_ll_maxVoltage,
+        Constants.TurretConstants.k_ll_maxVoltage
+    );
+
+    SmartDashboard.putBoolean("Turret/CommandRunning", true);
+    SmartDashboard.putNumber("Turret/CommandVoltage", voltage);
+    SmartDashboard.putBoolean("Turret/CommandHasTarget", hasTarget);
+
+    if (hasTarget) {
+      if (!m_turret.isAligned()) {
+        m_turret.moveTurretVoltage(voltage);
+      } else {
+        m_turret.stopTurretVoltage();
+      }
+    } else {
+      m_turret.stopTurretVoltage();
     }
   }
 
   @Override
   public void end(boolean interrupted) {
     m_turret.stopTurretVoltage();
+    SmartDashboard.putBoolean("Turret/CommandRunning", false);
+    SmartDashboard.putNumber("Turret/CommandVoltage", 0);
+    System.out.println("AutoAlignTurret: command ended, interrupted=" + interrupted);
   }
 
   @Override
-  public boolean isFinished(){
+  public boolean isFinished() {
     return false;
   }
 }

@@ -14,12 +14,13 @@ import frc.robot.subsystems.*;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class Score extends ParallelCommandGroup {
   /** Creates a new GoToL1. */
-  public Score(Intake intake, Indexer indexer, Kicker kicker, TurretShooter shooter) {
+  public Score(Intake intake, Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret) {
     super(
       new RunIntakeIn(intake),
       new RunSpindexer(indexer),
       new RunKickerUp(kicker),
-      new RunShooter(shooter)
+      new RunShooter(shooter), 
+      new AutoAlignTurret(turret)
       );
   }
 }
