@@ -55,11 +55,15 @@ public class Kicker extends SubsystemBase {
     SmartDashboard.putNumber("KickerVelocity", m_kickerMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("KickerVoltage", m_kickerMotor.getMotorVoltage().getValueAsDouble());
   }
-  public void runKicker(double velocity){// velocity not used now inputting from smartdashboard
-    double targetVel = SmartDashboard.getNumber("InputKickerVelocity", 0.0);
+  public void runKicker(double velocity){
     m_kickerMotor.setControl(k_velRequest.withVelocity(velocity));
-    
   }
+
+  public void runKickerDyn(){
+    double targetVel = SmartDashboard.getNumber("InputKickerVelocity",0.0);
+    m_kickerMotor.setControl(k_velRequest.withVelocity(targetVel));
+  }
+  
   public void stopKicker(){
     m_kickerMotor.setControl(k_velRequest.withVelocity(0));
   }
