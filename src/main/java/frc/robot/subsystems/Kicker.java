@@ -10,6 +10,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -43,12 +44,21 @@ public class Kicker extends SubsystemBase {
 
   }
 
+  public void initialize() {
+    SmartDashboard.putNumber("InputKickerVelocity", 0.0);
+
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("KickerVelocity", m_kickerMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("KickerVoltage", m_kickerMotor.getMotorVoltage().getValueAsDouble());
   }
-  public void runKicker(double velocity){
+  public void runKicker(double velocity){// velocity not used now inputting from smartdashboard
+    double targetVel = SmartDashboard.getNumber("InputKickerVelocity", 0.0);
     m_kickerMotor.setControl(k_velRequest.withVelocity(velocity));
+    
   }
   public void stopKicker(){
     m_kickerMotor.setControl(k_velRequest.withVelocity(0));

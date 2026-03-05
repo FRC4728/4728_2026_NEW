@@ -32,7 +32,13 @@ public class TurretShooter extends SubsystemBase {
 
   private final MotionMagicVoltage hood_motionMagic;
 
+ 
+
   public TurretShooter() {
+
+    
+
+
     m_flywheelMotor1 = new TalonFX(Constants.TurretConstants.m_flywheelMotor1, Constants.TurretConstants.turretCanbus);
     m_flywheelMotor2 = new TalonFX(Constants.TurretConstants.m_flywheelMotor2, Constants.TurretConstants.turretCanbus);
     m_hoodMotor      = new TalonFX(Constants.TurretConstants.m_hoodMotor,      Constants.TurretConstants.turretCanbus);
@@ -75,17 +81,26 @@ public class TurretShooter extends SubsystemBase {
     }
   }
 
+  public void initialize(){
+    SmartDashboard.putNumber("InputShooterVelocity", 0.0);
+    
+  }
+
   @Override
+
+  
   public void periodic() {
     // Flywheel telemetry for Elastic dashboard
     SmartDashboard.putNumber("Shooter/Flywheel1Velocity", m_flywheelMotor1.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Shooter/Flywheel2Velocity", m_flywheelMotor2.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Shooter/HoodPosition",      m_hoodMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Shooter/Flywheel1Voltage",  m_flywheelMotor1.getMotorVoltage().getValueAsDouble());
+    
   }
 
-  public void runFlywheel(double velocity) {
-    m_flywheelMotor1.setControl(fly_velRequest.withVelocity(-velocity));
+  public void runFlywheel(double velocity) {// not using velocity now. using the variable from shuffleboard
+   double targetVel = SmartDashboard.getNumber("InputShooterVelocity", 0.0);
+    m_flywheelMotor1.setControl(fly_velRequest.withVelocity(velocity));
     m_flywheelMotor2.setControl(new Follower(Constants.TurretConstants.m_flywheelMotor1, MotorAlignmentValue.Opposed));
   }
 

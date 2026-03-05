@@ -105,6 +105,8 @@ public class RobotContainer {
         joystick.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         joystick.a().whileTrue(new AutoAlignTurret(turret));
+        
+        joystick.x().whileTrue(new RunShooter(shooter));
 
         joystick.leftBumper().whileTrue(new RunIntakeIn(intake));
         joystick.rightBumper().whileTrue(new Score(intake,indexer,kicker,shooter,turret));

@@ -12,6 +12,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -48,9 +49,14 @@ public class Intake extends SubsystemBase {
 
   }
 
+  public void initialize() {
+    SmartDashboard.putNumber("InputIntakeVelocity", 0.0);
+
+  }
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putNumber("IntakeVelocity", m_intakeMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("IntakeVoltage", m_intakeMotor.getMotorVoltage().getValueAsDouble());
   }
 
   @Override
@@ -59,6 +65,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void runIntake(double velocity){
+    double targetVel = SmartDashboard.getNumber("InputIntakeVelocity", 0.0);
     m_intakeMotor.setControl(in_velRequest.withVelocity(velocity));
   }
 
