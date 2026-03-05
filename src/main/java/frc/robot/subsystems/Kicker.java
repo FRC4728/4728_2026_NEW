@@ -43,7 +43,7 @@ public class Kicker extends SubsystemBase {
 
     k_velRequest = new VelocityVoltage(0).withSlot(0);
 
-    targetVel = 0;
+   targetVel = 0;
 
   }
 
@@ -52,7 +52,7 @@ public class Kicker extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("KickerVelocity", m_kickerMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("KickerVoltage", m_kickerMotor.getMotorVoltage().getValueAsDouble());
-    SmartDashboard.putNumber("InputKickerVelocity",targetVel);
+    SmartDashboard.putNumber("InputKickerVelocity", targetVel);
   }
   public void runKicker(double velocity){
     m_kickerMotor.setControl(k_velRequest.withVelocity(velocity));

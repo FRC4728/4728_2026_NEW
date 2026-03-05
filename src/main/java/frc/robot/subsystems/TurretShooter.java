@@ -32,12 +32,10 @@ public class TurretShooter extends SubsystemBase {
 
   private final MotionMagicVoltage hood_motionMagic;
 
+  private double targetVelF;
+  
  
-
   public TurretShooter() {
-
-    
-
 
     m_flywheelMotor1 = new TalonFX(Constants.TurretConstants.m_flywheelMotor1, Constants.TurretConstants.turretCanbus);
     m_flywheelMotor2 = new TalonFX(Constants.TurretConstants.m_flywheelMotor2, Constants.TurretConstants.turretCanbus);
@@ -71,6 +69,7 @@ public class TurretShooter extends SubsystemBase {
     m_hoodMotor.setPosition(0);
     fly_velRequest  = new VelocityVoltage(0).withSlot(0);
     hood_velRequest = new VelocityVoltage(0).withSlot(0);
+    targetVelF = 0;
 
     try {
       m_flywheelMotor1.getConfigurator().apply(m_flywheelConfig);
@@ -81,26 +80,25 @@ public class TurretShooter extends SubsystemBase {
     }
   }
 
-  public void initialize(){
-    SmartDashboard.putNumber("InputShooterVelocity", 0.0);
-    
-  }
-
   @Override
-
-  
   public void periodic() {
     // Flywheel telemetry for Elastic dashboard
     SmartDashboard.putNumber("Shooter/Flywheel1Velocity", m_flywheelMotor1.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Shooter/Flywheel2Velocity", m_flywheelMotor2.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Shooter/HoodPosition",      m_hoodMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Shooter/Flywheel1Voltage",  m_flywheelMotor1.getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber("InputFlywheelVelocity",targetVelF);
     
   }
 
-  public void runFlywheel(double velocity) {// not using velocity now. using the variable from shuffleboard
-   double targetVel = SmartDashboard.getNumber("InputShooterVelocity", 0.0);
+  public void runFlywheel(double velocity) {
     m_flywheelMotor1.setControl(fly_velRequest.withVelocity(velocity));
+    m_flywheelMotor2.setControl(new Follower(Constants.TurretConstants.m_flywheelMotor1, MotorAlignmentValue.Opposed));
+  }
+
+  public void runFlywheelDyn() {
+    targetVelF = SmartDashboard.getNumber("InputFlywheelVelocity",targetVelF);
+    m_flywheelMotor1.setControl(fly_velRequest.withVelocity(targetVelF));
     m_flywheelMotor2.setControl(new Follower(Constants.TurretConstants.m_flywheelMotor1, MotorAlignmentValue.Opposed));
   }
 
