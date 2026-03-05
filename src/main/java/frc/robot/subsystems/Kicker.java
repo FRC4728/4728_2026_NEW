@@ -46,7 +46,6 @@ public class Kicker extends SubsystemBase {
 
   public void initialize() {
     SmartDashboard.putNumber("InputKickerVelocity", 0.0);
-
   }
 
   @Override
