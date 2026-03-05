@@ -20,6 +20,7 @@ public class Kicker extends SubsystemBase {
   private final TalonFX m_kickerMotor;
   private final TalonFXConfiguration m_kickerConfig;
   private final VelocityVoltage k_velRequest;
+  private double targetVel;
 
 
   /** Creates a new ExampleSubsystem. */
@@ -42,10 +43,8 @@ public class Kicker extends SubsystemBase {
 
     k_velRequest = new VelocityVoltage(0).withSlot(0);
 
-  }
+    targetVel = 0;
 
-  public void initialize() {
-    SmartDashboard.putNumber("InputKickerVelocity", 0.0);
   }
 
   @Override
@@ -53,13 +52,14 @@ public class Kicker extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("KickerVelocity", m_kickerMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("KickerVoltage", m_kickerMotor.getMotorVoltage().getValueAsDouble());
+    SmartDashboard.putNumber("InputKickerVelocity",targetVel);
   }
   public void runKicker(double velocity){
     m_kickerMotor.setControl(k_velRequest.withVelocity(velocity));
   }
 
   public void runKickerDyn(){
-    double targetVel = SmartDashboard.getNumber("InputKickerVelocity",0.0);
+    targetVel = SmartDashboard.getNumber("InputKickerVelocity",targetVel);
     m_kickerMotor.setControl(k_velRequest.withVelocity(targetVel));
   }
   
