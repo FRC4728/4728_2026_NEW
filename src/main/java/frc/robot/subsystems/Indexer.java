@@ -21,9 +21,10 @@ public class Indexer extends SubsystemBase {
   private final TalonFXConfiguration m_indexerConfig;
   private final VelocityVoltage i_velRequest;
 
+  private double targetVel;
+
   public Indexer() {
     m_indexerMotor = new TalonFX(Constants.indexerConstants.m_indexerMotor, Constants.indexerConstants.indexerCanbus);
-
     m_indexerConfig = new TalonFXConfiguration();
     m_indexerConfig.Slot0.kP = Constants.indexerConstants.k_indexer_p;
     m_indexerConfig.Slot0.kI = Constants.indexerConstants.k_indexer_i;
@@ -39,12 +40,11 @@ public class Indexer extends SubsystemBase {
     i_velRequest = new VelocityVoltage(0.0).withSlot(0);
 
     m_indexerMotor.getConfigurator().apply(m_indexerConfig);
+
+    targetVel = 0;
+    SmartDashboard.putNumber("InputIndexerVelocity", 0.0);
   }
   
-  public void initialize() {
-    SmartDashboard.putNumber("InputIndexerVelocity", 0.0);
-
-  }
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Indexer/Velocity", m_indexerMotor.getVelocity().getValueAsDouble());
@@ -69,8 +69,11 @@ public class Indexer extends SubsystemBase {
   }
 
   public void runIndexer(double velocity) {
-    double targetVel = SmartDashboard.getNumber("InputIndexerVelocity", 0.0);
     m_indexerMotor.setControl(i_velRequest.withVelocity(velocity));
+  }
+
+  public void runIndexerDyn() {
+    m_indexerMotor.setControl(i_velRequest.withVelocity(targetVel));
   }
 
   public void stopIndexer() {

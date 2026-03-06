@@ -32,9 +32,8 @@ public class TurretShooter extends SubsystemBase {
 
   private final MotionMagicVoltage hood_motionMagic;
 
-  private double targetVelF;
+  private double targetVel;
   
- 
   public TurretShooter() {
 
     m_flywheelMotor1 = new TalonFX(Constants.TurretConstants.m_flywheelMotor1, Constants.TurretConstants.turretCanbus);
@@ -69,7 +68,9 @@ public class TurretShooter extends SubsystemBase {
     m_hoodMotor.setPosition(0);
     fly_velRequest  = new VelocityVoltage(0).withSlot(0);
     hood_velRequest = new VelocityVoltage(0).withSlot(0);
-    targetVelF = 0;
+    
+    targetVel = 0;
+    SmartDashboard.putNumber("InputFlywheelVelocity",targetVel);
 
     try {
       m_flywheelMotor1.getConfigurator().apply(m_flywheelConfig);
@@ -87,8 +88,6 @@ public class TurretShooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter/Flywheel2Velocity", m_flywheelMotor2.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Shooter/HoodPosition",      m_hoodMotor.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Shooter/Flywheel1Voltage",  m_flywheelMotor1.getMotorVoltage().getValueAsDouble());
-    SmartDashboard.putNumber("InputFlywheelVelocity",targetVelF);
-    
   }
 
   public void runFlywheel(double velocity) {
@@ -97,8 +96,8 @@ public class TurretShooter extends SubsystemBase {
   }
 
   public void runFlywheelDyn() {
-    targetVelF = SmartDashboard.getNumber("InputFlywheelVelocity",targetVelF);
-    m_flywheelMotor1.setControl(fly_velRequest.withVelocity(targetVelF));
+    targetVel = SmartDashboard.getNumber("InputFlywheelVelocity",targetVel);
+    m_flywheelMotor1.setControl(fly_velRequest.withVelocity(targetVel));
     m_flywheelMotor2.setControl(new Follower(Constants.TurretConstants.m_flywheelMotor1, MotorAlignmentValue.Opposed));
   }
 

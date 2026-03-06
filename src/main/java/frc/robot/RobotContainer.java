@@ -8,12 +8,9 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.RunIntakeIn;
 import frc.robot.commands.RunIntakeOut;
 import frc.robot.commands.RunKickerUp;
@@ -23,8 +20,6 @@ import frc.robot.commands.Score;
 import frc.robot.commands.SetHoodMax;
 import frc.robot.commands.SetHoodMid;
 import frc.robot.commands.SetHoodMin;
-import frc.robot.commands.SetTurretCenter;
-import frc.robot.commands.SetTurretZeroish;
 import frc.robot.commands.AutoAlignTurret;
 import frc.robot.commands.JogTurretNegative;
 import frc.robot.commands.JogTurretPositive;
@@ -106,8 +101,9 @@ public class RobotContainer {
 
         joystick.a().whileTrue(new AutoAlignTurret(turret));
         
-        joystick.leftStick().whileTrue(new RunShooter(shooter));//new used for testing
-        joystick.rightStick().whileTrue(new RunKickerUp(kicker));//new used for testing
+        joystick.rightStick().whileTrue(new RunShooter(shooter));
+        joystick.leftStick().whileTrue(new RunKickerUp(kicker));
+        joystick.x().whileTrue(new RunSpindexer(indexer));
 
         joystick.leftBumper().whileTrue(new RunIntakeIn(intake));
         joystick.rightBumper().whileTrue(new Score(intake,indexer,kicker,shooter,turret));
