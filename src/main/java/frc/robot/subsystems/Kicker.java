@@ -19,6 +19,7 @@ public class Kicker extends SubsystemBase {
   private final TalonFX m_kickerMotor;
   private final TalonFXConfiguration m_kickerConfig;
   private final VelocityVoltage k_velRequest;
+
   private double targetVel;
 
 
@@ -41,7 +42,7 @@ public class Kicker extends SubsystemBase {
 
     k_velRequest = new VelocityVoltage(0).withSlot(0);
 
-   targetVel = 0;
+   targetVel = -20;
    SmartDashboard.putNumber("InputKickerVelocity", targetVel);
   }
 

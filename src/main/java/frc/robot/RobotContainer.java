@@ -101,8 +101,8 @@ public class RobotContainer {
 
         joystick.a().whileTrue(new AutoAlignTurret(turret));
         
-        joystick.rightStick().whileTrue(new RunShooter(shooter));
-        joystick.leftStick().whileTrue(new RunKickerUp(kicker));
+        joystick.rightTrigger().whileTrue(new RunShooter(shooter));
+        joystick.leftTrigger().whileTrue(new RunKickerUp(kicker));
         joystick.x().whileTrue(new RunSpindexer(indexer));
 
         joystick.leftBumper().whileTrue(new RunIntakeIn(intake));

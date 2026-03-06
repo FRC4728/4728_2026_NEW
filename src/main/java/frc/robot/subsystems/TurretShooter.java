@@ -23,13 +23,10 @@ public class TurretShooter extends SubsystemBase {
   private final TalonFX m_flywheelMotor1;
   private final TalonFX m_flywheelMotor2;
   private final TalonFX m_hoodMotor;
-
   private final TalonFXConfiguration m_flywheelConfig;
   private final TalonFXConfiguration m_hoodConfig;
-
   private final VelocityVoltage fly_velRequest;
   private final VelocityVoltage hood_velRequest;
-
   private final MotionMagicVoltage hood_motionMagic;
 
   private double targetVel;
@@ -69,7 +66,7 @@ public class TurretShooter extends SubsystemBase {
     fly_velRequest  = new VelocityVoltage(0).withSlot(0);
     hood_velRequest = new VelocityVoltage(0).withSlot(0);
     
-    targetVel = 0;
+    targetVel = 45;
     SmartDashboard.putNumber("InputFlywheelVelocity",targetVel);
 
     try {

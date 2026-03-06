@@ -36,13 +36,14 @@ public class Intake extends SubsystemBase {
     m_intakeConfig.MotionMagic.MotionMagicAcceleration = Constants.intakeConstants.k_intake_acceleration;
     m_intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
+
     m_intakeConfig.CurrentLimits.StatorCurrentLimit = Constants.intakeConstants.k_currentLimit;
 
     in_velRequest = new VelocityVoltage(0).withSlot(0);
 
     m_intakeMotor.getConfigurator().apply(m_intakeConfig);
 
-    targetVel = 0;
+    targetVel = -80;
     SmartDashboard.putNumber("InputIntakeVelocity",targetVel);
   }
 
