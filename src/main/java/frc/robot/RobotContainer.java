@@ -20,6 +20,8 @@ import frc.robot.commands.Score;
 import frc.robot.commands.SetHoodMax;
 import frc.robot.commands.SetHoodMid;
 import frc.robot.commands.SetHoodMin;
+import frc.robot.commands.SetTurretCenter;
+import frc.robot.commands.SetTurretZeroish;
 import frc.robot.commands.AutoAlignTurret;
 import frc.robot.commands.JogTurretNegative;
 import frc.robot.commands.JogTurretPositive;
@@ -114,6 +116,9 @@ public class RobotContainer {
         joystick2.x().onTrue(new SetHoodMin(shooter));
         joystick2.rightBumper().whileTrue(new JogTurretPositive(turret));
         joystick2.leftBumper().whileTrue(new JogTurretNegative(turret));
+
+        joystick2.y().onTrue(new SetTurretZeroish(turret));
+        joystick2.start().onTrue(new SetTurretCenter(turret));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

@@ -63,6 +63,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void runIntakeDyn(){
+    targetVel = SmartDashboard.getNumber("InputIntakeVelocity",targetVel);
     m_intakeMotor.setControl(in_velRequest.withVelocity(targetVel));
 
   }

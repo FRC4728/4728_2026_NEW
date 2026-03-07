@@ -19,20 +19,15 @@ public class SetTurretCenter extends Command {
     addRequirements(turret);
   }
 
-  @Override
-  public void initialize() {
-
-
-  }
 
   @Override
   public void execute(){
-    turret.moveTurretPosition(0.4);
+    turret.moveTurretPosition(18.0);
   }
 
   @Override
   public void end(boolean interrupted) {
-    turret.stopTurretVoltage();
+
   }
 
   @Override

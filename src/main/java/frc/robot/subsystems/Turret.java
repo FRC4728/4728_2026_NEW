@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -23,6 +24,7 @@ public class Turret extends SubsystemBase {
   private final TalonFX m_turretMotor;
   private final VoltageOut voltReq;
   private final MotionMagicVoltage m_turretMotionMagic;
+  private final NeutralOut m_brake;
 
   public Turret() {
     m_turretMotor = new TalonFX(Constants.TurretConstants.m_turretMotorId, Constants.TurretConstants.ringGearCanbus);
@@ -36,24 +38,25 @@ public class Turret extends SubsystemBase {
     cfg.Slot0.kS = Constants.TurretConstants.k_turret_s;
     cfg.Slot0.kV = Constants.TurretConstants.k_turret_v;
     cfg.Slot0.kA = Constants.TurretConstants.k_turret_a;
-    cfg.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
+    cfg.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
     // Motion magic
     cfg.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_turret_velocity;
     cfg.MotionMagic.MotionMagicAcceleration   = Constants.TurretConstants.k_turret_acceleration;
+    cfg.MotionMagic.MotionMagicJerk = Constants.TurretConstants.k_turret_jerk;
 
     // Rotor sensor with gear ratio applied
-    cfg.Feedback.SensorToMechanismRatio = Constants.TurretConstants.k_turret_gearRatio;
+    //cfg.Feedback.SensorToMechanismRatio = Constants.TurretConstants.k_turret_gearRatio;
 
     // Neutral mode
-    cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    cfg.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     // Soft limits — 5 degrees of buffer on each end of the 270 degree range
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable    = true;
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable    = true;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
+    //cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable    = true;
+    //cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
+    //cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable    = true;
+    //cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
 
     var status = m_turretMotor.getConfigurator().apply(cfg);
     if (!status.isOK()) {
@@ -66,6 +69,8 @@ public class Turret extends SubsystemBase {
     m_turretMotionMagic = new MotionMagicVoltage(0).withSlot(0);
 
     voltReq = new VoltageOut(0);
+
+    m_brake = new NeutralOut();
   }
 
   @Override
@@ -97,5 +102,9 @@ public class Turret extends SubsystemBase {
 
   public void moveTurretPosition(Double position){
     m_turretMotor.setControl(m_turretMotionMagic.withPosition(position));
+  }
+
+  public void stopTurret(){
+    m_turretMotor.setControl(m_brake);
   }
 }

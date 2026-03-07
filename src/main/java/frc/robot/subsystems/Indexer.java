@@ -73,6 +73,7 @@ public class Indexer extends SubsystemBase {
   }
 
   public void runIndexerDyn() {
+    targetVel = SmartDashboard.getNumber("InputIndexerVelocity",targetVel);
     m_indexerMotor.setControl(i_velRequest.withVelocity(targetVel));
   }
 
