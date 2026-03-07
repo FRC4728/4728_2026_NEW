@@ -19,9 +19,9 @@ public class Score extends SequentialCommandGroup {
                 LimelightHelpers.getTV("limelight-turret") && turret.isAligned()
             ),
 
-            // Step 2: Shooter spins up, then feeding starts after 0.75s
+            // Step 2: Shooter spins up to distance-based setpoint, then feeding starts after 0.25s
             new ParallelCommandGroup(
-                new RunShooter(shooter),
+                new SetShooterByDistance(shooter),
                 new SequentialCommandGroup(
                     new WaitCommand(0.25),
                     new ParallelCommandGroup(

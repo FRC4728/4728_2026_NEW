@@ -53,10 +53,10 @@ public class Turret extends SubsystemBase {
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     // Soft limits — 5 degrees of buffer on each end of the 270 degree range
-    //cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable    = true;
-    //cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
-    //cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable    = true;
-    //cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable    = true;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable    = true;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
 
     var status = m_turretMotor.getConfigurator().apply(cfg);
     if (!status.isOK()) {
