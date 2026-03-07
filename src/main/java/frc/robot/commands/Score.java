@@ -1,25 +1,35 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.*;
 
+public class Score extends SequentialCommandGroup {
+    public Score(Intake intake, Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret) {
+        addCommands(
+            // Step 1: Wait until limelight sees target and turret is aligned
+            new WaitUntilCommand(() ->
+                LimelightHelpers.getTV("limelight-turret") && turret.isAligned()
+            ),
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class Score extends ParallelCommandGroup {
-  /** Creates a new GoToL1. */
-  public Score(Intake intake, Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret) {
-    super(
-      new RunIntakeIn(intake),
-      new RunSpindexer(indexer),
-      new RunKickerUp(kicker),
-      new RunShooter(shooter), 
-      new AutoAlignTurret(turret)
-      );
-  }
+            // Step 2: Start shooter and auto-align, wait for flywheel to spin up
+            new ParallelCommandGroup(
+                new RunShooter(shooter),
+                new AutoAlignTurret(turret),
+                new SequentialCommandGroup(
+                    // Wait for shooter to reach speed
+                    new WaitCommand(0.5),
+                    // Then run everything else in parallel
+                    new ParallelCommandGroup(
+                        new RunIntakeIn(intake),
+                        new RunSpindexer(indexer),
+                        new RunKickerUp(kicker)
+                    )
+                )
+            )
+        );
+    }
 }
