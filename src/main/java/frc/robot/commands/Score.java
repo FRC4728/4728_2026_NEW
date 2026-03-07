@@ -5,7 +5,11 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.LimelightHelpers;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Kicker;
+import frc.robot.subsystems.TurretShooter;
+import frc.robot.subsystems.Turret;
 
 public class Score extends SequentialCommandGroup {
     public Score(Intake intake, Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret) {
@@ -15,14 +19,11 @@ public class Score extends SequentialCommandGroup {
                 LimelightHelpers.getTV("limelight-turret") && turret.isAligned()
             ),
 
-            // Step 2: Start shooter and auto-align, wait for flywheel to spin up
+            // Step 2: Shooter spins up, then feeding starts after 0.75s
             new ParallelCommandGroup(
                 new RunShooter(shooter),
-                new AutoAlignTurret(turret),
                 new SequentialCommandGroup(
-                    // Wait for shooter to reach speed
-                    new WaitCommand(0.5),
-                    // Then run everything else in parallel
+                    new WaitCommand(0.25),
                     new ParallelCommandGroup(
                         new RunIntakeIn(intake),
                         new RunSpindexer(indexer),
