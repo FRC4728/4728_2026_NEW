@@ -41,14 +41,14 @@ public class Indexer extends SubsystemBase {
 
     m_indexerMotor.getConfigurator().apply(m_indexerConfig);
 
-    targetVel = 60;
+    targetVel = 21;
     SmartDashboard.putNumber("InputIndexerVelocity", targetVel);
   }
   
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Indexer/Velocity", m_indexerMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Indexer/Current",  m_indexerMotor.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Indexer/Voltage",  m_indexerMotor.getMotorVoltage().getValueAsDouble());
     SmartDashboard.putBoolean("Indexer/IsJammed", isJammed());
   }
 
