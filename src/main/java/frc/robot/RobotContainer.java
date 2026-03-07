@@ -11,6 +11,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import frc.robot.commands.AutoAlignTurret;
+import frc.robot.commands.JogTurretNegative;
+import frc.robot.commands.JogTurretPositive;
 import frc.robot.commands.RunIntakeIn;
 import frc.robot.commands.RunIntakeOut;
 import frc.robot.commands.RunKickerUp;
@@ -22,9 +25,6 @@ import frc.robot.commands.SetHoodMid;
 import frc.robot.commands.SetHoodMin;
 import frc.robot.commands.SetTurretCenter;
 import frc.robot.commands.SetTurretZeroish;
-import frc.robot.commands.AutoAlignTurret;
-import frc.robot.commands.JogTurretNegative;
-import frc.robot.commands.JogTurretPositive;
 import frc.robot.commands.UnjamIndexer;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -35,99 +35,127 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.TurretShooter;
 
 public class RobotContainer {
-    private Intake intake = new Intake();
-    private Turret turret = new Turret();
-    private TurretShooter shooter = new TurretShooter();
-    private Kicker kicker = new Kicker();
-    private Indexer indexer = new Indexer();
 
-    //default values
-    public double translationMultiplier = 0.85;
-    public double strafeMultiplier = 0.85;
-    public double rotateMultipler = 0.65;
-    
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    // Subsystems
+    private final Intake intake       = new Intake();
+    private final Turret turret       = new Turret();
+    private final TurretShooter shooter = new TurretShooter();
+    private final Kicker kicker       = new Kicker();
+    private final Indexer indexer     = new Indexer();
 
-    /* Setting up bindings for necessary control of the swerve drive platform */
+    // Drive speed multipliers
+    private final double translationMultiplier = 0.85;
+    private final double strafeMultiplier      = 0.85;
+    private final double rotateMultiplier      = 0.65;
+
+    // Drivetrain speed limits
+    private final double MaxSpeed       = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+
+    // Swerve drive requests
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.08).withRotationalDeadband(MaxAngularRate * 0.08) // Add a 8% deadband
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+            .withDeadband(MaxSpeed * 0.08)
+            .withRotationalDeadband(MaxAngularRate * 0.08)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+    private final SwerveRequest.Idle idle = new SwerveRequest.Idle();
 
+    // Controllers
+    private final CommandXboxController driver   = new CommandXboxController(0);
+    private final CommandXboxController operator = new CommandXboxController(1);
+
+    // Drivetrain and telemetry
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController joystick2 = new CommandXboxController(1);
-
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
     public RobotContainer() {
-        configureBindings();
+        configureDefaultCommands();
+        configureDriverBindings();
+        configureOperatorBindings();
+        configureAutomation();
+        drivetrain.registerTelemetry(logger::telemeterize);
     }
 
-    private void configureBindings() {
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
+    // ── Default Commands ─────────────────────────────────────────────────────
+
+    private void configureDefaultCommands() {
+        // Drivetrain: field-centric drive
         drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-driver.getLeftY() * MaxSpeed * translationMultiplier)
+                     .withVelocityY(-driver.getLeftX() * MaxSpeed * strafeMultiplier)
+                     .withRotationalRate(-driver.getRightX() * MaxAngularRate * rotateMultiplier)
             )
         );
 
-        // Idle while the robot is disabled. This ensures the configured
-        // neutral mode is applied to the drive motors while disabled.
-        final var idle = new SwerveRequest.Idle();
+        // Idle drivetrain when disabled
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-/*      joystick.leftBumper().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.leftBumper().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
-
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-*/
-        // Reset the field-centric heading on left bumper press.
-        joystick.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
-        joystick.a().whileTrue(new AutoAlignTurret(turret));
-        
-        joystick.rightTrigger().whileTrue(new RunShooter(shooter));
-        joystick.leftTrigger().whileTrue(new RunKickerUp(kicker));
-        joystick.x().whileTrue(new RunSpindexer(indexer));
+        // Turret: always auto-aligning when no other command is running
         turret.setDefaultCommand(new AutoAlignTurret(turret));
 
+        // Intake: always running in unless interrupted
         intake.setDefaultCommand(new RunIntakeIn(intake));
-        joystick.rightBumper().whileTrue(new Score(intake,indexer,kicker,shooter,turret));
-        joystick.b().whileTrue(new RunIntakeOut(intake));
+    }
 
-        joystick2.b().onTrue(new SetHoodMax(shooter));
-        joystick2.a().onTrue(new SetHoodMid(shooter));
-        joystick2.x().onTrue(new SetHoodMin(shooter));
-        joystick2.rightBumper().whileTrue(new JogTurretPositive(turret));
-        joystick2.leftBumper().whileTrue(new JogTurretNegative(turret));
+    // ── Driver Controller (port 0) ────────────────────────────────────────────
+    // Left stick:  translate
+    // Right stick: rotate
+    // Y:           reset field-centric heading
+    // A:           manual auto-align turret (override)
+    // Right trigger: run shooter (manual)
+    // Left trigger:  run kicker up (manual)
+    // X:             run spindexer (manual)
+    // Right bumper:  score (full sequence)
+    // Left bumper:   run intake in (manual override)
+    // B:             run intake out
 
-        joystick2.y().onTrue(new SetTurretZeroish(turret));
-        joystick2.start().onTrue(new SetTurretCenter(turret));
+    private void configureDriverBindings() {
+        driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        driver.a().whileTrue(new AutoAlignTurret(turret));
 
+        driver.rightTrigger().whileTrue(new RunShooter(shooter));
+        driver.leftTrigger().whileTrue(new RunKickerUp(kicker));
+        driver.x().whileTrue(new RunSpindexer(indexer));
+
+        driver.rightBumper().whileTrue(new Score(intake, indexer, kicker, shooter, turret));
+        driver.leftBumper().whileTrue(new RunIntakeIn(intake));
+        driver.b().whileTrue(new RunIntakeOut(intake));
+    }
+
+    // ── Operator Controller (port 1) ──────────────────────────────────────────
+    // B:             set hood max
+    // A:             set hood mid
+    // X:             set hood min
+    // Right bumper:  jog turret positive
+    // Left bumper:   jog turret negative
+    // Y:             set turret to zero-ish
+    // Start:         set turret to center
+
+    private void configureOperatorBindings() {
+        operator.b().onTrue(new SetHoodMax(shooter));
+        operator.a().onTrue(new SetHoodMid(shooter));
+        operator.x().onTrue(new SetHoodMin(shooter));
+
+        operator.rightBumper().whileTrue(new JogTurretPositive(turret));
+        operator.leftBumper().whileTrue(new JogTurretNegative(turret));
+
+        operator.y().onTrue(new SetTurretZeroish(turret));
+        operator.start().onTrue(new SetTurretCenter(turret));
+    }
+
+    // ── Automated Triggers ────────────────────────────────────────────────────
+
+    private void configureAutomation() {
+        // Auto-unjam indexer when jam is detected
         indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
     }
 
+    // ── Autonomous ───────────────────────────────────────────────────────────
+
     public Command getAutonomousCommand() {
         return null;
-
     }
 }
