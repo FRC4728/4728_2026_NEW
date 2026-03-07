@@ -24,7 +24,7 @@ public class AutoAlignTurret extends Command {
   }
 
   @Override
-  public void execute() {
+public void execute() {
     boolean hasTarget = LimelightHelpers.getTV("limelight-turret");
     double tx = LimelightHelpers.getTX("limelight-turret");
 
@@ -39,15 +39,11 @@ public class AutoAlignTurret extends Command {
     SmartDashboard.putBoolean("Turret/CommandHasTarget", hasTarget);
 
     if (hasTarget) {
-      if (!m_turret.isAligned()) {
         m_turret.moveTurretVoltage(voltage);
-      } else {
-        m_turret.stopTurretVoltage();
-      }
     } else {
-      m_turret.stopTurretVoltage();
+        m_turret.stopTurretVoltage();
     }
-  }
+}
 
   @Override
   public void end(boolean interrupted) {
