@@ -10,7 +10,6 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.commands.AutoAlignTurret;
 import frc.robot.commands.JogTurretNegative;
 import frc.robot.commands.JogTurretPositive;
@@ -37,19 +36,19 @@ import frc.robot.subsystems.TurretShooter;
 public class RobotContainer {
 
     // Subsystems
-    private final Intake intake       = new Intake();
-    private final Turret turret       = new Turret();
+    private final Intake intake = new Intake();
+    private final Turret turret = new Turret();
     private final TurretShooter shooter = new TurretShooter();
-    private final Kicker kicker       = new Kicker();
-    private final Indexer indexer     = new Indexer();
+    private final Kicker kicker = new Kicker();
+    private final Indexer indexer= new Indexer();
 
     // Drive speed multipliers
     private final double translationMultiplier = 0.85;
-    private final double strafeMultiplier      = 0.85;
-    private final double rotateMultiplier      = 0.65;
+    private final double strafeMultiplier = 0.85;
+    private final double rotateMultiplier = 0.65;
 
     // Drivetrain speed limits
-    private final double MaxSpeed       = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     // Swerve drive requests
@@ -57,10 +56,9 @@ public class RobotContainer {
             .withDeadband(MaxSpeed * 0.08)
             .withRotationalDeadband(MaxAngularRate * 0.08)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-    private final SwerveRequest.Idle idle = new SwerveRequest.Idle();
 
     // Controllers
-    private final CommandXboxController driver   = new CommandXboxController(0);
+    private final CommandXboxController driver = new CommandXboxController(0);
     private final CommandXboxController operator = new CommandXboxController(1);
 
     // Drivetrain and telemetry
@@ -87,11 +85,6 @@ public class RobotContainer {
             )
         );
 
-        // Idle drivetrain when disabled
-        RobotModeTriggers.disabled().whileTrue(
-            drivetrain.applyRequest(() -> idle).ignoringDisable(true)
-        );
-
         // Turret: always auto-aligning when no other command is running
         turret.setDefaultCommand(new AutoAlignTurret(turret));
 
@@ -102,14 +95,14 @@ public class RobotContainer {
     // ── Driver Controller (port 0) ────────────────────────────────────────────
     // Left stick:  translate
     // Right stick: rotate
-    // Y:           reset field-centric heading
-    // A:           manual auto-align turret (override)
+    // Y: reset field-centric heading
+    // A: manual auto-align turret (override)
     // Right trigger: run shooter (manual)
-    // Left trigger:  run kicker up (manual)
-    // X:             run spindexer (manual)
-    // Right bumper:  score (full sequence)
-    // Left bumper:   run intake in (manual override)
-    // B:             run intake out
+    // Left trigger: run kicker up (manual)
+    // X: run spindexer (manual)
+    // Right bumper: score (full sequence)
+    // Left bumper: run intake in (manual override)
+    // B: run intake out
 
     private void configureDriverBindings() {
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
@@ -126,13 +119,13 @@ public class RobotContainer {
     }
 
     // ── Operator Controller (port 1) ──────────────────────────────────────────
-    // B:             set hood max
-    // A:             set hood mid
-    // X:             set hood min
-    // Right bumper:  jog turret positive
-    // Left bumper:   jog turret negative
-    // Y:             set turret to zero-ish
-    // Start:         set turret to center
+    // B: set hood max
+    // A: set hood mid
+    // X: set hood min
+    // Right bumper: jog turret positive
+    // Left bumper: jog turret negative
+    // Y: set turret to zero-ish
+    // Start: set turret to center
 
     private void configureOperatorBindings() {
         operator.b().onTrue(new SetHoodMax(shooter));
@@ -146,14 +139,11 @@ public class RobotContainer {
         operator.start().onTrue(new SetTurretCenter(turret));
     }
 
-    // ── Automated Triggers ────────────────────────────────────────────────────
-
     private void configureAutomation() {
         // Auto-unjam indexer when jam is detected
         indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
     }
 
-    // ── Autonomous ───────────────────────────────────────────────────────────
 
     public Command getAutonomousCommand() {
         return null;

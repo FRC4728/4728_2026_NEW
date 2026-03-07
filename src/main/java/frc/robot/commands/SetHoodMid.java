@@ -19,12 +19,6 @@ public class SetHoodMid extends Command {
     addRequirements(turretShooter);
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-
-  }
-
   @Override
   public void execute(){
     turretShooter.runHood(-7);

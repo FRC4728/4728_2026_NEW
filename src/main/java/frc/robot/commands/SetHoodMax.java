@@ -21,12 +21,6 @@ public class SetHoodMax extends Command {
   }
 
   @Override
-  public void initialize() {
-
-
-  }
-
-  @Override
   public void execute(){
     turretShooter.runHood(-15);
 

@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -39,8 +40,12 @@ public class Indexer extends SubsystemBase {
 
     i_velRequest = new VelocityVoltage(0.0).withSlot(0);
 
-    m_indexerMotor.getConfigurator().apply(m_indexerConfig);
-
+    try{
+      m_indexerMotor.getConfigurator().apply(m_indexerConfig);
+    } catch (Exception e1){
+      DriverStation.reportWarning("Failed to configure indexer motor"+ e1.toString(), true);
+    }
+    
     targetVel = 50;
     SmartDashboard.putNumber("InputIndexerVelocity", targetVel);
   }

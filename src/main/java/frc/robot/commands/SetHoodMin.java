@@ -20,11 +20,6 @@ public class SetHoodMin extends Command {
     addRequirements(turretShooter);
   }
 
-  @Override
-  public void initialize() {
-
-
-  }
 
   @Override
   public void execute(){

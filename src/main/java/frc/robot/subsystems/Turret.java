@@ -45,22 +45,20 @@ public class Turret extends SubsystemBase {
     cfg.MotionMagic.MotionMagicAcceleration   = Constants.TurretConstants.k_turret_acceleration;
     cfg.MotionMagic.MotionMagicJerk = Constants.TurretConstants.k_turret_jerk;
 
-    // Rotor sensor with gear ratio applied
-    //cfg.Feedback.SensorToMechanismRatio = Constants.TurretConstants.k_turret_gearRatio;
-
     // Neutral mode
     cfg.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     // Soft limits — 5 degrees of buffer on each end of the 270 degree range
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable    = true;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable    = true;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
 
-    var status = m_turretMotor.getConfigurator().apply(cfg);
-    if (!status.isOK()) {
-      DriverStation.reportWarning("Failed to configure Turret motor: " + status.toString(), false);
+    try{
+      m_turretMotor.getConfigurator().apply(cfg);
+    } catch (Exception e1){
+      DriverStation.reportWarning("Failed to configure Turret motor: " + e1.toString(), true);
     }
 
     // Zero the encoder at startup — robot must be placed against the hard stop before enabling
@@ -75,13 +73,13 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Turret/Position",       m_turretMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Turret/Velocity",       m_turretMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Turret/Position", m_turretMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Turret/Velocity", m_turretMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Turret/AppliedVoltage", m_turretMotor.getMotorVoltage().getValueAsDouble());
-    SmartDashboard.putNumber("Turret/LL_tX",          LimelightHelpers.getTX("limelight-turret"));
-    SmartDashboard.putNumber("Turret/LL_Targets",     LimelightHelpers.getTargetCount("limelight-turret"));
-    SmartDashboard.putBoolean("Turret/HasTarget",     LimelightHelpers.getTV("limelight-turret"));
-    SmartDashboard.putBoolean("Turret/IsAligned",     isAligned());
+    SmartDashboard.putNumber("Turret/LL_tX", LimelightHelpers.getTX("limelight-turret"));
+    SmartDashboard.putNumber("Turret/LL_Targets", LimelightHelpers.getTargetCount("limelight-turret"));
+    SmartDashboard.putBoolean("Turret/HasTarget", LimelightHelpers.getTV("limelight-turret"));
+    SmartDashboard.putBoolean("Turret/IsAligned", isAligned());
   }
 
   /**
