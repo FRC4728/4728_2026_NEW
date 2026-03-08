@@ -34,7 +34,7 @@ public final class Constants {
     public static final double k_turret_acceleration = 160;
     public static final double k_turret_velocity = 80;
     public static final double k_turret_jerk = 0;
-    public static final double k_ll_kP = 0.18; //0.08
+    public static final double k_ll_kP = 0.12; //0.08
     public static final double k_ll_maxVoltage = 8;   //6    // max voltage output during auto-align (tune this)
     public static final double k_ll_alignDeadband = 2.5; //1   // degrees of tx within which turret is considered aligned
     public static final double k_turret_gearRatio = .0231;
@@ -42,7 +42,7 @@ public final class Constants {
     // Turret travel: 270 degrees of physical range, with 5 degrees of buffer on the forward end
     // Hard stop physically handles the reverse end so reverse limit is set to 0
     // 265 / 360 * 51.02 = 37.57 rotations
-    public static final double k_turret_forwardSoftLimit = 37.57; // ~265 degrees
+    public static final double k_turret_forwardSoftLimit = 34; // ~265 degrees
     public static final double k_turret_reverseSoftLimit = 0.0;   // hard stop handles this end
     
 
@@ -55,10 +55,10 @@ public final class Constants {
     public static final double k_flywheel_acceleration = 100;
     public static final double k_flywheel_velocity = 100;
 
-    public static final double k_hood_p = 4.8;
-    public static final double k_hood_i = 0;
-    public static final double k_hood_d = 0.1;
-    public static final double k_hood_s = 0.25;
+    public static final double k_hood_p = 0.0;
+    public static final double k_hood_i = 0.0;
+    public static final double k_hood_d = 0.0;
+    public static final double k_hood_s = 0.0;
     public static final double k_hood_v = 0.12;
     public static final double k_hood_a = 0.01;
     public static final double k_hood_acceleration = 100;

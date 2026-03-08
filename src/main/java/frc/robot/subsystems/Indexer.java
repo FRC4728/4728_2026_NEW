@@ -41,7 +41,7 @@ public class Indexer extends SubsystemBase {
 
     m_indexerMotor.getConfigurator().apply(m_indexerConfig);
 
-    targetVel = 50;
+    targetVel = 5;
     SmartDashboard.putNumber("InputIndexerVelocity", targetVel);
   }
   

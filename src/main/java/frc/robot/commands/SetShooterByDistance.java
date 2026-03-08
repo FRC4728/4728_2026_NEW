@@ -7,12 +7,24 @@ import frc.robot.ShooterTable;
 import frc.robot.subsystems.TurretShooter;
 
 /**
- * Continuously updates flywheel and hood setpoints based on distance to the AprilTag.
- * Uses ShooterTable to interpolate the correct values for the current distance.
+ * Snapshots distance once when the command starts, then holds those
+ * flywheel and hood setpoints for the duration of the shot.
+ * This prevents noisy ty readings from causing the hood to flicker.
  */
 public class SetShooterByDistance extends Command {
 
     private final TurretShooter shooter;
+
+    // Sanity clamp — ignore readings outside this range (inches)
+    private static final double kMinDistance = 10.0;
+    private static final double kMaxDistance = 300.0;
+
+    // Number of samples to average on startup for a stable distance reading
+    private static final int kSampleCount = 10;
+
+    private double lockedFlywheelRPS  = 45.0; // fallback defaults
+    private double lockedHoodPosition = -3.0;
+    private boolean hasLockedIn = false;
 
     public SetShooterByDistance(TurretShooter shooter) {
         this.shooter = shooter;
@@ -20,29 +32,45 @@ public class SetShooterByDistance extends Command {
     }
 
     @Override
-    public void initialize() {}
+    public void initialize() {
+        hasLockedIn = false;
+        lockedFlywheelRPS  = 45.0;
+        lockedHoodPosition = -3.0;
+
+        // Take several samples and average them for a stable initial distance
+        if (LimelightHelpers.getTV("limelight-turret")) {
+            double sum = 0;
+            int validSamples = 0;
+
+            for (int i = 0; i < kSampleCount; i++) {
+                double ty = LimelightHelpers.getTY("limelight-turret");
+                double dist = ShooterTable.getDistanceInches(ty);
+                if (dist >= kMinDistance && dist <= kMaxDistance) {
+                    sum += dist;
+                    validSamples++;
+                }
+            }
+
+            if (validSamples > 0) {
+                double avgDistance = sum / validSamples;
+                lockedFlywheelRPS  = ShooterTable.getFlywheelRPS(avgDistance);
+                lockedHoodPosition = ShooterTable.getHoodPosition(avgDistance);
+                hasLockedIn = true;
+
+                SmartDashboard.putNumber("Shooter/LockedDistanceInches", avgDistance);
+                SmartDashboard.putNumber("Shooter/TargetFlywheelRPS",    lockedFlywheelRPS);
+                SmartDashboard.putNumber("Shooter/TargetHoodPosition",   lockedHoodPosition);
+            }
+        }
+    }
 
     @Override
     public void execute() {
-        boolean hasTarget = LimelightHelpers.getTV("limelight-turret");
+        // Just hold the locked setpoints — no continuous updates
+        shooter.runFlywheel(lockedFlywheelRPS);
+        shooter.runHood(lockedHoodPosition);
 
-        if (hasTarget) {
-            double ty = LimelightHelpers.getTY("limelight-turret");
-            double distance = ShooterTable.getDistanceInches(ty);
-            double flywheelRPS = ShooterTable.getFlywheelRPS(distance);
-            double hoodPosition = ShooterTable.getHoodPosition(distance);
-
-            shooter.runFlywheel(flywheelRPS);
-            shooter.runHood(hoodPosition);
-
-            SmartDashboard.putNumber("Shooter/DistanceInches", distance);
-            SmartDashboard.putNumber("Shooter/TargetFlywheelRPS", flywheelRPS);
-            SmartDashboard.putNumber("Shooter/TargetHoodPosition", hoodPosition);
-        } else {
-            // No target — stop flywheel and hold hood in place
-            shooter.stopFlywheel();
-            SmartDashboard.putNumber("Shooter/DistanceInches", -1);
-        }
+        SmartDashboard.putBoolean("Shooter/LockedIn", hasLockedIn);
     }
 
     @Override
