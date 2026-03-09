@@ -45,9 +45,6 @@ public class Turret extends SubsystemBase {
     cfg.MotionMagic.MotionMagicAcceleration   = Constants.TurretConstants.k_turret_acceleration;
     cfg.MotionMagic.MotionMagicJerk = Constants.TurretConstants.k_turret_jerk;
 
-    // Rotor sensor with gear ratio applied
-    //cfg.Feedback.SensorToMechanismRatio = Constants.TurretConstants.k_turret_gearRatio;
-
     // Neutral mode
     cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -75,18 +72,15 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Turret/Position",       m_turretMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Turret/Velocity",       m_turretMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Turret/Position", m_turretMotor.getPosition().getValueAsDouble());
+    SmartDashboard.putNumber("Turret/Velocity", m_turretMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Turret/AppliedVoltage", m_turretMotor.getMotorVoltage().getValueAsDouble());
-    SmartDashboard.putNumber("Turret/LL_tX",          LimelightHelpers.getTX("limelight-turret"));
-    SmartDashboard.putNumber("Turret/LL_Targets",     LimelightHelpers.getTargetCount("limelight-turret"));
-    SmartDashboard.putBoolean("Turret/HasTarget",     LimelightHelpers.getTV("limelight-turret"));
-    SmartDashboard.putBoolean("Turret/IsAligned",     isAligned());
+    SmartDashboard.putNumber("Turret/LL_tX", LimelightHelpers.getTX("limelight-turret"));
+    SmartDashboard.putNumber("Turret/LL_Targets", LimelightHelpers.getTargetCount("limelight-turret"));
+    SmartDashboard.putBoolean("Turret/HasTarget", LimelightHelpers.getTV("limelight-turret"));
+    SmartDashboard.putBoolean("Turret/IsAligned", isAligned());
   }
 
-  /**
-   * Returns true when the Limelight sees a target and tX is within the alignment deadband.
-   */
   public boolean isAligned() {
     return LimelightHelpers.getTV("limelight-turret")
         && Math.abs(LimelightHelpers.getTX("limelight-turret")) < Constants.TurretConstants.k_ll_alignDeadband;
