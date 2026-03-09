@@ -20,7 +20,6 @@ public class Intake extends SubsystemBase {
   private final VelocityVoltage in_velRequest;
   private double targetVel;
 
-  /** Creates a new ExampleSubsystem. */
   public Intake() {
     m_intakeMotor = new TalonFX(Constants.intakeConstants.m_intakeMotor,Constants.intakeConstants.intakeCanbus);
 
@@ -35,7 +34,6 @@ public class Intake extends SubsystemBase {
     m_intakeConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.intakeConstants.k_intake_velocity;
     m_intakeConfig.MotionMagic.MotionMagicAcceleration = Constants.intakeConstants.k_intake_acceleration;
     m_intakeConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-
 
     m_intakeConfig.CurrentLimits.StatorCurrentLimit = Constants.intakeConstants.k_currentLimit;
 
@@ -53,11 +51,6 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putNumber("IntakeVoltage", m_intakeMotor.getMotorVoltage().getValueAsDouble());
   }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
-
   public void runIntake(double velocity){
     m_intakeMotor.setControl(in_velRequest.withVelocity(velocity));
   }
@@ -65,8 +58,8 @@ public class Intake extends SubsystemBase {
   public void runIntakeDyn(){
     targetVel = SmartDashboard.getNumber("InputIntakeVelocity",targetVel);
     m_intakeMotor.setControl(in_velRequest.withVelocity(targetVel));
-
   }
+  
   public void stopIntake(){
     m_intakeMotor.setControl(in_velRequest.withVelocity(0));
   }
