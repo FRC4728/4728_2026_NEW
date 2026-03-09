@@ -3,9 +3,6 @@ package frc.robot;
 /**
  * Lookup table that maps distance (inches) to shooter velocity (RPS) and hood position (rotations).
  * Uses linear interpolation between data points and clamps to nearest value outside the range.
- *
- * TO TUNE: Replace the placeholder values in the TABLE array with real data from testing.
- * Each row is { distanceInches, flywheelRPS, hoodPosition }
  */
 public class ShooterTable {
 
@@ -16,14 +13,12 @@ public class ShooterTable {
 
     /**
      * Lookup table: { distanceInches, flywheelRPS, hoodPosition }
-     * PLACEHOLDER VALUES — replace with real data from testing.
-     * Must be sorted by distance ascending.
      */
     private static final double[][] TABLE = {
         // dist (in)  flywheel (RPS)  hood (rot)
-        {  10.0,       30.0,           -0.5  },//
-        {  20.0,       30.0,           -2.0  },//
-        {  30.0,       35.0,           -2.5  },//
+        {  10.0,       30.0,           -0.5  },
+        {  20.0,       30.0,           -2.0  },
+        {  30.0,       35.0,           -2.5  },
         {  40.0,       40.0,           -3.0  },
         {  50.0,       50.0,           -3.5  },
         {  60.0,       50.0,           -4.0  },
@@ -57,8 +52,8 @@ public class ShooterTable {
 
     /**
      * Linearly interpolates (or clamps) a value from the table for a given distance.
-     * @param distanceInches distance to target
-     * @param col column index: 1 = flywheel, 2 = hood
+     * distanceInches distance to target
+     * col column index: 1 = flywheel, 2 = hood
      */
     private static double interpolate(double distanceInches, int col) {
         // Clamp below minimum
