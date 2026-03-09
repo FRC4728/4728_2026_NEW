@@ -22,8 +22,6 @@ public class Kicker extends SubsystemBase {
 
   private double targetVel;
 
-
-  /** Creates a new ExampleSubsystem. */
   public Kicker() {
     m_kickerMotor = new TalonFX(Constants.KickerConstants.m_kickerMotor,Constants.KickerConstants.kickerCanbus);
     m_kickerConfig = new TalonFXConfiguration();
@@ -42,8 +40,8 @@ public class Kicker extends SubsystemBase {
 
     k_velRequest = new VelocityVoltage(0).withSlot(0);
 
-   targetVel = -25;
-   SmartDashboard.putNumber("InputKickerVelocity", targetVel);
+    targetVel = -25;
+    SmartDashboard.putNumber("InputKickerVelocity", targetVel);
   }
 
   @Override
