@@ -52,18 +52,10 @@ public class Indexer extends SubsystemBase {
     SmartDashboard.putBoolean("Indexer/IsJammed", isJammed());
   }
 
-  /**
-   * Returns true when the indexer stator current exceeds the jam threshold.
-   * Only meaningful while the indexer is actually running.
-   */
   public boolean isJammed() {
     return m_indexerMotor.getStatorCurrent().getValueAsDouble() > Constants.indexerConstants.k_jam_current;
   }
 
-  /**
-   * Trigger that fires when the indexer is jammed.
-   * Bind this in RobotContainer to schedule the unjam command.
-   */
   public Trigger getJamTrigger() {
     return new Trigger(this::isJammed);
   }
