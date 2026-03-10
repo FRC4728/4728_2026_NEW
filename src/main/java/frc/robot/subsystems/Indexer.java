@@ -14,12 +14,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import com.ctre.phoenix6.controls.NeutralOut;
+
 
 public class Indexer extends SubsystemBase {
 
   private final TalonFX m_indexerMotor;
   private final TalonFXConfiguration m_indexerConfig;
   private final VelocityVoltage i_velRequest;
+  private final NeutralOut m_coast = new NeutralOut();
 
   private double targetVel;
 
@@ -41,7 +44,7 @@ public class Indexer extends SubsystemBase {
 
     m_indexerMotor.getConfigurator().apply(m_indexerConfig);
 
-    targetVel = 5;
+    targetVel = 21;
     SmartDashboard.putNumber("InputIndexerVelocity", targetVel);
   }
   
@@ -69,6 +72,10 @@ public class Indexer extends SubsystemBase {
     m_indexerMotor.setControl(i_velRequest.withVelocity(targetVel));
   }
 
+  public void coastIndexer() {
+    m_indexerMotor.setControl(m_coast);
+  }
+  
   public void stopIndexer() {
     m_indexerMotor.setControl(i_velRequest.withVelocity(0));
   }

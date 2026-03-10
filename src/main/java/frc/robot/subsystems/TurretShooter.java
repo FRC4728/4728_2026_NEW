@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
@@ -28,6 +29,7 @@ public class TurretShooter extends SubsystemBase {
   private final VelocityVoltage fly_velRequest;
   private final VelocityVoltage hood_velRequest;
   private final MotionMagicVoltage hood_motionMagic;
+  private final NeutralOut m_coast = new NeutralOut();
 
   private double targetVel;
   
@@ -96,6 +98,11 @@ public class TurretShooter extends SubsystemBase {
     targetVel = SmartDashboard.getNumber("InputFlywheelVelocity",targetVel);
     m_flywheelMotor1.setControl(fly_velRequest.withVelocity(targetVel));
     m_flywheelMotor2.setControl(new Follower(Constants.TurretConstants.m_flywheelMotor1, MotorAlignmentValue.Opposed));
+  }
+
+  public void coastFlywheel() {
+    m_flywheelMotor1.setControl(m_coast);
+    m_flywheelMotor2.setControl(m_coast);
   }
 
   public void stopFlywheel() {

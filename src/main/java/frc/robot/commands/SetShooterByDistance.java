@@ -75,7 +75,7 @@ public class SetShooterByDistance extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        shooter.stopFlywheel();
+        shooter.coastFlywheel();
         shooter.stopHood();
     }
 
