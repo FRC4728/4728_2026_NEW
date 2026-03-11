@@ -73,9 +73,9 @@ public final class Constants {
     public static final double k_indexer_i = 0.0;
     public static final double k_indexer_d = 0.0;
     public static final double k_indexer_s = 0.27;
-    public static final double k_indexer_v = 1.2; //X60 = 12/100Rps*5:1*2:1 =1.2
+    public static final double k_indexer_v = 0.156; //X60 = 12/100Rps*5:1*2:1 =1.2
     public static final double k_indexer_a = 0.01;
-    public static final double k_indexer_acceleration = 100;
+    public static final double k_indexer_acceleration = 15; //100
     public static final double k_indexer_velocity = 500;
     public static final double k_jam_current = 200.0;  // stator amps above which indexer is considered jammed
     public static final double k_unjam_velocity = -45.0; // reverse velocity to clear jam
@@ -89,7 +89,7 @@ public final class Constants {
     public static final double k_intake_i = 0.0;
     public static final double k_intake_d = 0.0;
     public static final double k_intake_s = 0.2;
-    public static final double k_intake_v = 0.56; // X60 = 12/100Rps*3:1*28:18 =0.56
+    public static final double k_intake_v = 0.154; // X60 = 12/100Rps*3:1*28:18 =0.56
     public static final double k_intake_a = 0.01;
     public static final double k_intake_acceleration = 100;
     public static final double k_intake_velocity = 100;
@@ -116,7 +116,7 @@ public final class Constants {
     public static final double k_kicker_i = 0.0;
     public static final double k_kicker_d = 0.0;
     public static final double k_kicker_s = 0.38;
-    public static final double k_kicker_v = 0.164; //X44 = 12/125.5*36:21 =0.164
+    public static final double k_kicker_v = 0.136; //X44 = 12/125.5*36:21 =0.164
     public static final double k_kicker_a = 0.01;
     public static final double k_kicker_acceleration = 100;
     public static final double k_kicker_velocity = 100;

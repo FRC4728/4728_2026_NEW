@@ -31,7 +31,7 @@ public class RunSpindexerRev extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    indexer.stopIndexer();
+    indexer.coastIndexer();
   }
 
   @Override
