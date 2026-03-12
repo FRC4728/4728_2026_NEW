@@ -8,7 +8,7 @@ public class ShooterTable {
 
     // Limelight mounting constants
     public static final double kLimelightHeightInches = 29.0;   // height of limelight lens off ground
-    public static final double kTargetHeightInches    = 44.5;   // height of AprilTag center off ground
+    public static final double kTargetHeightInches    = 65;   // height of AprilTag center off ground 44.5
     public static final double kLimelightAngleDegrees = 22.554012;   // limelight tilt angle from horizontal
 
     /**

@@ -11,7 +11,7 @@ import frc.robot.subsystems.TurretShooter;
  * flywheel and hood setpoints for the duration of the shot.
  * This prevents noisy ty readings from causing the hood to flicker.
  */
-public class SetShooterByDistance extends Command {
+public class SetShooterDynamic extends Command {
 
     private final TurretShooter shooter;
 
@@ -24,16 +24,14 @@ public class SetShooterByDistance extends Command {
 
     private double lockedFlywheelRPS  = 45.0; // fallback defaults
     private double lockedHoodPosition = -3.0;
-    private boolean hasLockedIn = false;
 
-    public SetShooterByDistance(TurretShooter shooter) {
+    public SetShooterDynamic(TurretShooter shooter) {
         this.shooter = shooter;
         addRequirements(shooter);
     }
 
     @Override
     public void initialize() {
-        hasLockedIn = false;
         lockedFlywheelRPS  = 45.0;
         lockedHoodPosition = -3.0;
 
@@ -55,7 +53,6 @@ public class SetShooterByDistance extends Command {
                 double avgDistance = sum / validSamples;
                 lockedFlywheelRPS  = ShooterTable.getFlywheelRPS(avgDistance);
                 lockedHoodPosition = ShooterTable.getHoodPosition(avgDistance);
-                hasLockedIn = true;
 
                 SmartDashboard.putNumber("Shooter/LockedDistanceInches", avgDistance);
                 SmartDashboard.putNumber("Shooter/TargetFlywheelRPS",    lockedFlywheelRPS);
@@ -66,17 +63,13 @@ public class SetShooterByDistance extends Command {
 
     @Override
     public void execute() {
-        // Just hold the locked setpoints — no continuous updates
-        shooter.runFlywheel(lockedFlywheelRPS);
-        shooter.runHood(lockedHoodPosition);
-
-        SmartDashboard.putBoolean("Shooter/LockedIn", hasLockedIn);
+        shooter.runFlywheelDyn();
+        shooter.runHoodDyn();
     }
 
     @Override
     public void end(boolean interrupted) {
         shooter.coastFlywheel();
-        //shooter.stopHood();
     }
 
     @Override

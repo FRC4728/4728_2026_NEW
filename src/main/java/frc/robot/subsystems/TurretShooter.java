@@ -30,14 +30,15 @@ public class TurretShooter extends SubsystemBase {
   private final VelocityVoltage hood_velRequest;
   private final MotionMagicVoltage hood_motionMagic;
   private final NeutralOut m_coast = new NeutralOut();
+  private final NeutralOut m_brake = new NeutralOut();
 
-  private double targetVel;
+  private double targetVel,targetPosition;
   
   public TurretShooter() {
 
     m_flywheelMotor1 = new TalonFX(Constants.TurretConstants.m_flywheelMotor1, Constants.TurretConstants.turretCanbus);
     m_flywheelMotor2 = new TalonFX(Constants.TurretConstants.m_flywheelMotor2, Constants.TurretConstants.turretCanbus);
-    m_hoodMotor      = new TalonFX(Constants.TurretConstants.m_hoodMotor,      Constants.TurretConstants.turretCanbus);
+    m_hoodMotor = new TalonFX(Constants.TurretConstants.m_hoodMotor, Constants.TurretConstants.turretCanbus);
 
     m_flywheelConfig = new TalonFXConfiguration();
     m_flywheelConfig.Slot0.kP = Constants.TurretConstants.k_flywheel_p;
@@ -58,10 +59,14 @@ public class TurretShooter extends SubsystemBase {
     m_hoodConfig.Slot0.kS = Constants.TurretConstants.k_hood_s;
     m_hoodConfig.Slot0.kV = Constants.TurretConstants.k_hood_v;
     m_hoodConfig.Slot0.kA = Constants.TurretConstants.k_hood_a;
-    m_hoodConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
+    m_hoodConfig.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
     m_hoodConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_hood_velocity;
     m_hoodConfig.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_hood_acceleration;
     m_hoodConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    m_hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    m_hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    m_hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_hood_forwardSoftLimit;
+    m_hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_hood_reverseSoftLimit;
 
     hood_motionMagic = new MotionMagicVoltage(0).withSlot(0);
     m_hoodMotor.setPosition(0);
@@ -70,6 +75,7 @@ public class TurretShooter extends SubsystemBase {
     
     targetVel = 45;
     SmartDashboard.putNumber("InputFlywheelVelocity",targetVel);
+    SmartDashboard.putNumber("HoodPosition",0);
 
     try {
       m_flywheelMotor1.getConfigurator().apply(m_flywheelConfig);
@@ -102,7 +108,7 @@ public class TurretShooter extends SubsystemBase {
 
   public void coastFlywheel() {
     m_flywheelMotor1.setControl(m_coast);
-    m_flywheelMotor2.setControl(m_coast);
+    m_flywheelMotor2.setControl(new Follower(Constants.TurretConstants.m_flywheelMotor1, MotorAlignmentValue.Opposed));
   }
 
   public void stopFlywheel() {
@@ -112,6 +118,11 @@ public class TurretShooter extends SubsystemBase {
 
   public void runHood(double position) {
     m_hoodMotor.setControl(hood_motionMagic.withPosition(position));
+  }
+
+  public void runHoodDyn(){
+    targetPosition = SmartDashboard.getNumber("HoodPosition",targetPosition);
+    m_hoodMotor.setControl(hood_motionMagic.withPosition(targetPosition));
   }
 
   public void stopHood() {

@@ -20,6 +20,7 @@ import frc.robot.commands.RunKickerUp;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.RunSpindexer;
 import frc.robot.commands.Score;
+import frc.robot.commands.ScoreDyn;
 import frc.robot.commands.SetHoodMax;
 import frc.robot.commands.SetHoodMid;
 import frc.robot.commands.SetHoodMin;
@@ -114,7 +115,7 @@ public class RobotContainer {
     private void configureDriverBindings() {
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        driver.a().whileTrue(new AutoAlignTurret(turret));
+        driver.a().whileTrue(new ScoreDyn(intake, indexer, kicker, shooter, turret));
 
         driver.rightTrigger().whileTrue(new RunShooter(shooter));
         driver.leftTrigger().whileTrue(new RunKickerUp(kicker));

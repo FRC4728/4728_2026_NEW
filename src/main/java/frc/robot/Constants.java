@@ -55,14 +55,16 @@ public final class Constants {
     public static final double k_flywheel_acceleration = 100;
     public static final double k_flywheel_velocity = 100;
 
-    public static final double k_hood_p = 0.0;
+    public static final double k_hood_p = 3.75;
     public static final double k_hood_i = 0.0;
-    public static final double k_hood_d = 0.0;
-    public static final double k_hood_s = 0.0;
+    public static final double k_hood_d = 0.1;
+    public static final double k_hood_s = 0.125;
     public static final double k_hood_v = 0.12;
     public static final double k_hood_a = 0.01;
     public static final double k_hood_acceleration = 100;
     public static final double k_hood_velocity = 100;
+    public static final double k_hood_forwardSoftLimit = -0.5; 
+    public static final double k_hood_reverseSoftLimit = -15;
 
   }
 

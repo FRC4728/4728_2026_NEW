@@ -42,17 +42,17 @@ public class Turret extends SubsystemBase {
 
     // Motion magic
     cfg.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_turret_velocity;
-    cfg.MotionMagic.MotionMagicAcceleration   = Constants.TurretConstants.k_turret_acceleration;
+    cfg.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_turret_acceleration;
     cfg.MotionMagic.MotionMagicJerk = Constants.TurretConstants.k_turret_jerk;
 
     // Neutral mode
-    cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    cfg.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     // Soft limits — 5 degrees of buffer on each end of the 270 degree range
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable    = true;
+    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable    = true;
+    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
 
     var status = m_turretMotor.getConfigurator().apply(cfg);
