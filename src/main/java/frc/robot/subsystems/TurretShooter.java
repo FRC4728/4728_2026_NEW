@@ -75,7 +75,7 @@ public class TurretShooter extends SubsystemBase {
     
     targetVel = 45;
     SmartDashboard.putNumber("InputFlywheelVelocity",targetVel);
-    SmartDashboard.putNumber("HoodPosition",0);
+    SmartDashboard.putNumber("InputHoodPosition",0);
 
     try {
       m_flywheelMotor1.getConfigurator().apply(m_flywheelConfig);
@@ -121,7 +121,7 @@ public class TurretShooter extends SubsystemBase {
   }
 
   public void runHoodDyn(){
-    targetPosition = SmartDashboard.getNumber("HoodPosition",targetPosition);
+    targetPosition = SmartDashboard.getNumber("InputHoodPosition",targetPosition);
     m_hoodMotor.setControl(hood_motionMagic.withPosition(targetPosition));
   }
 
