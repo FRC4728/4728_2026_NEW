@@ -125,11 +125,11 @@ public class LimelightHelpers {
         public double ts;
 
         public LimelightTarget_Retro() {
-            cameraPose_TargetSpace = new double[6];
-            robotPose_FieldSpace = new double[6];
-            robotPose_TargetSpace = new double[6];
-            targetPose_CameraSpace = new double[6];
-            targetPose_RobotSpace = new double[6];
+            cameraPose_TargetSpace = new double[11];
+            robotPose_FieldSpace = new double[11];
+            robotPose_TargetSpace = new double[11];
+            targetPose_CameraSpace = new double[11];
+            targetPose_RobotSpace = new double[11];
         }
 
     }
