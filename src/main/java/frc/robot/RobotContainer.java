@@ -8,6 +8,12 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
+
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -68,12 +74,24 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
+    /* Path follower */
+    private final SendableChooser<Command> autoChooser;
+    public void periodic(){}
+
     public RobotContainer() {
         configureDefaultCommands();
         configureDriverBindings();
         configureOperatorBindings();
         configureAutomation();
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        new EventTrigger("AutoAlignTurret").whileTrue(new AutoAlignTurret(turret));
+ 
+        //create auto chooser in dashboard
+        autoChooser = AutoBuilder.buildAutoChooser("Main"); 
+        SmartDashboard.putData("Auto Mode", autoChooser);
+        
+        configureDriverBindings();
     }
 
     // ── Default Commands ─────────────────────────────────────────────────────
@@ -157,6 +175,6 @@ public class RobotContainer {
     // ── Autonomous ───────────────────────────────────────────────────────────
 
     public Command getAutonomousCommand() {
-        return null;
+        return autoChooser.getSelected();
     }
 }

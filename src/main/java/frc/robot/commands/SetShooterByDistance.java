@@ -16,7 +16,7 @@ public class SetShooterByDistance extends Command {
     private static final double kMaxDistance = 300.0;
 
     
-    private static final double kDeadband = 6.0;
+    private static final double kDeadband = 15.0;
 
     // Low-pass filter — smooths out noisy ty readings
     // 0.0 = no filtering, higher = more smoothing but slower to respond
