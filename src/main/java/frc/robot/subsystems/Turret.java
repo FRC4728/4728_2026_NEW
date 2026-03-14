@@ -70,6 +70,10 @@ public class Turret extends SubsystemBase {
     m_brake = new NeutralOut();
   }
 
+  public double getTurretPosition() {
+    return m_turretMotor.getPosition().getValueAsDouble();
+}
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Turret/Position", m_turretMotor.getPosition().getValueAsDouble());

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAlignTurret;
 import frc.robot.commands.DropIntake;
 import frc.robot.commands.JogTurretNegative;
@@ -28,6 +29,7 @@ import frc.robot.commands.RunShooter;
 import frc.robot.commands.RunSpindexer;
 import frc.robot.commands.Score;
 import frc.robot.commands.ScoreDyn;
+import frc.robot.commands.SearchForTarget;
 import frc.robot.commands.SetHoodMax;
 import frc.robot.commands.SetHoodMid;
 import frc.robot.commands.SetHoodMin;
@@ -95,9 +97,7 @@ public class RobotContainer {
  
         //create auto chooser in dashboard
         autoChooser = AutoBuilder.buildAutoChooser("Main"); 
-        SmartDashboard.putData("Auto Mode", autoChooser);
-        
-        configureDriverBindings();
+        SmartDashboard.putData("Auto Mode", autoChooser); 
     }
 
     // ── Default Commands ─────────────────────────────────────────────────────
@@ -176,6 +176,9 @@ public class RobotContainer {
     private void configureAutomation() {
         // Auto-unjam indexer when jam is detected
         indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
+
+        new Trigger(() -> !LimelightHelpers.getTV("limelight-turret"))
+        .whileTrue(new SearchForTarget(turret));
     }
 
     // ── Autonomous ───────────────────────────────────────────────────────────
