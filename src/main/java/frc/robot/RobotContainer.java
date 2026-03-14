@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.commands.AutoAlignTurret;
+import frc.robot.commands.DropIntake;
 import frc.robot.commands.JogTurretNegative;
 import frc.robot.commands.JogTurretPositive;
 import frc.robot.commands.RunIntakeIn;
@@ -44,19 +45,19 @@ import frc.robot.subsystems.TurretShooter;
 public class RobotContainer {
 
     // Subsystems
-    private final Intake intake       = new Intake();
-    private final Turret turret       = new Turret();
+    private final Intake intake = new Intake();
+    private final Turret turret = new Turret();
     private final TurretShooter shooter = new TurretShooter();
-    private final Kicker kicker       = new Kicker();
-    private final Indexer indexer     = new Indexer();
+    private final Kicker kicker = new Kicker();
+    private final Indexer indexer = new Indexer();
 
     // Drive speed multipliers
     private final double translationMultiplier = 0.85;
-    private final double strafeMultiplier      = 0.85;
-    private final double rotateMultiplier      = 0.65;
+    private final double strafeMultiplier = 0.85;
+    private final double rotateMultiplier = 0.85;
 
     // Drivetrain speed limits
-    private final double MaxSpeed       = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     // Swerve drive requests
@@ -86,6 +87,11 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         new EventTrigger("AutoAlignTurret").whileTrue(new AutoAlignTurret(turret));
+        new EventTrigger("RunIntake").whileTrue(new RunIntakeIn(intake));
+        new EventTrigger("DropIntake").onTrue(new DropIntake(intake));
+        new EventTrigger("ZeroTurret").onTrue(new SetTurretZeroish(turret));
+        new EventTrigger("CenterTurret").onTrue(new SetTurretCenter(turret));
+        new EventTrigger("Score").whileTrue(new Score(intake, indexer, kicker, shooter, turret).withTimeout(8));
  
         //create auto chooser in dashboard
         autoChooser = AutoBuilder.buildAutoChooser("Main"); 
