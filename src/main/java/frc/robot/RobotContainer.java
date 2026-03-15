@@ -15,6 +15,7 @@ import com.pathplanner.lib.events.EventTrigger;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -54,9 +55,9 @@ public class RobotContainer {
     private final Indexer indexer = new Indexer();
 
     // Drive speed multipliers
-    private final double translationMultiplier = 0.85;
-    private final double strafeMultiplier = 0.85;
-    private final double rotateMultiplier = 0.85;
+    private double translationMultiplier = 0.85;
+    private double strafeMultiplier = 0.85;
+    private double rotateMultiplier = 0.85;
 
     // Drivetrain speed limits
     private final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -88,7 +89,7 @@ public class RobotContainer {
         configureAutomation();
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        new EventTrigger("AutoAlignTurret").whileTrue(new AutoAlignTurret(turret));
+        new EventTrigger("AutoAlignTurret").whileTrue(new AutoAlignTurret(turret, drivetrain).withTimeout(20));
         new EventTrigger("RunIntake").whileTrue(new RunIntakeIn(intake));
         new EventTrigger("DropIntake").onTrue(new DropIntake(intake));
         new EventTrigger("ZeroTurret").onTrue(new SetTurretZeroish(turret));
@@ -118,7 +119,7 @@ public class RobotContainer {
         );
 
         // Turret: always auto-aligning when no other command is running
-        turret.setDefaultCommand(new AutoAlignTurret(turret));
+        turret.setDefaultCommand(new AutoAlignTurret(turret, drivetrain));
 
         // Intake: always running in unless interrupted
         intake.setDefaultCommand(new RunIntakeIn(intake));
@@ -148,6 +149,14 @@ public class RobotContainer {
         driver.rightBumper().whileTrue(new Score(intake, indexer, kicker, shooter, turret));
         driver.leftBumper().whileTrue(new RunIntakeIn(intake));
         driver.b().whileTrue(new RunIntakeOut(intake));
+
+        //left bumper to toggle drvetrain to low speed
+        driver.rightBumper().whileTrue(new InstantCommand(() -> translationMultiplier = .11));
+        driver.rightBumper().whileFalse(new InstantCommand(() -> translationMultiplier = 0.85));
+        driver.rightBumper().whileTrue(new InstantCommand(() -> strafeMultiplier = .11));
+        driver.rightBumper().whileFalse(new InstantCommand(() -> strafeMultiplier = 0.85));
+        driver.rightBumper().whileTrue(new InstantCommand(() -> rotateMultiplier = .2));
+        driver.rightBumper().whileFalse(new InstantCommand(() -> rotateMultiplier = 0.85));
     }
 
     // ── Operator Controller (port 1) ──────────────────────────────────────────
@@ -178,6 +187,7 @@ public class RobotContainer {
         indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
 
         new Trigger(() -> !LimelightHelpers.getTV("limelight-turret"))
+        .debounce(0.5)
         .whileTrue(new SearchForTarget(turret));
     }
 

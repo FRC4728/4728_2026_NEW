@@ -6,30 +6,28 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.LimelightHelpers;
+import frc.robot.ShooterTable;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Turret;
 
 public class AutoAlignTurret extends Command {
 
   private final Turret m_turret;
+  private final CommandSwerveDrivetrain m_drivetrain;
 
-  // How close to a soft limit before we trigger a wrap (in rotor rotations)
-  private static final double kWrapBuffer = 1.0;
+  // Tuning constant — how aggressively to lead the target based on lateral speed
+  // Increase if shots land behind the target when moving, decrease if they land ahead
+  private static final double kVelocityCompensationScale = 1.75;
 
-  // Positions to jump to when wrapping (just inside the soft limits)
-  private static final double kWrapToForward = 33.0; 
-  private static final double kWrapToReverse = 1.0;  
-
-  private boolean isWrapping = false;
-
-  public AutoAlignTurret(Turret turret) {
+  public AutoAlignTurret(Turret turret, CommandSwerveDrivetrain drivetrain) {
     m_turret = turret;
+    m_drivetrain = drivetrain;
     addRequirements(m_turret);
   }
 
   @Override
   public void initialize() {
     NetworkTableInstance.getDefault().getTable("limelight-turret").getEntry("pipeline").setDouble(0);
-    isWrapping = false;
     System.out.println("AutoAlignTurret: command started");
   }
 
@@ -37,45 +35,51 @@ public class AutoAlignTurret extends Command {
   public void execute() {
     boolean hasTarget = LimelightHelpers.getTV("limelight-turret");
     double tx = LimelightHelpers.getTX("limelight-turret");
-    double position = m_turret.getTurretPosition();
+    double ty = LimelightHelpers.getTY("limelight-turret");
+
+    // --- Velocity compensation ---
+    // Get robot-relative lateral (strafe) velocity
+    double lateralVelocityMps = m_drivetrain.getState().Speeds.vyMetersPerSecond;
+
+    // Estimate distance and flight time
+    double distanceInches = ShooterTable.getDistanceInches(ty);
+    double distanceMeters = distanceInches * 0.0254;
+
+    // Rough flight time — assumes ~8.5 m/s average ball speed in air
+    double flightTimeSeconds = distanceMeters / 10;
+
+    // Convert lateral velocity to angle offset in degrees
+    double velocityOffsetDegrees = Math.toDegrees(
+        Math.atan2(lateralVelocityMps * flightTimeSeconds * kVelocityCompensationScale, distanceMeters)
+    );
+
+    // Apply compensation to tx
+    double compensatedTx = tx - velocityOffsetDegrees;
 
     double voltage = MathUtil.clamp(
-        -tx * Constants.TurretConstants.k_ll_kP,
+        -compensatedTx * Constants.TurretConstants.k_ll_kP,
         -Constants.TurretConstants.k_ll_maxVoltage,
         Constants.TurretConstants.k_ll_maxVoltage
     );
 
-    // Check if we need to wrap
-    boolean nearForwardLimit = position >= (Constants.TurretConstants.k_turret_forwardSoftLimit - kWrapBuffer);
-    boolean nearReverseLimit = position <= (Constants.TurretConstants.k_turret_reverseSoftLimit + kWrapBuffer);
-    boolean tryingToGoForward = voltage > 0;
-    boolean tryingToGoReverse = voltage < 0;
-
-    if (nearForwardLimit && tryingToGoForward) {
-      isWrapping = true;
-      m_turret.moveTurretPosition(kWrapToReverse);
-    } else if (nearReverseLimit && tryingToGoReverse) {
-      isWrapping = true;
-      m_turret.moveTurretPosition(kWrapToForward);
-    } else {
-      isWrapping = false;
-      if (hasTarget) {
-        m_turret.moveTurretVoltage(voltage);
-      } else {
-        m_turret.stopTurretVoltage();
-      }
-    }
-
     SmartDashboard.putBoolean("Turret/CommandRunning", true);
     SmartDashboard.putBoolean("Turret/CommandHasTarget", hasTarget);
-    SmartDashboard.putBoolean("Turret/IsWrapping", isWrapping);
-    SmartDashboard.putNumber("Turret/CommandVoltage", isWrapping ? 0 : voltage);
+    SmartDashboard.putNumber("Turret/CommandVoltage", voltage);
+    SmartDashboard.putNumber("Turret/RawTx", tx);
+    SmartDashboard.putNumber("Turret/CompensatedTx", compensatedTx);
+    SmartDashboard.putNumber("Turret/VelocityOffsetDeg", velocityOffsetDegrees);
+    SmartDashboard.putNumber("Turret/LateralVelocityMps", lateralVelocityMps);
+
+    if (hasTarget) {
+        m_turret.moveTurretVoltage(voltage);
+    } else {
+        m_turret.stopTurretVoltage();
+    }
   }
 
   @Override
   public void end(boolean interrupted) {
     m_turret.stopTurretVoltage();
-    isWrapping = false;
     SmartDashboard.putBoolean("Turret/CommandRunning", false);
     SmartDashboard.putNumber("Turret/CommandVoltage", 0);
     System.out.println("AutoAlignTurret: command ended, interrupted=" + interrupted);

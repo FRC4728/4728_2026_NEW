@@ -36,7 +36,7 @@ public final class Constants {
     public static final double k_turret_jerk = 0;
     public static final double k_ll_kP = 0.12; //0.12
     public static final double k_ll_maxVoltage = 8;   //6    // max voltage output during auto-align (tune this)
-    public static final double k_ll_alignDeadband = 2.5; //1   // degrees of tx within which turret is considered aligned
+    public static final double k_ll_alignDeadband = 1.5; //1   // degrees of tx within which turret is considered aligned
     public static final double k_turret_gearRatio = .0231;
 
     // Turret travel: 270 degrees of physical range, with 5 degrees of buffer on the forward end
@@ -80,8 +80,8 @@ public final class Constants {
     public static final double k_indexer_acceleration = 15; //100
     public static final double k_indexer_velocity = 500;
     public static final double k_jam_current = 200.0;  // stator amps above which indexer is considered jammed
-    public static final double k_unjam_velocity = -45.0; // reverse velocity to clear jam
-    public static final double k_unjam_duration = 0.5;   // seconds to run in reverse
+    public static final double k_unjam_velocity = -100.0; // reverse velocity to clear jam
+    public static final double k_unjam_duration = 1;   // seconds to run in reverse
   }
 
   public static class intakeConstants {

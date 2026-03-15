@@ -46,7 +46,7 @@ public class Turret extends SubsystemBase {
     cfg.MotionMagic.MotionMagicJerk = Constants.TurretConstants.k_turret_jerk;
 
     // Neutral mode
-    cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    cfg.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     // Soft limits — 5 degrees of buffer on each end of the 270 degree range
