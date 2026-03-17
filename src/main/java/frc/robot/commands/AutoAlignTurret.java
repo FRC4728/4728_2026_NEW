@@ -40,7 +40,7 @@ public class AutoAlignTurret extends Command {
     // --- Velocity compensation ---
     // Get robot-relative lateral (strafe) velocity
     double lateralVelocityMps = m_drivetrain.getState().Speeds.vyMetersPerSecond;
-
+  
     // Estimate distance and flight time
     double distanceInches = ShooterTable.getDistanceInches(ty);
     double distanceMeters = distanceInches * 0.0254;

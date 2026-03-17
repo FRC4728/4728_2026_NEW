@@ -139,13 +139,13 @@
     },
     {
       "name": "CenterTurret",
-      "waypointRelativePos": 2.4923076923076737,
+      "waypointRelativePos": 2.236228287841193,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "AutoAlignTurret",
-      "waypointRelativePos": 2.6947890818858524,
+      "waypointRelativePos": 2.563771712158808,
       "endWaypointRelativePos": 3.0,
       "command": null
     }
