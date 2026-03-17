@@ -74,8 +74,8 @@
       "rotationDegrees": -96.1048846771208
     },
     {
-      "waypointRelativePos": 2.0887966804979268,
-      "rotationDegrees": 180.0
+      "waypointRelativePos": 2.2580912863070575,
+      "rotationDegrees": 125.00000000000001
     }
   ],
   "constraintZones": [
@@ -128,21 +128,21 @@
       "command": null
     },
     {
-      "name": "DropIntake",
-      "waypointRelativePos": 0.02084367245657364,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
       "name": "RunIntake",
-      "waypointRelativePos": 0.20545905707196133,
-      "endWaypointRelativePos": 2.152853598014875,
+      "waypointRelativePos": 0.2054590570719631,
+      "endWaypointRelativePos": 2.367245657568229,
       "command": null
     },
     {
       "name": "AutoAlignTurret",
-      "waypointRelativePos": 0.6759305210918076,
+      "waypointRelativePos": 0.7593052109181124,
       "endWaypointRelativePos": 3.0,
+      "command": null
+    },
+    {
+      "name": "CenterTurret",
+      "waypointRelativePos": 1.902729528535955,
+      "endWaypointRelativePos": null,
       "command": null
     }
   ],
@@ -156,7 +156,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 125.00000000000001
   },
   "reversed": false,
   "folder": null,

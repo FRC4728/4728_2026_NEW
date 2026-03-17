@@ -86,15 +86,27 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "AutoAlignTurret",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": 4.0,
+      "name": "ZeroTurret",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "RunIntake",
-      "waypointRelativePos": 0.3771712158809022,
+      "waypointRelativePos": 0.29776674937965947,
       "endWaypointRelativePos": 3.5930521091811416,
+      "command": null
+    },
+    {
+      "name": "AutoAlignTurret",
+      "waypointRelativePos": 2.1558312655086453,
+      "endWaypointRelativePos": 4.0,
+      "command": null
+    },
+    {
+      "name": "CenterTurret",
+      "waypointRelativePos": 3.7677419354838633,
+      "endWaypointRelativePos": null,
       "command": null
     }
   ],

@@ -157,6 +157,7 @@ public class RobotContainer {
         driver.rightBumper().whileFalse(new InstantCommand(() -> strafeMultiplier = 0.85));
         driver.rightBumper().whileTrue(new InstantCommand(() -> rotateMultiplier = .2));
         driver.rightBumper().whileFalse(new InstantCommand(() -> rotateMultiplier = 0.85));
+
     }
 
     // ── Operator Controller (port 1) ──────────────────────────────────────────
@@ -187,7 +188,7 @@ public class RobotContainer {
         indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
 
         new Trigger(() -> !LimelightHelpers.getTV("limelight-turret"))
-        .debounce(0.5)
+        .debounce(0.75)
         .whileTrue(new SearchForTarget(turret));
     }
 
