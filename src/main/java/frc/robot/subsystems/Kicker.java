@@ -40,7 +40,7 @@ public class Kicker extends SubsystemBase {
 
     k_velRequest = new VelocityVoltage(0).withSlot(0);
 
-    targetVel = -25;
+    targetVel = -100; //-25
     SmartDashboard.putNumber("InputKickerVelocity", targetVel);
   }
 

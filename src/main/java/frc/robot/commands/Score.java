@@ -5,14 +5,13 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.LimelightHelpers;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.TurretShooter;
 import frc.robot.subsystems.Turret;
 
 public class Score extends SequentialCommandGroup {
-    public Score(Intake intake, Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret) {
+    public Score(Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret) {
         addCommands(
             // Step 1: Wait until limelight sees target and turret is aligned
             new WaitUntilCommand(() ->
@@ -25,7 +24,6 @@ public class Score extends SequentialCommandGroup {
                 new SequentialCommandGroup(
                     new WaitCommand(0.25),
                     new ParallelCommandGroup(
-                        new RunIntakeIn(intake),
                         new RunSpindexer(indexer),
                         new RunKickerUp(kicker)
                     )

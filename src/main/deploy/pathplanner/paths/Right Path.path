@@ -101,20 +101,7 @@
       "minWaypointRelativePos": 0,
       "maxWaypointRelativePos": 0.2769230769230747,
       "constraints": {
-        "maxVelocity": 3.0,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
-    },
-    {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 2.2481389578163857,
-      "maxWaypointRelativePos": 2.62928039702229,
-      "constraints": {
-        "maxVelocity": 3.0,
+        "maxVelocity": 2.5,
         "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
@@ -128,13 +115,7 @@
     {
       "name": "ZeroTurret",
       "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "RunIntake",
-      "waypointRelativePos": 0.20545905707196305,
-      "endWaypointRelativePos": 2.2898263027295314,
+      "endWaypointRelativePos": 0.1637717121588072,
       "command": null
     },
     {

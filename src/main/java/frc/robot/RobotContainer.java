@@ -28,6 +28,7 @@ import frc.robot.commands.RunIntakeOut;
 import frc.robot.commands.RunKickerUp;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.RunSpindexer;
+import frc.robot.commands.RunSpindexerRev;
 import frc.robot.commands.Score;
 import frc.robot.commands.ScoreDyn;
 import frc.robot.commands.SearchForTarget;
@@ -89,12 +90,14 @@ public class RobotContainer {
         configureAutomation();
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        new EventTrigger("AutoAlignTurret").whileTrue(new AutoAlignTurret(turret, drivetrain).withTimeout(20));
-        new EventTrigger("RunIntake").whileTrue(new RunIntakeIn(intake));
+        new EventTrigger("AutoAlignTurret").whileTrue(new AutoAlignTurret(turret).withTimeout(20));
         new EventTrigger("DropIntake").onTrue(new DropIntake(intake));
         new EventTrigger("ZeroTurret").onTrue(new SetTurretZeroish(turret));
         new EventTrigger("CenterTurret").onTrue(new SetTurretCenter(turret));
-        new EventTrigger("Score").whileTrue(new Score(intake, indexer, kicker, shooter, turret).withTimeout(8));
+        new EventTrigger("Score").whileTrue(new Score(indexer, kicker, shooter, turret).withTimeout(8));
+
+        NamedCommands.registerCommand("Score",new Score(indexer, kicker, shooter, turret).withTimeout(5));
+        NamedCommands.registerCommand("RunIntake",new RunIntakeIn(intake));
  
         //create auto chooser in dashboard
         autoChooser = AutoBuilder.buildAutoChooser("Main"); 
@@ -119,7 +122,7 @@ public class RobotContainer {
         );
 
         // Turret: always auto-aligning when no other command is running
-        turret.setDefaultCommand(new AutoAlignTurret(turret, drivetrain));
+        turret.setDefaultCommand(new AutoAlignTurret(turret));
 
         // Intake: always running in unless interrupted
         intake.setDefaultCommand(new RunIntakeIn(intake));
@@ -144,9 +147,9 @@ public class RobotContainer {
 
         driver.rightTrigger().whileTrue(new RunShooter(shooter));
         driver.leftTrigger().whileTrue(new RunKickerUp(kicker));
-        driver.x().whileTrue(new RunSpindexer(indexer));
+        driver.x().whileTrue(new RunSpindexerRev(indexer));
 
-        driver.rightBumper().whileTrue(new Score(intake, indexer, kicker, shooter, turret));
+        driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret));
         driver.leftBumper().whileTrue(new RunIntakeIn(intake));
         driver.b().whileTrue(new RunIntakeOut(intake));
 
