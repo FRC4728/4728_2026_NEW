@@ -26,12 +26,12 @@ public class RunSpindexerRev extends Command {
   @Override
   public void execute(){
     //theoretically run indexer whatever direction it's supposed to go
-    indexer.runIndexer(-500);
+    indexer.runIndexer(-100);
   }
 
   @Override
   public void end(boolean interrupted) {
-    indexer.stopIndexer();
+    indexer.coastIndexer();
   }
 
   @Override

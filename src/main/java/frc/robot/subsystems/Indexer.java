@@ -14,16 +14,20 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
+import com.ctre.phoenix6.controls.NeutralOut;
+
 
 public class Indexer extends SubsystemBase {
 
   private final TalonFX m_indexerMotor;
   private final TalonFXConfiguration m_indexerConfig;
   private final VelocityVoltage i_velRequest;
+  private final NeutralOut m_coast = new NeutralOut();
+
+  private double targetVel;
 
   public Indexer() {
     m_indexerMotor = new TalonFX(Constants.indexerConstants.m_indexerMotor, Constants.indexerConstants.indexerCanbus);
-
     m_indexerConfig = new TalonFXConfiguration();
     m_indexerConfig.Slot0.kP = Constants.indexerConstants.k_indexer_p;
     m_indexerConfig.Slot0.kI = Constants.indexerConstants.k_indexer_i;
@@ -39,33 +43,37 @@ public class Indexer extends SubsystemBase {
     i_velRequest = new VelocityVoltage(0.0).withSlot(0);
 
     m_indexerMotor.getConfigurator().apply(m_indexerConfig);
-  }
 
+    targetVel = 100;
+    SmartDashboard.putNumber("InputIndexerVelocity", targetVel);
+  }
+  
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Indexer/Velocity", m_indexerMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Indexer/Current",  m_indexerMotor.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Indexer/Voltage",  m_indexerMotor.getMotorVoltage().getValueAsDouble());
     SmartDashboard.putBoolean("Indexer/IsJammed", isJammed());
   }
 
-  /**
-   * Returns true when the indexer stator current exceeds the jam threshold.
-   * Only meaningful while the indexer is actually running.
-   */
   public boolean isJammed() {
     return m_indexerMotor.getStatorCurrent().getValueAsDouble() > Constants.indexerConstants.k_jam_current;
   }
 
-  /**
-   * Trigger that fires when the indexer is jammed.
-   * Bind this in RobotContainer to schedule the unjam command.
-   */
   public Trigger getJamTrigger() {
     return new Trigger(this::isJammed);
   }
 
   public void runIndexer(double velocity) {
     m_indexerMotor.setControl(i_velRequest.withVelocity(velocity));
+  }
+
+  public void runIndexerDyn() {
+    targetVel = SmartDashboard.getNumber("InputIndexerVelocity",targetVel);
+    m_indexerMotor.setControl(i_velRequest.withVelocity(targetVel));
+  }
+
+  public void coastIndexer() {
+    m_indexerMotor.setControl(m_coast);
   }
 
   public void stopIndexer() {

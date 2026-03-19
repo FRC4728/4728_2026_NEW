@@ -25,24 +25,25 @@ public final class Constants {
     public static final int m_flywheelMotor2 = 35;
     public static final int m_hoodMotor = 36;
 
-    public static final double k_turret_p = 5.5;
-    public static final double k_turret_i = 0.0;
-    public static final double k_turret_d = 0.6;
-    public static final double k_turret_s = 0.25;
+    public static final double k_turret_p = 4.8; //23.0
+    public static final double k_turret_i = 0.0; //0
+    public static final double k_turret_d = 0.1; //0.2
+    public static final double k_turret_s = 0.0675; //3.0
     public static final double k_turret_v = 0.12;
     public static final double k_turret_a = 0.01;
-    public static final double k_turret_acceleration = 200;
-    public static final double k_turret_velocity = 100;
-    public static final double k_ll_kP = 0.08;
-    public static final double k_ll_maxVoltage = 6;       // max voltage output during auto-align (tune this)
-    public static final double k_ll_alignDeadband = 1.5;    // degrees of tx within which turret is considered aligned
-    public static final double k_turret_gearRatio = 43.29;
+    public static final double k_turret_acceleration = 160;
+    public static final double k_turret_velocity = 80;
+    public static final double k_turret_jerk = 0;
+    public static final double k_ll_kP = 0.10; //0.12
+    public static final double k_ll_maxVoltage = 8;   //6    // max voltage output during auto-align (tune this)
+    public static final double k_ll_alignDeadband = 4; //1   // degrees of tx within which turret is considered aligned
+    public static final double k_turret_gearRatio = .0231;
 
     // Turret travel: 270 degrees of physical range, with 5 degrees of buffer on the forward end
     // Hard stop physically handles the reverse end so reverse limit is set to 0
     // 265 / 360 * 51.02 = 37.57 rotations
-    public static final double k_turret_forwardSoftLimit = 37.57; // ~265 degrees
-    public static final double k_turret_reverseSoftLimit = 0.0;   // hard stop handles this end
+    public static final double k_turret_forwardSoftLimit = 33.5; // ~265 degrees
+    public static final double k_turret_reverseSoftLimit = 0.5;   // hard stop handles this end
     
 
     public static final double k_flywheel_p = 0.2;
@@ -54,14 +55,16 @@ public final class Constants {
     public static final double k_flywheel_acceleration = 100;
     public static final double k_flywheel_velocity = 100;
 
-    public static final double k_hood_p = 4.8;
-    public static final double k_hood_i = 0;
+    public static final double k_hood_p = 3.75;
+    public static final double k_hood_i = 0.0;
     public static final double k_hood_d = 0.1;
-    public static final double k_hood_s = 0.25;
+    public static final double k_hood_s = 0.125;
     public static final double k_hood_v = 0.12;
     public static final double k_hood_a = 0.01;
     public static final double k_hood_acceleration = 100;
     public static final double k_hood_velocity = 100;
+    public static final double k_hood_forwardSoftLimit = -0.5; 
+    public static final double k_hood_reverseSoftLimit = -15;
 
   }
 
@@ -72,13 +75,13 @@ public final class Constants {
     public static final double k_indexer_i = 0.0;
     public static final double k_indexer_d = 0.0;
     public static final double k_indexer_s = 0.27;
-    public static final double k_indexer_v = 1.2; //X60 = 12/100Rps*5:1*2:1 =1.2
+    public static final double k_indexer_v = 0.156; //X60 = 12/100Rps*5:1*2:1 =1.2
     public static final double k_indexer_a = 0.01;
-    public static final double k_indexer_acceleration = 100;
+    public static final double k_indexer_acceleration = 15; //100
     public static final double k_indexer_velocity = 500;
     public static final double k_jam_current = 200.0;  // stator amps above which indexer is considered jammed
-    public static final double k_unjam_velocity = -45.0; // reverse velocity to clear jam
-    public static final double k_unjam_duration = 0.5;   // seconds to run in reverse
+    public static final double k_unjam_velocity = -100.0; // reverse velocity to clear jam
+    public static final double k_unjam_duration = 1;   // seconds to run in reverse
   }
 
   public static class intakeConstants {
@@ -88,7 +91,7 @@ public final class Constants {
     public static final double k_intake_i = 0.0;
     public static final double k_intake_d = 0.0;
     public static final double k_intake_s = 0.2;
-    public static final double k_intake_v = 0.56; // X60 = 12/100Rps*3:1*28:18 =0.56
+    public static final double k_intake_v = 0.154; // X60 = 12/100Rps*3:1*28:18 =0.56
     public static final double k_intake_a = 0.01;
     public static final double k_intake_acceleration = 100;
     public static final double k_intake_velocity = 100;
@@ -115,7 +118,7 @@ public final class Constants {
     public static final double k_kicker_i = 0.0;
     public static final double k_kicker_d = 0.0;
     public static final double k_kicker_s = 0.38;
-    public static final double k_kicker_v = 0.164; //X44 = 12/125.5*36:21 =0.164
+    public static final double k_kicker_v = 0.136; //X44 = 12/125.5*36:21 =0.164
     public static final double k_kicker_a = 0.01;
     public static final double k_kicker_acceleration = 100;
     public static final double k_kicker_velocity = 100;

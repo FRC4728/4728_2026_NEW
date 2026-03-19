@@ -20,7 +20,7 @@ public class UnjamIndexer extends SequentialCommandGroup {
 
       // Step 2: stop — whatever button-bound command was running will resume
       // on its own since it still holds the indexer requirement
-      new InstantCommand(() -> indexer.stopIndexer(), indexer)
+      new InstantCommand(() -> indexer.coastIndexer(), indexer)
     );
   }
 }

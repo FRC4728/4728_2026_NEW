@@ -10,7 +10,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -20,11 +20,10 @@ public class Kicker extends SubsystemBase {
   private final TalonFXConfiguration m_kickerConfig;
   private final VelocityVoltage k_velRequest;
 
+  private double targetVel;
 
-  /** Creates a new ExampleSubsystem. */
   public Kicker() {
     m_kickerMotor = new TalonFX(Constants.KickerConstants.m_kickerMotor,Constants.KickerConstants.kickerCanbus);
-
     m_kickerConfig = new TalonFXConfiguration();
     m_kickerConfig.Slot0.kP = Constants.KickerConstants.k_kicker_p;
     m_kickerConfig.Slot0.kI = Constants.KickerConstants.k_kicker_i;
@@ -41,15 +40,26 @@ public class Kicker extends SubsystemBase {
 
     k_velRequest = new VelocityVoltage(0).withSlot(0);
 
+    targetVel = -100; //-25
+    SmartDashboard.putNumber("InputKickerVelocity", targetVel);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("KickerVelocity", m_kickerMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("KickerVoltage", m_kickerMotor.getMotorVoltage().getValueAsDouble());
   }
+
   public void runKicker(double velocity){
     m_kickerMotor.setControl(k_velRequest.withVelocity(velocity));
   }
+
+  public void runKickerDyn(){
+    targetVel = SmartDashboard.getNumber("InputKickerVelocity",targetVel);
+    m_kickerMotor.setControl(k_velRequest.withVelocity(targetVel));
+  }
+  
   public void stopKicker(){
     m_kickerMotor.setControl(k_velRequest.withVelocity(0));
   }

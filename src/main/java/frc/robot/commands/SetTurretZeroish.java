@@ -6,8 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Turret;
-//import frc.robot.subsystems.Wrist;
-import frc.robot.subsystems.TurretShooter;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -29,12 +27,12 @@ public class SetTurretZeroish extends Command {
 
   @Override
   public void execute(){
-    turret.moveTurretPosition(0.05);
+    turret.moveTurretPosition(1.0);
   }
 
   @Override
   public void end(boolean interrupted) {
-    turret.stopTurretVoltage();
+
   }
 
   @Override

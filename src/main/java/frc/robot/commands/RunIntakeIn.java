@@ -20,14 +20,14 @@ public class RunIntakeIn extends Command {
   }
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-
+  public void initialize(){
   }
 
   @Override
   public void execute(){
     //theoretically run intake inwards??
-    intake.runIntake(-200); //150
+    //intake.runIntake(-300); //150,200
+      intake.runIntakeDyn();
   }
 
   @Override

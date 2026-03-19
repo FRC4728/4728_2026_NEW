@@ -21,12 +21,12 @@ public class RunShooter extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
   }
 
   @Override
-  public void execute(){
-    shooter.runFlywheel(-50); //125, 75,55
+  public void execute(){// shooting from about 6ft out is about -45 full speed is 90 and shoot about 30ft.
+    //shooter.runFlywheel(40); //125, 75,55  appears that 90 is about 92 or max rps  65 equals about 68rps
+    shooter.runFlywheelDyn();
   }
 
   @Override
