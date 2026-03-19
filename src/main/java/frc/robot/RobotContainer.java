@@ -147,7 +147,7 @@ public class RobotContainer {
 
         driver.rightTrigger().whileTrue(new RunShooter(shooter));
         driver.leftTrigger().whileTrue(new RunKickerUp(kicker));
-        driver.x().whileTrue(new RunSpindexerRev(indexer));
+        driver.x().whileTrue(new RunSpindexer(indexer));
 
         driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret));
         driver.leftBumper().whileTrue(new RunIntakeIn(intake));

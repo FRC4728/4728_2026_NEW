@@ -19,7 +19,7 @@ public class ScoreDyn extends SequentialCommandGroup {
             new ParallelCommandGroup(
                 new SetShooterDynamic(shooter),
                 new SequentialCommandGroup(
-                    new WaitCommand(0.25),
+                    new WaitCommand(1),
                     new ParallelCommandGroup(
                         new RunIntakeIn(intake),
                         new RunSpindexer(indexer),
