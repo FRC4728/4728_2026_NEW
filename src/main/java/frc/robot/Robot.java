@@ -59,6 +59,9 @@ public class Robot extends TimedRobot {
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
+
+        // Enable/disable rewind recording
+        LimelightHelpers.setRewindEnabled("limelight-turret", true);
     }
 
     @Override

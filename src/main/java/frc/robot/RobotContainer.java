@@ -97,7 +97,7 @@ public class RobotContainer {
         new EventTrigger("Score").whileTrue(new Score(indexer, kicker, shooter, turret).withTimeout(8));
 
         NamedCommands.registerCommand("Score",new Score(indexer, kicker, shooter, turret).withTimeout(5));
-        NamedCommands.registerCommand("RunIntake",new RunIntakeIn(intake));
+        NamedCommands.registerCommand("RunIntake",new RunIntakeIn(intake).withTimeout(12));
  
         //create auto chooser in dashboard
         autoChooser = AutoBuilder.buildAutoChooser("Main"); 
@@ -147,7 +147,7 @@ public class RobotContainer {
 
         driver.rightTrigger().whileTrue(new RunShooter(shooter));
         driver.leftTrigger().whileTrue(new RunKickerUp(kicker));
-        driver.x().whileTrue(new RunSpindexer(indexer));
+        driver.x().whileTrue(new RunSpindexerRev(indexer));
 
         driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret));
         driver.leftBumper().whileTrue(new RunIntakeIn(intake));

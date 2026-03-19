@@ -43,6 +43,9 @@ m_turret.moveTurretVoltage(voltage);
 } else {
 m_turret.stopTurretVoltage();
 }
+
+// Capture the last N seconds of video after an event
+        LimelightHelpers.triggerRewindCapture("limelight-turret", 10.0);  // Capture last 30 seconds
 }
 
 @Override
