@@ -152,6 +152,7 @@ public class RobotContainer {
 
         //left bumper to toggle drvetrain to low speed
         driver.rightBumper().whileTrue(new InstantCommand(() -> translationMultiplier = .11));
+
         driver.rightBumper().whileFalse(new InstantCommand(() -> translationMultiplier = 0.85));
         driver.rightBumper().whileTrue(new InstantCommand(() -> strafeMultiplier = .11));
         driver.rightBumper().whileFalse(new InstantCommand(() -> strafeMultiplier = 0.85));
@@ -179,26 +180,6 @@ public class RobotContainer {
     private void configureAutomation() {
     // Auto-unjam indexer when jam is detected
     indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
-
-    // Buzz both controllers for 0.5 seconds at the start of each scoring shift
-    new Trigger(() -> {
-        double t = DriverStation.getMatchTime();
-        return (t <= 130 && t > 105) ||
-               (t <= 105 && t > 80)  ||
-               (t <= 80  && t > 55)  ||
-               (t <= 55  && t > 30);
-    })
-    .onTrue(new SequentialCommandGroup(
-        new InstantCommand(() -> {
-            driver.getHID().setRumble(RumbleType.kBothRumble, 1.0);
-            operator.getHID().setRumble(RumbleType.kBothRumble, 1.0);
-        }),
-        new WaitCommand(0.5),
-        new InstantCommand(() -> {
-            driver.getHID().setRumble(RumbleType.kBothRumble, 0.0);
-            operator.getHID().setRumble(RumbleType.kBothRumble, 0.0);
-        })
-    ));
 
         new Trigger(() -> !LimelightHelpers.getTV("limelight-turret"))
         .debounce(0.75)
