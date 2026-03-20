@@ -16,13 +16,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAlignTurret;
 import frc.robot.commands.DropIntake;
+import frc.robot.commands.EmergencyScore;
 import frc.robot.commands.JogTurretNegative;
 import frc.robot.commands.JogTurretPositive;
+import frc.robot.commands.ReverseAll;
 import frc.robot.commands.RunIntakeIn;
 import frc.robot.commands.RunIntakeOut;
 import frc.robot.commands.RunKickerUp;
@@ -45,6 +49,8 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.TurretShooter;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 public class RobotContainer {
 
@@ -96,7 +102,7 @@ public class RobotContainer {
         new EventTrigger("CenterTurret").onTrue(new SetTurretCenter(turret));
         new EventTrigger("Score").whileTrue(new Score(indexer, kicker, shooter, turret).withTimeout(8));
 
-        NamedCommands.registerCommand("Score",new Score(indexer, kicker, shooter, turret).withTimeout(5));
+        NamedCommands.registerCommand("Score",new Score(indexer, kicker, shooter, turret).withTimeout(7));
         NamedCommands.registerCommand("RunIntake",new RunIntakeIn(intake).withTimeout(12));
  
         //create auto chooser in dashboard
@@ -129,29 +135,20 @@ public class RobotContainer {
     }
 
     // ── Driver Controller (port 0) ────────────────────────────────────────────
-    // Left stick:  translate
-    // Right stick: rotate
-    // Y:           reset field-centric heading
-    // A:           manual auto-align turret (override)
-    // Right trigger: run shooter (manual)
-    // Left trigger:  run kicker up (manual)
-    // X:             run spindexer (manual)
-    // Right bumper:  score (full sequence)
-    // Left bumper:   run intake in (manual override)
-    // B:             run intake out
 
     private void configureDriverBindings() {
-        driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-        driver.a().whileTrue(new ScoreDyn(intake, indexer, kicker, shooter, turret));
-
-        driver.rightTrigger().whileTrue(new RunShooter(shooter));
-        driver.leftTrigger().whileTrue(new RunKickerUp(kicker));
-        driver.x().whileTrue(new RunSpindexerRev(indexer));
+        //driver.x().whileTrue(new ScoreDyn(intake, indexer, kicker, shooter, turret));
+        //driver.b().whileTrue(new RunIntakeOut(intake));
+        //driver.leftTrigger().whileTrue(new RunKickerUp(kicker));
+        //driver.rightTrigger().whileTrue(new RunShooter(shooter));
+        //driver.leftBumper().whileTrue(new RunIntakeIn(intake));
 
         driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret));
-        driver.leftBumper().whileTrue(new RunIntakeIn(intake));
-        driver.b().whileTrue(new RunIntakeOut(intake));
+        driver.leftBumper().whileTrue(new EmergencyScore(intake, indexer,kicker, shooter, turret, shooter));
+        driver.a().whileTrue(new RunSpindexerRev(indexer));
+        driver.start().whileTrue(new ReverseAll(kicker, intake));
+        driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         //left bumper to toggle drvetrain to low speed
         driver.rightBumper().whileTrue(new InstantCommand(() -> translationMultiplier = .11));
@@ -164,13 +161,6 @@ public class RobotContainer {
     }
 
     // ── Operator Controller (port 1) ──────────────────────────────────────────
-    // B:             set hood max
-    // A:             set hood mid
-    // X:             set hood min
-    // Right bumper:  jog turret positive
-    // Left bumper:   jog turret negative
-    // Y:             set turret to zero-ish
-    // Start:         set turret to center
 
     private void configureOperatorBindings() {
         operator.b().onTrue(new SetHoodMax(shooter));
@@ -187,8 +177,28 @@ public class RobotContainer {
     // ── Automated Triggers ────────────────────────────────────────────────────
 
     private void configureAutomation() {
-        // Auto-unjam indexer when jam is detected
-        indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
+    // Auto-unjam indexer when jam is detected
+    indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
+
+    // Buzz both controllers for 0.5 seconds at the start of each scoring shift
+    new Trigger(() -> {
+        double t = DriverStation.getMatchTime();
+        return (t <= 130 && t > 105) ||
+               (t <= 105 && t > 80)  ||
+               (t <= 80  && t > 55)  ||
+               (t <= 55  && t > 30);
+    })
+    .onTrue(new SequentialCommandGroup(
+        new InstantCommand(() -> {
+            driver.getHID().setRumble(RumbleType.kBothRumble, 1.0);
+            operator.getHID().setRumble(RumbleType.kBothRumble, 1.0);
+        }),
+        new WaitCommand(0.5),
+        new InstantCommand(() -> {
+            driver.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+            operator.getHID().setRumble(RumbleType.kBothRumble, 0.0);
+        })
+    ));
 
         new Trigger(() -> !LimelightHelpers.getTV("limelight-turret"))
         .debounce(0.75)

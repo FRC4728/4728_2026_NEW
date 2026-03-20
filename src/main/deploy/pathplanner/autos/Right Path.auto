@@ -15,30 +15,31 @@
                 }
               },
               {
-                "type": "path",
+                "type": "sequential",
                 "data": {
-                  "pathName": "Right Path"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Right Path"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Score"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Leave Right"
+                      }
+                    }
+                  ]
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 8.0
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Leave Right"
           }
         }
       ]
