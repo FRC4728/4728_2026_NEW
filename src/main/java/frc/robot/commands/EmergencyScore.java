@@ -19,13 +19,12 @@ import frc.robot.subsystems.TurretShooter;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class EmergencyScore extends ParallelCommandGroup {
   
-  public EmergencyScore(Intake intake, Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret, TurretShooter turretShooter) {
+  public EmergencyScore(Intake intake, Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     super(
       new RunShooter(shooter),
       new SetTurretCenter(turret),
-      new SetHoodMid(turretShooter),
       new RunIntakeIn(intake),
       new RunSpindexer(indexer),
       new RunKickerUp(kicker));

@@ -145,7 +145,7 @@ public class RobotContainer {
         //driver.leftBumper().whileTrue(new RunIntakeIn(intake));
 
         driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret));
-        driver.leftBumper().whileTrue(new EmergencyScore(intake, indexer,kicker, shooter, turret, shooter));
+        driver.leftBumper().whileTrue(new EmergencyScore(intake, indexer, kicker, shooter, turret));
         driver.a().whileTrue(new RunSpindexerRev(indexer));
         driver.start().whileTrue(new ReverseAll(kicker, intake));
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
