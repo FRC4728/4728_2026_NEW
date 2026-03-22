@@ -123,4 +123,8 @@ public final class Constants {
     public static final double k_kicker_acceleration = 100;
     public static final double k_kicker_velocity = 100;
   }
+
+  public static class CANdleConstants{
+    public static final int canID = 55;
+  }
 }
