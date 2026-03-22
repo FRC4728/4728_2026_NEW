@@ -47,7 +47,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Kicker;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.TurretShooter;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -61,7 +60,6 @@ public class RobotContainer {
     private final TurretShooter shooter = new TurretShooter();
     private final Kicker kicker = new Kicker();
     private final Indexer indexer = new Indexer();
-    private final LED led = new LED();
 
     // Drive speed multipliers
     private double translationMultiplier = 0.85;
@@ -134,9 +132,6 @@ public class RobotContainer {
 
         // Intake: always running in unless interrupted
         intake.setDefaultCommand(new RunIntakeIn(intake));
-
-        // LED: always check which hub is active
-        led.setDefaultCommand(new InstantCommand(() -> led.checkHubStatusAndSetLED()));
     }
 
     // ── Driver Controller (port 0) ────────────────────────────────────────────
