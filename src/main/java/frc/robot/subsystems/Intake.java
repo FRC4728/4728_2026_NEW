@@ -41,7 +41,7 @@ public class Intake extends SubsystemBase {
 
     m_intakeMotor.getConfigurator().apply(m_intakeConfig);
 
-    targetVel = -50; //-50
+    targetVel = -80; //-50
     SmartDashboard.putNumber("InputIntakeVelocity",targetVel);
   }
 

@@ -24,9 +24,9 @@ public class EmergencyScore extends ParallelCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     super(
       new RunShooter(shooter),
-      new SetTurretCenter(turret),
       new RunIntakeIn(intake),
       new RunSpindexer(indexer),
+      new SetTurretCenter (turret),
       new RunKickerUp(kicker));
   }
 }
