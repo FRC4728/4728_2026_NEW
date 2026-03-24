@@ -164,4 +164,33 @@ public class LED extends SubsystemBase {
             }
         }
     }
+    public void checkHubStatusAndUpdateElastic() {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+
+        if (!RobotState.isAutonomous()) {
+            if (alliance.isPresent() && alliance.get() == Alliance.Blue && HubTracker.isAllianceHubActive()) {
+                SmartDashboard.putString("Hub State", "***HUB ACTIVE***");
+            }
+            else if (alliance.isPresent() && alliance.get() == Alliance.Red && HubTracker.isAllianceHubActive()) {
+                SmartDashboard.putString("Hub State", "***HUB ACTIVE***");
+            }
+            else if (alliance.isPresent() && !HubTracker.isAllianceHubActive()) {
+               SmartDashboard.putString("Hub State", "HUB *NOT* ACTIVE");
+            }
+            else {
+                SmartDashboard.putString("Hub State", "NO VALID DATA!");
+                DriverStation.reportWarning("No valid data from FMS!", false);
+            }
+        } else {
+            if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
+                SmartDashboard.putString("Hub State", "Autonomous In Progress...");
+            }
+            else if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+                SmartDashboard.putString("Hub State", "Autonomous In Progress...");
+            }
+            else {
+                DriverStation.reportWarning("No valid data from FMS!", false);
+            }
+        }
+    }
 }
