@@ -60,6 +60,7 @@ public class RobotContainer {
     private final TurretShooter shooter = new TurretShooter();
     private final Kicker kicker = new Kicker();
     private final Indexer indexer = new Indexer();
+    private final LED led = new LED();
 
     // Drive speed multipliers
     private double translationMultiplier = 0.85;
@@ -132,6 +133,9 @@ public class RobotContainer {
 
         // Intake: always running in unless interrupted
         intake.setDefaultCommand(new RunIntakeIn(intake));
+
+        // LED: always check what the status of the hub is and update Elastic accordingly
+        led.setDefaultCommand(new InstantCommand(() -> led.checkHubStatusAndUpdateElastic()));
     }
 
     // ── Driver Controller (port 0) ────────────────────────────────────────────
