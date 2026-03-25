@@ -25,10 +25,10 @@ public final class Constants {
     public static final int m_flywheelMotor2 = 35;
     public static final int m_hoodMotor = 36;
 
-    public static final double k_turret_p = 4.8; //23.0
-    public static final double k_turret_i = 0.0; //0
-    public static final double k_turret_d = 0.1; //0.2
-    public static final double k_turret_s = 0.0675; //3.0
+    public static final double k_turret_p = 4.8; 
+    public static final double k_turret_i = 0.0; 
+    public static final double k_turret_d = 0.1; 
+    public static final double k_turret_s = 0.0675; 
     public static final double k_turret_v = 0.12;
     public static final double k_turret_a = 0.01;
     public static final double k_turret_acceleration = 160;
@@ -122,5 +122,9 @@ public final class Constants {
     public static final double k_kicker_a = 0.01;
     public static final double k_kicker_acceleration = 100;
     public static final double k_kicker_velocity = 100;
+  }
+
+  public static class CandleConstants{
+    public static final int canID = 55;
   }
 }

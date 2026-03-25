@@ -72,8 +72,8 @@ public class RobotContainer {
 
     // Swerve drive requests
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.08)
-            .withRotationalDeadband(MaxAngularRate * 0.08)
+            .withDeadband(MaxSpeed * 0.2)
+            .withRotationalDeadband(MaxAngularRate * 0.2)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
     private final SwerveRequest.Idle idle = new SwerveRequest.Idle();
 
@@ -100,9 +100,9 @@ public class RobotContainer {
         new EventTrigger("DropIntake").onTrue(new DropIntake(intake));
         new EventTrigger("ZeroTurret").onTrue(new SetTurretZeroish(turret));
         new EventTrigger("CenterTurret").onTrue(new SetTurretCenter(turret));
-        new EventTrigger("Score").whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withTimeout(8));
+        new EventTrigger("Score").whileTrue(new Score(indexer, kicker, shooter, turret).withTimeout(8));
 
-        NamedCommands.registerCommand("Score",new Score(indexer, kicker, shooter, turret, drivetrain).withTimeout(7));
+        NamedCommands.registerCommand("Score",new Score(indexer, kicker, shooter, turret).withTimeout(7));
         NamedCommands.registerCommand("RunIntake",new RunIntakeIn(intake).withTimeout(12));
  
         //create auto chooser in dashboard
@@ -144,7 +144,7 @@ public class RobotContainer {
         //driver.rightTrigger().whileTrue(new RunShooter(shooter));
         //driver.leftBumper().whileTrue(new RunIntakeIn(intake));
 
-        driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain));
+        driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret));
         driver.leftBumper().whileTrue(new EmergencyScore(intake, indexer, kicker, shooter, turret));
         driver.a().whileTrue(new RunSpindexerRev(indexer));
         driver.start().whileTrue(new ReverseAll(kicker, intake));
