@@ -20,7 +20,7 @@ public class Score extends SequentialCommandGroup {
         addCommands(
             // Step 1: X-lock wheels and wait for turret alignment simultaneously
             new ParallelCommandGroup(
-                drivetrain.applyRequest(() -> xLock).withTimeout(2),
+                drivetrain.applyRequest(() -> xLock).withTimeout(0.1),
                 new WaitUntilCommand(() ->
                     LimelightHelpers.getTV("limelight-turret") && turret.isAligned()
                 )

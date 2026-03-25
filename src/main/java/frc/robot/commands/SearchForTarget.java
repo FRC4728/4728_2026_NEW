@@ -11,7 +11,7 @@ public class SearchForTarget extends Command {
     private final Turret m_turret;
 
     // Voltage to rotate while searching
-    private static final double kSearchVoltage = 2;
+    private static final double kSearchVoltage = 3;
 
     // Direction: 1.0 = positive, -1.0 = negative
     private double searchDirection = 1.0;
