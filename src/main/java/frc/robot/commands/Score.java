@@ -5,21 +5,26 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.TurretShooter;
 import frc.robot.subsystems.Turret;
-
+import com.ctre.phoenix6.swerve.SwerveRequest;
 
 public class Score extends SequentialCommandGroup {
-    public Score(Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret) {
+    public Score(Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret, CommandSwerveDrivetrain drivetrain) {
+
+        SwerveRequest.SwerveDriveBrake xLock = new SwerveRequest.SwerveDriveBrake();
 
         addCommands(
-            // Step 1: Wait until limelight sees target and turret is aligned
-            new WaitUntilCommand(() ->
-                LimelightHelpers.getTV("limelight-turret") && turret.isAligned()
+            // Step 1: X-lock wheels and wait for turret alignment simultaneously
+            new ParallelCommandGroup(
+                drivetrain.applyRequest(() -> xLock).withTimeout(2),
+                new WaitUntilCommand(() ->
+                    LimelightHelpers.getTV("limelight-turret") && turret.isAligned()
+                )
             ),
-
                         // Step 2: Shooter spins up to distance-based setpoint, then feeding starts after 0.25s
             new ParallelCommandGroup(
                 new SetShooterByDistance(shooter),
