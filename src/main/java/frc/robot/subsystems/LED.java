@@ -25,7 +25,7 @@ import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
 import frc.robot.Constants;
 
 public class LED extends SubsystemBase {
-    private final CANdle candle = new CANdle(Constants.CandleConstants.canID);
+    /*private final CANdle candle = new CANdle(Constants.CandleConstants.canID);
 
     private static final int START_LED = 0;
     private static final int END_LED = 7;
@@ -40,10 +40,11 @@ public class LED extends SubsystemBase {
         RAINBOW
     }
 
-    private LEDState currentState = null;
+    private LEDState currentState = null;*/
 
     public LED() {
-        var config = new CANdleConfiguration()
+        SmartDashboard.putString("Hub State", "Invalid");
+        /*var config = new CANdleConfiguration()
             .withLED(new LEDConfigs()
                 .withBrightnessScalar(1.0)
                 .withLossOfSignalBehavior(LossOfSignalBehaviorValue.DisableLEDs))
@@ -52,7 +53,7 @@ public class LED extends SubsystemBase {
                 .withStatusLedWhenActive(StatusLedWhenActiveValue.Disabled));
 
         candle.getConfigurator().apply(config);
-        off();
+        off();*/
     }
 
     @Override
@@ -64,7 +65,7 @@ public class LED extends SubsystemBase {
             alliance.map(Enum::name).orElse("Unknown"));
     }
 
-    private void clearAnimation() {
+    /*private void clearAnimation() {
         candle.setControl(new EmptyAnimation(ANIMATION_SLOT));
     }
 
@@ -163,7 +164,8 @@ public class LED extends SubsystemBase {
                 setRainbow();
             }
         }
-    }
+    }*/
+    
     public void checkHubStatusAndUpdateElastic() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
