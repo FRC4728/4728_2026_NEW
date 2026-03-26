@@ -102,7 +102,7 @@ public class RobotContainer {
         new EventTrigger("DropIntake").onTrue(new DropIntake(intake));
         new EventTrigger("ZeroTurret").onTrue(new SetTurretZeroish(turret));
         new EventTrigger("CenterTurret").onTrue(new SetTurretCenter(turret));
-        new EventTrigger("Score").whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withTimeout(8));
+        new EventTrigger("Score").whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withTimeout(15));
 
         NamedCommands.registerCommand("Score",new Score(indexer, kicker, shooter, turret, drivetrain).withTimeout(7));
         NamedCommands.registerCommand("RunIntake",new RunIntakeIn(intake).withTimeout(12));

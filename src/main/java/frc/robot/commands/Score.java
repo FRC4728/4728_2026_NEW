@@ -29,9 +29,8 @@ public class Score extends SequentialCommandGroup {
             new ParallelCommandGroup(
                 new SetShooterByDistance(shooter),
                 new SequentialCommandGroup(
-                    new WaitCommand(0.25),
+                    new WaitCommand(0.45),
                     new ParallelCommandGroup(
-                        new Rewind(),
                         new RunSpindexer(indexer),
                         new RunKickerUp(kicker)
                     )
