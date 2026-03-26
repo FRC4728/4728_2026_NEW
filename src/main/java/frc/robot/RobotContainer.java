@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAlignTurret;
+import frc.robot.commands.CheckHubStatus;
 import frc.robot.commands.DropIntake;
 import frc.robot.commands.EmergencyScore;
 import frc.robot.commands.JogTurretNegative;
@@ -47,10 +48,10 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Kicker;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.TurretShooter;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 public class RobotContainer {
 
@@ -135,7 +136,7 @@ public class RobotContainer {
         intake.setDefaultCommand(new RunIntakeIn(intake));
 
         // LED: always check what the status of the hub is and update Elastic accordingly
-        led.setDefaultCommand(new InstantCommand(() -> led.checkHubStatusAndUpdateElastic()));
+        led.setDefaultCommand(new CheckHubStatus(led));
     }
 
     // ── Driver Controller (port 0) ────────────────────────────────────────────
