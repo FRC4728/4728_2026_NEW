@@ -3,32 +3,61 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.75,
-        "y": 5.5
+        "x": 2.6182222222222227,
+        "y": 5.759766666666667
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9921888888888892,
-        "y": 5.798744444444444
+        "x": 3.8604111111111115,
+        "y": 6.058511111111111
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.558655555555555,
-        "y": 5.808488888888889
+        "x": 7.54891111111111,
+        "y": 4.912000000000001
       },
       "prevControl": {
-        "x": 6.755412186907734,
-        "y": 5.811053359235288
+        "x": 7.539166666666667,
+        "y": 5.76951111111111
+      },
+      "nextControl": {
+        "x": 7.5702822171445945,
+        "y": 3.0313426690531338
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.116477777777778,
+        "y": 4.707366666666667
+      },
+      "prevControl": {
+        "x": 6.301622222222224,
+        "y": 3.391866666666667
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.24730290456431545,
+      "rotationDegrees": 38.35632883172315
+    },
+    {
+      "waypointRelativePos": 0.6721991701244804,
+      "rotationDegrees": -23.70969062501084
+    },
+    {
+      "waypointRelativePos": 1.5385892116182511,
+      "rotationDegrees": 169.2254625089286
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
@@ -40,7 +69,7 @@
     },
     {
       "name": "RunIntake",
-      "waypointRelativePos": 0.7196029776674944,
+      "waypointRelativePos": 1.45,
       "endWaypointRelativePos": 1.0,
       "command": null
     }
@@ -55,7 +84,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 120.46554491945983
   },
   "reversed": false,
   "folder": null,

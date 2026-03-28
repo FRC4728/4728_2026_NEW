@@ -29,6 +29,12 @@
                       "data": {
                         "name": "Score"
                       }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Leave Left"
+                      }
                     }
                   ]
                 }

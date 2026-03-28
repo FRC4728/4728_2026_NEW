@@ -102,10 +102,10 @@ public class RobotContainer {
         new EventTrigger("DropIntake").onTrue(new DropIntake(intake));
         new EventTrigger("ZeroTurret").onTrue(new SetTurretZeroish(turret));
         new EventTrigger("CenterTurret").onTrue(new SetTurretCenter(turret));
-        new EventTrigger("Score").whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withTimeout(15));
+        new EventTrigger("Score").whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withTimeout(7));
 
         NamedCommands.registerCommand("Score",new Score(indexer, kicker, shooter, turret, drivetrain).withTimeout(7));
-        NamedCommands.registerCommand("RunIntake",new RunIntakeIn(intake).withTimeout(12));
+        NamedCommands.registerCommand("RunIntake",new RunIntakeIn(intake).withTimeout(20));
  
         //create auto chooser in dashboard
         autoChooser = AutoBuilder.buildAutoChooser("Main"); 
