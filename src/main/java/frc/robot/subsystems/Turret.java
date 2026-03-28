@@ -1,8 +1,6 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
+
+import java.util.Optional;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -13,96 +11,149 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.LimelightHelpers;
 
 public class Turret extends SubsystemBase {
+    private final TalonFX m_turretMotor;
+    private final VoltageOut voltReq;
+    private final MotionMagicVoltage m_turretMotionMagic;
+    private final NeutralOut m_brake;
 
-  private final TalonFX m_turretMotor;
-  private final VoltageOut voltReq;
-  private final MotionMagicVoltage m_turretMotionMagic;
-  private final NeutralOut m_brake;
+    private double m_targetRotations = 0.0;
 
-  public Turret() {
-    m_turretMotor = new TalonFX(Constants.TurretConstants.m_turretMotorId, Constants.TurretConstants.ringGearCanbus);
+    public Turret() {
+        m_turretMotor = new TalonFX(Constants.TurretConstants.m_turretMotorId, Constants.TurretConstants.ringGearCanbus);
 
-    TalonFXConfiguration cfg = new TalonFXConfiguration();
+        TalonFXConfiguration cfg = new TalonFXConfiguration();
 
-    // PID / feedforward gains
-    cfg.Slot0.kP = Constants.TurretConstants.k_turret_p;
-    cfg.Slot0.kI = Constants.TurretConstants.k_turret_i;
-    cfg.Slot0.kD = Constants.TurretConstants.k_turret_d;
-    cfg.Slot0.kS = Constants.TurretConstants.k_turret_s;
-    cfg.Slot0.kV = Constants.TurretConstants.k_turret_v;
-    cfg.Slot0.kA = Constants.TurretConstants.k_turret_a;
-    cfg.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+        cfg.Slot0.kP = Constants.TurretConstants.k_turret_p;
+        cfg.Slot0.kI = Constants.TurretConstants.k_turret_i;
+        cfg.Slot0.kD = Constants.TurretConstants.k_turret_d;
+        cfg.Slot0.kS = Constants.TurretConstants.k_turret_s;
+        cfg.Slot0.kV = Constants.TurretConstants.k_turret_v;
+        cfg.Slot0.kA = Constants.TurretConstants.k_turret_a;
+        cfg.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
-    // Motion magic
-    cfg.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_turret_velocity;
-    cfg.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_turret_acceleration;
-    cfg.MotionMagic.MotionMagicJerk = Constants.TurretConstants.k_turret_jerk;
+        cfg.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_turret_velocity;
+        cfg.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_turret_acceleration;
+        cfg.MotionMagic.MotionMagicJerk = Constants.TurretConstants.k_turret_jerk;
 
-    // Neutral mode
-    cfg.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-    cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-    // Soft limits — 5 degrees of buffer on each end of the 270 degree range
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
+        cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
+        cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
 
-    var status = m_turretMotor.getConfigurator().apply(cfg);
-    if (!status.isOK()) {
-      DriverStation.reportWarning("Failed to configure Turret motor: " + status.toString(), false);
+        var status = m_turretMotor.getConfigurator().apply(cfg);
+        if (!status.isOK()) {
+            DriverStation.reportWarning("Failed to configure Turret motor: " + status.toString(), false);
+        }
+
+        // Startup zero must still be repeatable every match.
+        m_turretMotor.setPosition(0);
+
+        m_turretMotionMagic = new MotionMagicVoltage(0).withSlot(0);
+        voltReq = new VoltageOut(0);
+        m_brake = new NeutralOut();
     }
 
-    // Zero the encoder at startup — robot must be placed against the hard stop before enabling
-    m_turretMotor.setPosition(0);
+    public double getTurretPosition() {
+        return m_turretMotor.getPosition().getValueAsDouble();
+    }
 
-    m_turretMotionMagic = new MotionMagicVoltage(0).withSlot(0);
+    public double getTargetPosition() {
+        return m_targetRotations;
+    }
 
-    voltReq = new VoltageOut(0);
+    public void setTargetPosition(double rotations) {
+        m_targetRotations = clampToSoftLimits(rotations);
+        m_turretMotor.setControl(m_turretMotionMagic.withPosition(m_targetRotations));
+    }
 
-    m_brake = new NeutralOut();
-  }
+    public boolean isAligned() {
+        return Math.abs(getTurretPosition() - m_targetRotations)
+            < Constants.PoseAimConstants.kTurretAlignToleranceRotations;
+    }
 
-  public double getTurretPosition() {
-    return m_turretMotor.getPosition().getValueAsDouble();
-}
+    public void moveTurretVoltage(double voltage) {
+        m_turretMotor.setControl(voltReq.withOutput(voltage));
+    }
 
-  @Override
-  public void periodic() {
-    SmartDashboard.putNumber("Turret/Position", m_turretMotor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Turret/Velocity", m_turretMotor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Turret/AppliedVoltage", m_turretMotor.getMotorVoltage().getValueAsDouble());
-    SmartDashboard.putNumber("Turret/LL_tX", LimelightHelpers.getTX("limelight-turret"));
-    SmartDashboard.putNumber("Turret/LL_Targets", LimelightHelpers.getTargetCount("limelight-turret"));
-    SmartDashboard.putBoolean("Turret/HasTarget", LimelightHelpers.getTV("limelight-turret"));
-    SmartDashboard.putBoolean("Turret/IsAligned", isAligned());
-  }
+    public void stopTurretVoltage() {
+        m_turretMotor.setControl(voltReq.withOutput(0));
+    }
 
-  public boolean isAligned() {
-    return LimelightHelpers.getTV("limelight-turret")
-        && Math.abs(LimelightHelpers.getTX("limelight-turret")) < Constants.TurretConstants.k_ll_alignDeadband;
-  }
+    public void moveTurretPosition(Double position) {
+        setTargetPosition(position);
+    }
 
-  public void moveTurretVoltage(double voltage) {
-    m_turretMotor.setControl(voltReq.withOutput(voltage));
-  }
+    public void stopTurret() {
+        m_turretMotor.setControl(m_brake);
+    }
 
-  public void stopTurretVoltage() {
-    m_turretMotor.setControl(voltReq.withOutput(0));
-  }
+    public double calculateTargetRotationsFromPose(Pose2d robotPose) {
+        Translation2d target = getAllianceTarget();
+        Translation2d delta = target.minus(robotPose.getTranslation());
 
-  public void moveTurretPosition(Double position){
-    m_turretMotor.setControl(m_turretMotionMagic.withPosition(position));
-  }
+        Rotation2d fieldAngleToTarget = new Rotation2d(delta.getX(), delta.getY());
+        Rotation2d turretRobotRelative = fieldAngleToTarget.minus(robotPose.getRotation());
 
-  public void stopTurret(){
-    m_turretMotor.setControl(m_brake);
-  }
+        double desiredTurretDegrees = turretRobotRelative.getDegrees() + Constants.PoseAimConstants.kTurretZeroOffsetDegrees;
+        double desiredTurretRotations = (desiredTurretDegrees / 360.0) * Constants.TurretConstants.k_turret_gearRatio;
+
+        return chooseClosestLegalRotation(desiredTurretRotations);
+    }
+
+    public Translation2d getAllianceTarget() {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+            return Constants.FieldConstants.kRedScoringTarget;
+        }
+        return Constants.FieldConstants.kBlueScoringTarget;
+    }
+
+    private double clampToSoftLimits(double rotations) {
+        return Math.max(
+            Constants.TurretConstants.k_turret_reverseSoftLimit,
+            Math.min(Constants.TurretConstants.k_turret_forwardSoftLimit, rotations)
+        );
+    }
+
+    private double chooseClosestLegalRotation(double desiredRotations) {
+        double current = getTurretPosition();
+        double best = clampToSoftLimits(desiredRotations);
+        double bestError = Math.abs(best - current);
+
+        for (int k = -3; k <= 3; k++) {
+            double candidate = desiredRotations + (k * Constants.TurretConstants.k_turret_gearRatio);
+            if (candidate < Constants.TurretConstants.k_turret_reverseSoftLimit) continue;
+            if (candidate > Constants.TurretConstants.k_turret_forwardSoftLimit) continue;
+
+            double error = Math.abs(candidate - current);
+            if (error < bestError) {
+                best = candidate;
+                bestError = error;
+            }
+        }
+
+        return best;
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Turret/Position", m_turretMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Turret/Velocity", m_turretMotor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Turret/AppliedVoltage", m_turretMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("Turret/TargetPosition", m_targetRotations);
+        SmartDashboard.putBoolean("Turret/IsAligned", isAligned());
+    }
 }
