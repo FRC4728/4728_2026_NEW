@@ -21,6 +21,6 @@ public class ReverseAll extends ParallelCommandGroup {
     super(
       new RunIntakeOut(intake),
       new RunKickerDown(kicker), 
-      new RunSpindexer(indexer));
+      new RunSpindexerRev(indexer));
   }
 }
