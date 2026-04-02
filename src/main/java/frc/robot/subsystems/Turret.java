@@ -115,16 +115,11 @@ public class Turret extends SubsystemBase {
         Rotation2d fieldAngleToTarget = new Rotation2d(delta.getX(), delta.getY());
         Rotation2d turretRobotRelative = fieldAngleToTarget.minus(robotPose.getRotation());
 
-        // 0 deg relative means target is straight out robot front.
-        // We shoot out robot back, so anchor around the encoder position
-        // where the turret is aimed straight out the back.
-        double desiredRelativeDegreesFromRear = turretRobotRelative.getDegrees() - 180.0;
+        double rearRelativeDeg = normalizeDegrees(turretRobotRelative.getDegrees() - 180);
 
-        double encoderDelta =
-            desiredRelativeDegreesFromRear * Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
+        rearRelativeDeg = Math.max(-135.0, Math.min(135.0, rearRelativeDeg));
 
-        double desiredEncoderPosition =
-            Constants.PoseAimConstants.kRearShotEncoderPosition + encoderDelta;
+        double desiredEncoderPosition = Constants.PoseAimConstants.kRearShotEncoderPosition + rearRelativeDeg + Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
 
         return clampEncoderPosition(desiredEncoderPosition);
     }
@@ -134,6 +129,12 @@ public class Turret extends SubsystemBase {
             Constants.PoseAimConstants.kTurretMinEncoderPosition,
             Math.min(Constants.PoseAimConstants.kTurretMaxEncoderPosition, encoderPosition)
         );
+    }
+
+    private static double normalizeDegrees(double deg){
+        while (deg > 180.0) deg -= 360;
+        while (deg < -180) deg += 360;
+        return deg;
     }
 
     @Override
