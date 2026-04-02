@@ -21,7 +21,11 @@ public class SetShooterByDistance extends Command {
     private double lockedFlywheelRPS = 45.0;
     private double lockedHoodPosition = -3.0;
 
-    public SetShooterByDistance(TurretShooter shooter, CommandSwerveDrivetrain drivetrain, Turret turret) {
+    public SetShooterByDistance(
+        TurretShooter shooter,
+        CommandSwerveDrivetrain drivetrain,
+        Turret turret
+    ) {
         this.shooter = shooter;
         this.drivetrain = drivetrain;
         this.turret = turret;
@@ -54,11 +58,13 @@ public class SetShooterByDistance extends Command {
         } else {
             filteredDistance =
                 Constants.PoseAimConstants.kDistanceFilterAlpha * filteredDistance
-                    + (1.0 - Constants.PoseAimConstants.kDistanceFilterAlpha) * rawDistanceInches;
+                + (1.0 - Constants.PoseAimConstants.kDistanceFilterAlpha) * rawDistanceInches;
         }
 
         if (lastCommandedDistance < 0.0
-            || Math.abs(filteredDistance - lastCommandedDistance) > Constants.PoseAimConstants.kShooterDistanceDeadbandInches) {
+            || Math.abs(filteredDistance - lastCommandedDistance)
+                > Constants.PoseAimConstants.kShooterDistanceDeadbandInches) {
+
             lockedFlywheelRPS = ShooterTable.getFlywheelRPS(filteredDistance);
             lockedHoodPosition = ShooterTable.getHoodPosition(filteredDistance);
             lastCommandedDistance = filteredDistance;
@@ -69,6 +75,7 @@ public class SetShooterByDistance extends Command {
 
         SmartDashboard.putNumber("Shooter/RawDistanceInches", rawDistanceInches);
         SmartDashboard.putNumber("Shooter/FilteredDistanceInches", filteredDistance);
+        SmartDashboard.putNumber("Shooter/LastCommandedDistance", lastCommandedDistance);
         SmartDashboard.putNumber("Shooter/TargetFlywheelRPS", lockedFlywheelRPS);
         SmartDashboard.putNumber("Shooter/TargetHoodPosition", lockedHoodPosition);
     }

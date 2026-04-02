@@ -11,8 +11,8 @@ public class AutoAlignTurret extends Command {
     private final CommandSwerveDrivetrain m_drivetrain;
 
     public AutoAlignTurret(Turret turret, CommandSwerveDrivetrain drivetrain) {
-        m_turret = turret;
-        m_drivetrain = drivetrain;
+        this.m_turret = turret;
+        this.m_drivetrain = drivetrain;
         addRequirements(m_turret);
     }
 
@@ -25,7 +25,6 @@ public class AutoAlignTurret extends Command {
     public void execute() {
         Pose2d robotPose = m_drivetrain.getState().Pose;
         double targetRotations = m_turret.calculateTargetRotationsFromPose(robotPose);
-
         m_turret.setTargetPosition(targetRotations);
 
         SmartDashboard.putNumber("Turret/CommandTargetRotations", targetRotations);

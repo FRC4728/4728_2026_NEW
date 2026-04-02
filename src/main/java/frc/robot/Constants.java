@@ -31,16 +31,8 @@ public final class Constants {
         public static final double k_turret_velocity = 80;
         public static final double k_turret_jerk = 0;
 
-        // Legacy Limelight turret constants retained in case you want them later,
-        // but they are not used by the pose-only alignment path.
-        public static final double k_ll_kP = 0.10;
-        public static final double k_ll_maxVoltage = 8;
-        public static final double k_ll_alignDeadband = 4;
-
-        // This branch uses ~51.02 motor rotations per 1 turret revolution.
         public static final double k_turret_gearRatio = 51.02;
 
-        // Soft limits in motor rotations.
         public static final double k_turret_forwardSoftLimit = 33.5;
         public static final double k_turret_reverseSoftLimit = 0.5;
 
@@ -66,21 +58,33 @@ public final class Constants {
     }
 
     public static final class FieldConstants {
-        // TODO: Replace with your actual target coordinates in WPILib field coordinates (meters).
-        public static final Translation2d kBlueScoringTarget = new Translation2d(0.0, 0.0);
-        public static final Translation2d kRedScoringTarget = new Translation2d(16.541, 0.0);
+        // Ground location of target in meters
+        public static final Translation2d kBlueScoringTarget = new Translation2d(0.000, 0.000);
+        public static final Translation2d kRedScoringTarget  = new Translation2d(0.000, 0.000);
     }
 
     public static final class PoseAimConstants {
-        // Offset in case turret encoder zero is not chassis-forward.
+        // Turret angle relative to robot-forward when raw motor position is zero. 
+        // Value of encoder when the turret is facing forward.
         public static final double kTurretZeroOffsetDegrees = 0.0;
 
-        // Tolerance in motor rotations.
-        public static final double kTurretAlignToleranceRotations = 0.15;
+        // Raw motor-position calibration for a turret that travels 270 degrees across the soft limits.
+        public static final double kTurretTravelDegrees = 270.0;
+        public static final double kTurretMotorRotationsAcrossTravel =
+            TurretConstants.k_turret_forwardSoftLimit - TurretConstants.k_turret_reverseSoftLimit;
+        public static final double kTurretMotorRotationsPerDegree =
+            kTurretMotorRotationsAcrossTravel / kTurretTravelDegrees;
+        public static final double kTurretMotorRotationsPerRevolution =
+            kTurretMotorRotationsPerDegree * 360.0;
 
-        // Distance filtering / command hysteresis.
+        // Alignment tolerance in raw turret motor rotations.
+        public static final double kTurretAlignToleranceMotorRotations = 0.15;
+
+        // Distance filter settings for pose-derived range.
         public static final double kShooterDistanceDeadbandInches = 6.0;
         public static final double kDistanceFilterAlpha = 0.80;
+
+        // Pose-derived distance sanity limits.
         public static final double kMinDistanceInches = 10.0;
         public static final double kMaxDistanceInches = 300.0;
     }
@@ -144,4 +148,5 @@ public final class Constants {
     public static class CandleConstants {
         public static final int canID = 55;
     }
+    
 }

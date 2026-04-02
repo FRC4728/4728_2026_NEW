@@ -13,7 +13,13 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.TurretShooter;
 
 public class Score extends SequentialCommandGroup {
-    public Score(Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret, CommandSwerveDrivetrain drivetrain) {
+    public Score(
+        Indexer indexer,
+        Kicker kicker,
+        TurretShooter shooter,
+        Turret turret,
+        CommandSwerveDrivetrain drivetrain
+    ) {
         SwerveRequest.SwerveDriveBrake xLock = new SwerveRequest.SwerveDriveBrake();
 
         addCommands(

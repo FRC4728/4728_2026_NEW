@@ -26,10 +26,13 @@ public class Turret extends SubsystemBase {
     private final MotionMagicVoltage m_turretMotionMagic;
     private final NeutralOut m_brake;
 
-    private double m_targetRotations = 0.0;
+    private double m_targetMotorRotations = 0.0;
 
     public Turret() {
-        m_turretMotor = new TalonFX(Constants.TurretConstants.m_turretMotorId, Constants.TurretConstants.ringGearCanbus);
+        m_turretMotor = new TalonFX(
+            Constants.TurretConstants.m_turretMotorId,
+            Constants.TurretConstants.ringGearCanbus
+        );
 
         TalonFXConfiguration cfg = new TalonFXConfiguration();
 
@@ -58,7 +61,7 @@ public class Turret extends SubsystemBase {
             DriverStation.reportWarning("Failed to configure Turret motor: " + status.toString(), false);
         }
 
-        // Startup zero must still be repeatable every match.
+        // Startup zero must be repeatable every match.
         m_turretMotor.setPosition(0);
 
         m_turretMotionMagic = new MotionMagicVoltage(0).withSlot(0);
@@ -71,17 +74,17 @@ public class Turret extends SubsystemBase {
     }
 
     public double getTargetPosition() {
-        return m_targetRotations;
+        return m_targetMotorRotations;
     }
 
-    public void setTargetPosition(double rotations) {
-        m_targetRotations = clampToSoftLimits(rotations);
-        m_turretMotor.setControl(m_turretMotionMagic.withPosition(m_targetRotations));
+    public void setTargetPosition(double motorRotations) {
+        m_targetMotorRotations = clampToSoftLimits(motorRotations);
+        m_turretMotor.setControl(m_turretMotionMagic.withPosition(m_targetMotorRotations));
     }
 
     public boolean isAligned() {
-        return Math.abs(getTurretPosition() - m_targetRotations)
-            < Constants.PoseAimConstants.kTurretAlignToleranceRotations;
+        return Math.abs(getTurretPosition() - m_targetMotorRotations)
+            < Constants.PoseAimConstants.kTurretAlignToleranceMotorRotations;
     }
 
     public void moveTurretVoltage(double voltage) {
@@ -107,10 +110,13 @@ public class Turret extends SubsystemBase {
         Rotation2d fieldAngleToTarget = new Rotation2d(delta.getX(), delta.getY());
         Rotation2d turretRobotRelative = fieldAngleToTarget.minus(robotPose.getRotation());
 
-        double desiredTurretDegrees = turretRobotRelative.getDegrees() + Constants.PoseAimConstants.kTurretZeroOffsetDegrees;
-        double desiredTurretRotations = (desiredTurretDegrees / 360.0) * Constants.TurretConstants.k_turret_gearRatio;
+        double desiredTurretDegrees =
+            turretRobotRelative.getDegrees() + Constants.PoseAimConstants.kTurretZeroOffsetDegrees;
 
-        return chooseClosestLegalRotation(desiredTurretRotations);
+        double desiredMotorRotations = desiredTurretDegrees
+            * Constants.PoseAimConstants.kTurretMotorRotationsPerDegree;
+
+        return chooseClosestLegalRotation(desiredMotorRotations);
     }
 
     public Translation2d getAllianceTarget() {
@@ -121,20 +127,22 @@ public class Turret extends SubsystemBase {
         return Constants.FieldConstants.kBlueScoringTarget;
     }
 
-    private double clampToSoftLimits(double rotations) {
+    private double clampToSoftLimits(double motorRotations) {
         return Math.max(
             Constants.TurretConstants.k_turret_reverseSoftLimit,
-            Math.min(Constants.TurretConstants.k_turret_forwardSoftLimit, rotations)
+            Math.min(Constants.TurretConstants.k_turret_forwardSoftLimit, motorRotations)
         );
     }
 
-    private double chooseClosestLegalRotation(double desiredRotations) {
+    private double chooseClosestLegalRotation(double desiredMotorRotations) {
         double current = getTurretPosition();
-        double best = clampToSoftLimits(desiredRotations);
+
+        double best = clampToSoftLimits(desiredMotorRotations);
         double bestError = Math.abs(best - current);
 
         for (int k = -3; k <= 3; k++) {
-            double candidate = desiredRotations + (k * Constants.TurretConstants.k_turret_gearRatio);
+            double candidate = desiredMotorRotations
+                + (k * Constants.PoseAimConstants.kTurretMotorRotationsPerRevolution);
             if (candidate < Constants.TurretConstants.k_turret_reverseSoftLimit) continue;
             if (candidate > Constants.TurretConstants.k_turret_forwardSoftLimit) continue;
 
@@ -153,7 +161,7 @@ public class Turret extends SubsystemBase {
         SmartDashboard.putNumber("Turret/Position", m_turretMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Turret/Velocity", m_turretMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Turret/AppliedVoltage", m_turretMotor.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("Turret/TargetPosition", m_targetRotations);
+        SmartDashboard.putNumber("Turret/TargetPosition", m_targetMotorRotations);
         SmartDashboard.putBoolean("Turret/IsAligned", isAligned());
     }
 }
