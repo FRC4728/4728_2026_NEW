@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.SignalLogger;
@@ -122,7 +123,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineTranslation;
 
     // ---------------- VISION CONFIG ----------------
-    private static final String kFrontLimelightName = "limelight-front";
+    private static final String kRightLimelightName = "limelight-right";
     private static final String kleftlimelightname = "limelight-left";
 
     // Reject very fast spin; Limelight docs commonly gate vision while spinning hard
@@ -243,7 +244,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        updateVisionFromLimelight(kFrontLimelightName);
+        updateVisionFromLimelight(kRightLimelightName);
         updateVisionFromLimelight(kleftlimelightname);
 
         SmartDashboard.putNumber("Drive/PoseX", getState().Pose.getX());
@@ -255,19 +256,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // Tell LL our current robot orientation before requesting MegaTag2
         double yawDeg = getState().Pose.getRotation().getDegrees();
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
+        LimelightHelpers.PoseEstimate estimate;
+        Optional<Alliance> alliance = DriverStation.getAlliance();
 
-        LimelightHelpers.SetRobotOrientation(
-            limelightName,
-            yawDeg,
-            yawRateDegPerSec,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-        );
-
-        LimelightHelpers.PoseEstimate estimate =
-            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+        if(alliance.isPresent() && alliance.get()==Alliance.Blue){
+            estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+        }
+        else{
+            estimate = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(limelightName);
+        }
 
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
 
@@ -341,21 +338,5 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
-    }
-
-    /**
-     * Adds a vision measurement to the Kalman Filter with explicit std devs.
-     */
-    @Override
-    public void addVisionMeasurement(
-        Pose2d visionRobotPoseMeters,
-        double timestampSeconds,
-        Matrix<N3, N1> visionMeasurementStdDevs
-    ) {
-        super.addVisionMeasurement(
-            visionRobotPoseMeters,
-            Utils.fpgaToCurrentTime(timestampSeconds),
-            visionMeasurementStdDevs
-        );
     }
 }

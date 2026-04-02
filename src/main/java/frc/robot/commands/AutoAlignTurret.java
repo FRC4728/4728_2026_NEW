@@ -24,7 +24,7 @@ public class AutoAlignTurret extends Command {
     @Override
     public void execute() {
         Pose2d robotPose = m_drivetrain.getState().Pose;
-        double targetRotations = m_turret.calculateTargetRotationsFromPose(robotPose);
+        double targetRotations = m_turret.calculateTargetEncoderPositionFromPose(robotPose);
         m_turret.setTargetPosition(targetRotations);
 
         SmartDashboard.putNumber("Turret/CommandTargetRotations", targetRotations);

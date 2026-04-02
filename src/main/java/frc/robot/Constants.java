@@ -59,8 +59,8 @@ public final class Constants {
 
     public static final class FieldConstants {
         // Ground location of target in meters
-        public static final Translation2d kBlueScoringTarget = new Translation2d(0.000, 0.000);
-        public static final Translation2d kRedScoringTarget  = new Translation2d(0.000, 0.000);
+        public static final Translation2d kBlueScoringTarget = new Translation2d(4.60, 4.03);
+        public static final Translation2d kRedScoringTarget  = new Translation2d(11.89, 4.03);
     }
 
     public static final class PoseAimConstants {
@@ -68,14 +68,21 @@ public final class Constants {
         // Value of encoder when the turret is facing forward.
         public static final double kTurretZeroOffsetDegrees = 0.0;
 
+        public static final double kRearShotEncoderPosition = 18.08;
+
         // Raw motor-position calibration for a turret that travels 270 degrees across the soft limits.
-        public static final double kTurretTravelDegrees = 270.0;
+        public static final double kTurretTravelDegrees = 275.0;
         public static final double kTurretMotorRotationsAcrossTravel =
             TurretConstants.k_turret_forwardSoftLimit - TurretConstants.k_turret_reverseSoftLimit;
         public static final double kTurretMotorRotationsPerDegree =
             kTurretMotorRotationsAcrossTravel / kTurretTravelDegrees;
         public static final double kTurretMotorRotationsPerRevolution =
             kTurretMotorRotationsPerDegree * 360.0;
+
+        public static final double kTurretMinEncoderPosition = TurretConstants.k_turret_reverseSoftLimit;
+        public static final double kTurretMaxEncoderPosition = TurretConstants.k_hood_forwardSoftLimit;
+
+        public static final double kEncoderUnitsPerTurretDegree = (kTurretMaxEncoderPosition - kTurretMinEncoderPosition) / kTurretTravelDegrees;
 
         // Alignment tolerance in raw turret motor rotations.
         public static final double kTurretAlignToleranceMotorRotations = 0.15;

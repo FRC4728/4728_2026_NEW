@@ -62,7 +62,7 @@ public class RobotContainer {
     private final TurretShooter shooter = new TurretShooter();
     private final Kicker kicker = new Kicker();
     private final Indexer indexer = new Indexer();
-    private final LED led = new LED();
+    //private final LED led = new LED();
 
     // Drive speed multipliers
     private double translationMultiplier = 0.85;
@@ -137,7 +137,7 @@ public class RobotContainer {
         intake.setDefaultCommand(new RunIntakeIn(intake));
 
         // LED: always check which hub is active
-        led.setDefaultCommand(new CheckHubStatus(led));
+        //led.setDefaultCommand(new CheckHubStatus(led));
     }
 
     // ── Driver Controller (port 0) ────────────────────────────────────────────
@@ -185,11 +185,6 @@ public class RobotContainer {
 
     private void configureAutomation() {
     // Auto-unjam indexer when jam is detected
-    indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
-
-        new Trigger(() -> !LimelightHelpers.getTV("limelight-turret"))
-        .debounce(0.75)
-        .whileTrue(new SearchForTarget(turret));
     }
 
     // ── Autonomous ───────────────────────────────────────────────────────────

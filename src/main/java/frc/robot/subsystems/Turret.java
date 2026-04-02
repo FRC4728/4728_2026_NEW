@@ -26,7 +26,7 @@ public class Turret extends SubsystemBase {
     private final MotionMagicVoltage m_turretMotionMagic;
     private final NeutralOut m_brake;
 
-    private double m_targetMotorRotations = 0.0;
+    private double m_targetEncoderPosition = 0.0;
 
     public Turret() {
         m_turretMotor = new TalonFX(
@@ -56,12 +56,9 @@ public class Turret extends SubsystemBase {
         cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
 
-        var status = m_turretMotor.getConfigurator().apply(cfg);
-        if (!status.isOK()) {
-            DriverStation.reportWarning("Failed to configure Turret motor: " + status.toString(), false);
-        }
+        m_turretMotor.getConfigurator().apply(cfg);
 
-        // Startup zero must be repeatable every match.
+        // Startup hard stop is mechanical 0 deg
         m_turretMotor.setPosition(0);
 
         m_turretMotionMagic = new MotionMagicVoltage(0).withSlot(0);
@@ -74,16 +71,16 @@ public class Turret extends SubsystemBase {
     }
 
     public double getTargetPosition() {
-        return m_targetMotorRotations;
+        return m_targetEncoderPosition;
     }
 
-    public void setTargetPosition(double motorRotations) {
-        m_targetMotorRotations = clampToSoftLimits(motorRotations);
-        m_turretMotor.setControl(m_turretMotionMagic.withPosition(m_targetMotorRotations));
+    public void setTargetPosition(double encoderPosition) {
+        m_targetEncoderPosition = clampEncoderPosition(encoderPosition);
+        m_turretMotor.setControl(m_turretMotionMagic.withPosition(m_targetEncoderPosition));
     }
 
     public boolean isAligned() {
-        return Math.abs(getTurretPosition() - m_targetMotorRotations)
+        return Math.abs(getTurretPosition() - m_targetEncoderPosition)
             < Constants.PoseAimConstants.kTurretAlignToleranceMotorRotations;
     }
 
@@ -95,28 +92,12 @@ public class Turret extends SubsystemBase {
         m_turretMotor.setControl(voltReq.withOutput(0));
     }
 
-    public void moveTurretPosition(Double position) {
-        setTargetPosition(position);
-    }
-
     public void stopTurret() {
         m_turretMotor.setControl(m_brake);
     }
 
-    public double calculateTargetRotationsFromPose(Pose2d robotPose) {
-        Translation2d target = getAllianceTarget();
-        Translation2d delta = target.minus(robotPose.getTranslation());
-
-        Rotation2d fieldAngleToTarget = new Rotation2d(delta.getX(), delta.getY());
-        Rotation2d turretRobotRelative = fieldAngleToTarget.minus(robotPose.getRotation());
-
-        double desiredTurretDegrees =
-            turretRobotRelative.getDegrees() + Constants.PoseAimConstants.kTurretZeroOffsetDegrees;
-
-        double desiredMotorRotations = desiredTurretDegrees
-            * Constants.PoseAimConstants.kTurretMotorRotationsPerDegree;
-
-        return chooseClosestLegalRotation(desiredMotorRotations);
+    public void moveTurretPosition(double position) {
+        setTargetPosition(position);
     }
 
     public Translation2d getAllianceTarget() {
@@ -127,41 +108,38 @@ public class Turret extends SubsystemBase {
         return Constants.FieldConstants.kBlueScoringTarget;
     }
 
-    private double clampToSoftLimits(double motorRotations) {
-        return Math.max(
-            Constants.TurretConstants.k_turret_reverseSoftLimit,
-            Math.min(Constants.TurretConstants.k_turret_forwardSoftLimit, motorRotations)
-        );
+    public double calculateTargetEncoderPositionFromPose(Pose2d robotPose) {
+        Translation2d target = getAllianceTarget();
+        Translation2d delta = target.minus(robotPose.getTranslation());
+
+        Rotation2d fieldAngleToTarget = new Rotation2d(delta.getX(), delta.getY());
+        Rotation2d turretRobotRelative = fieldAngleToTarget.minus(robotPose.getRotation());
+
+        // 0 deg relative means target is straight out robot front.
+        // We shoot out robot back, so anchor around the encoder position
+        // where the turret is aimed straight out the back.
+        double desiredRelativeDegreesFromRear = turretRobotRelative.getDegrees() - 180.0;
+
+        double encoderDelta =
+            desiredRelativeDegreesFromRear * Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
+
+        double desiredEncoderPosition =
+            Constants.PoseAimConstants.kRearShotEncoderPosition + encoderDelta;
+
+        return clampEncoderPosition(desiredEncoderPosition);
     }
 
-    private double chooseClosestLegalRotation(double desiredMotorRotations) {
-        double current = getTurretPosition();
-
-        double best = clampToSoftLimits(desiredMotorRotations);
-        double bestError = Math.abs(best - current);
-
-        for (int k = -3; k <= 3; k++) {
-            double candidate = desiredMotorRotations
-                + (k * Constants.PoseAimConstants.kTurretMotorRotationsPerRevolution);
-            if (candidate < Constants.TurretConstants.k_turret_reverseSoftLimit) continue;
-            if (candidate > Constants.TurretConstants.k_turret_forwardSoftLimit) continue;
-
-            double error = Math.abs(candidate - current);
-            if (error < bestError) {
-                best = candidate;
-                bestError = error;
-            }
-        }
-
-        return best;
+    private double clampEncoderPosition(double encoderPosition) {
+        return Math.max(
+            Constants.PoseAimConstants.kTurretMinEncoderPosition,
+            Math.min(Constants.PoseAimConstants.kTurretMaxEncoderPosition, encoderPosition)
+        );
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Turret/Position", m_turretMotor.getPosition().getValueAsDouble());
-        SmartDashboard.putNumber("Turret/Velocity", m_turretMotor.getVelocity().getValueAsDouble());
-        SmartDashboard.putNumber("Turret/AppliedVoltage", m_turretMotor.getMotorVoltage().getValueAsDouble());
-        SmartDashboard.putNumber("Turret/TargetPosition", m_targetMotorRotations);
+        SmartDashboard.putNumber("Turret/Position", getTurretPosition());
+        SmartDashboard.putNumber("Turret/TargetPosition", m_targetEncoderPosition);
         SmartDashboard.putBoolean("Turret/IsAligned", isAligned());
     }
 }
