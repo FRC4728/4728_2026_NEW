@@ -66,8 +66,6 @@ public final class Constants {
     public static final class PoseAimConstants {
         // Turret angle relative to robot-forward when raw motor position is zero. 
         // Value of encoder when the turret is facing forward.
-        public static final double kTurretZeroOffsetDegrees = 0.0;
-
         public static final double kRearShotEncoderPosition = 18.08;
 
         // Raw motor-position calibration for a turret that travels 270 degrees across the soft limits.
@@ -80,7 +78,7 @@ public final class Constants {
             kTurretMotorRotationsPerDegree * 360.0;
 
         public static final double kTurretMinEncoderPosition = TurretConstants.k_turret_reverseSoftLimit;
-        public static final double kTurretMaxEncoderPosition = TurretConstants.k_hood_forwardSoftLimit;
+        public static final double kTurretMaxEncoderPosition = TurretConstants.k_turret_forwardSoftLimit;
 
         public static final double kEncoderUnitsPerTurretDegree = (kTurretMaxEncoderPosition - kTurretMinEncoderPosition) / kTurretTravelDegrees;
 

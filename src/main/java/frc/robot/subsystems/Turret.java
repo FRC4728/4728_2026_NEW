@@ -48,7 +48,7 @@ public class Turret extends SubsystemBase {
         cfg.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_turret_acceleration;
         cfg.MotionMagic.MotionMagicJerk = Constants.TurretConstants.k_turret_jerk;
 
-        cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        cfg.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;

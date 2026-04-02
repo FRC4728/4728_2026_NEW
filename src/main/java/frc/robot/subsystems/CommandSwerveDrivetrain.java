@@ -257,6 +257,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double yawDeg = getState().Pose.getRotation().getDegrees();
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
         LimelightHelpers.PoseEstimate estimate;
+        LimelightHelpers.SetRobotOrientation(
+            limelightName,
+            yawDeg,
+            yawRateDegPerSec,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        );
+
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
         if(alliance.isPresent() && alliance.get()==Alliance.Blue){
