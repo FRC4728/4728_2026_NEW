@@ -143,8 +143,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final double kMaxVisionOmegaDegPerSec = 360.0;
  
     // Simple distance-based trust tuning
-    private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.7, 0.7, 9999999.0);
-    private static final Matrix<N3, N1> kSingleTagStdDevsClose = VecBuilder.fill(1.5, 1.5, 9999999.0);
+    private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.7, 0.7, 0.25);
+    private static final Matrix<N3, N1> kSingleTagStdDevsClose = VecBuilder.fill(1.5, 1.5, 0.70);
  
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -257,7 +257,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
  
-        //updateVisionFromLimelight(kRightLimelightName);
+        updateVisionFromLimelight(kRightLimelightName);
         
         updateVisionFromLimelight(kleftlimelightname);
     
