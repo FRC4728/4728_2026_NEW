@@ -119,7 +119,7 @@ public class Turret extends SubsystemBase {
 
         rearRelativeDeg = Math.max(-135.0, Math.min(135.0, rearRelativeDeg));
 
-        double desiredEncoderPosition = Constants.PoseAimConstants.kRearShotEncoderPosition + rearRelativeDeg + Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
+        double desiredEncoderPosition = Constants.PoseAimConstants.kRearShotEncoderPosition + rearRelativeDeg * Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
 
         return clampEncoderPosition(desiredEncoderPosition);
     }

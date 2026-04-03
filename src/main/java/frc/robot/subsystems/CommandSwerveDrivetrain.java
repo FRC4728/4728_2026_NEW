@@ -256,7 +256,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // Tell LL our current robot orientation before requesting MegaTag2
         double yawDeg = getState().Pose.getRotation().getDegrees();
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
-        LimelightHelpers.PoseEstimate estimate;
+        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
         LimelightHelpers.SetRobotOrientation(
             limelightName,
             yawDeg,
@@ -266,15 +266,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             0.0,
             0.0
         );
-
-        Optional<Alliance> alliance = DriverStation.getAlliance();
-
-        if(alliance.isPresent() && alliance.get()==Alliance.Blue){
-            estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
-        }
-        else{
-            estimate = LimelightHelpers.getBotPoseEstimate_wpiRed_MegaTag2(limelightName);
-        }
 
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
 
@@ -348,5 +339,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    @Override
+    public void addVisionMeasurement(
+        Pose2d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs
+    ) {
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
     }
 }
