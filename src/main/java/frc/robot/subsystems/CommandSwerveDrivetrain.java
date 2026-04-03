@@ -257,7 +257,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
  
-        updateVisionFromLimelight(kRightLimelightName);
+        //updateVisionFromLimelight(kRightLimelightName);
         
         updateVisionFromLimelight(kleftlimelightname);
     
@@ -284,7 +284,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
         // AFTER (fixed) — orientation set first, then estimate fetched
         LimelightHelpers.SetRobotOrientation(limelightName, pigeonDegrees, 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
 
         LimelightHelpers.SetIMUMode(limelightName,4);
  

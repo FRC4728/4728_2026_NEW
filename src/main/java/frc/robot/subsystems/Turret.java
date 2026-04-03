@@ -76,7 +76,11 @@ public class Turret extends SubsystemBase {
     }
 
     public void setTargetPosition(double encoderPosition) {
-        m_targetEncoderPosition = clampEncoderPosition(encoderPosition);
+        double clamped = clampEncoderPosition(encoderPosition);
+        if(Math.abs(clamped - m_targetEncoderPosition)<0.08){
+            return;
+        }
+        m_targetEncoderPosition = clamped;
         m_turretMotor.setControl(m_turretMotionMagic.withPosition(m_targetEncoderPosition));
     }
 
@@ -126,7 +130,7 @@ public class Turret extends SubsystemBase {
         Translation2d target = getAllianceTarget();
         Translation2d delta = target.minus(turretPose.getTranslation());
 
-        Rotation2d fieldAngleToTarget = delta.getAngle();
+        Rotation2d fieldAngleToTarget = new Rotation2d(delta.getX(),delta.getY());//delta.getAngle();
         Rotation2d turretRobotRelative = fieldAngleToTarget.minus(robotPose.getRotation());
 
         double rearRelativeDeg = normalizeDegrees(turretRobotRelative.getDegrees() - 180);
@@ -136,6 +140,8 @@ public class Turret extends SubsystemBase {
         double encoderDelta = rearRelativeDeg * Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
 
         double desiredEncoderPosition = Constants.PoseAimConstants.kRearShotEncoderPosition + encoderDelta;
+
+        SmartDashboard.putNumber("Expected Position",desiredEncoderPosition);
 
         return clampEncoderPosition(desiredEncoderPosition);
     }
