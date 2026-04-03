@@ -33,8 +33,8 @@ public final class Constants {
 
         public static final double k_turret_gearRatio = 51.02;
 
-        public static final double k_turret_forwardSoftLimit = 33.5;
-        public static final double k_turret_reverseSoftLimit = 0.5;
+        public static final double k_turret_forwardSoftLimit = -34.5;
+        public static final double k_turret_reverseSoftLimit = -0.3;
 
         public static final double k_flywheel_p = 0.2;
         public static final double k_flywheel_i = 0.0;

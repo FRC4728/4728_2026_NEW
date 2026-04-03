@@ -27,7 +27,7 @@ public class SetTurretZeroish extends Command {
 
   @Override
   public void execute(){
-    turret.moveTurretPosition(1.0);
+    turret.moveTurretPosition(-0.3);
   }
 
   @Override
