@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -21,7 +22,7 @@ public final class Constants {
         public static final int m_flywheelMotor2 = 35;
         public static final int m_hoodMotor = 36;
 
-        public static final double k_turret_p = 0.1; //4.8
+        public static final double k_turret_p = 0.05; //4.8
         public static final double k_turret_i = 0.0; //0
         public static final double k_turret_d = 0.1; //0.1
         public static final double k_turret_s = 0.0675; //0.0675
@@ -33,8 +34,8 @@ public final class Constants {
 
         public static final double k_turret_gearRatio = 51.02;
 
-        public static final double k_turret_forwardSoftLimit = 34.5;
-        public static final double k_turret_reverseSoftLimit = 0.3;
+        public static final double k_turret_forwardSoftLimit = 35;
+        public static final double k_turret_reverseSoftLimit = 0.5;
 
         public static final double k_flywheel_p = 0.2;
         public static final double k_flywheel_i = 0.0;
@@ -92,6 +93,9 @@ public final class Constants {
         // Pose-derived distance sanity limits.
         public static final double kMinDistanceInches = 10.0;
         public static final double kMaxDistanceInches = 300.0;
+
+        public static final double kTurretForwardOffsetMeters = Units.inchesToMeters(-4.5);
+        public static final double kTurretLeftOffsetMeters = Units.inchesToMeters(4.5);
     }
 
     public static class indexerConstants {

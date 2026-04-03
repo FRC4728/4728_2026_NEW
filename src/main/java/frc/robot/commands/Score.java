@@ -20,13 +20,9 @@ public class Score extends SequentialCommandGroup {
         Turret turret,
         CommandSwerveDrivetrain drivetrain
     ) {
-        SwerveRequest.SwerveDriveBrake xLock = new SwerveRequest.SwerveDriveBrake();
+        //SwerveRequest.SwerveDriveBrake xLock = new SwerveRequest.SwerveDriveBrake();
 
         addCommands(
-            new ParallelCommandGroup(
-                drivetrain.applyRequest(() -> xLock).withTimeout(0.1),
-                new WaitUntilCommand(turret::isAligned)
-            ),
             new ParallelCommandGroup(
                 new SetShooterByDistance(shooter, drivetrain, turret),
                 new SequentialCommandGroup(

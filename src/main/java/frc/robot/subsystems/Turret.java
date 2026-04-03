@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -108,19 +109,30 @@ public class Turret extends SubsystemBase {
         return Constants.FieldConstants.kBlueScoringTarget;
     }
 
-    public double calculateTargetEncoderPositionFromPose(Pose2d robotPose) {
-        Translation2d target = getAllianceTarget();
-        Translation2d delta = target.minus(robotPose.getTranslation());
+    public Pose2d getTurretPose(Pose2d robotPose){
+        return robotPose.transformBy(
+            new Transform2d(
+                new Translation2d(
+                    Constants.PoseAimConstants.kTurretForwardOffsetMeters,
+                    Constants.PoseAimConstants.kTurretLeftOffsetMeters
+                ),
+                new Rotation2d()
+            )
+        );
+    }
 
-        Rotation2d fieldAngleToTarget = new Rotation2d(delta.getX(), delta.getY());
+    public double calculateTargetEncoderPositionFromPose(Pose2d robotPose) {
+        Pose2d turretPose = getTurretPose(robotPose);
+        Translation2d target = getAllianceTarget();
+        Translation2d delta = target.minus(turretPose.getTranslation());
+
+        Rotation2d fieldAngleToTarget = delta.getAngle();
         Rotation2d turretRobotRelative = fieldAngleToTarget.minus(robotPose.getRotation());
 
         double rearRelativeDeg = normalizeDegrees(turretRobotRelative.getDegrees() - 180);
 
         rearRelativeDeg = Math.max(-135.0, Math.min(135.0, rearRelativeDeg));
 
-        //double encoderDelta = rearRelativeDeg + Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
-        // CORRECT — convert degrees to encoder units by multiplying
         double encoderDelta = rearRelativeDeg * Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
 
         double desiredEncoderPosition = Constants.PoseAimConstants.kRearShotEncoderPosition + encoderDelta;

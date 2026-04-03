@@ -17,16 +17,21 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
  
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -44,6 +49,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
+
+
+    
  
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -62,7 +70,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
         new SwerveRequest.SysIdSwerveRotation();
- 
+    
+    private final Field2d m_field = new Field2d();
+
+    private final Turret turret = new Turret();
+
+    private final Translation2d target = turret.getAllianceTarget();
     /*
      * SysId routine for characterizing translation.
      * This is used to find PID gains for the drive motors.
@@ -244,49 +257,51 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
  
-        if (LimelightHelpers.getTV(kRightLimelightName)) {
-            updateVisionFromLimelight(kRightLimelightName);
-        }
-        if (LimelightHelpers.getTV(kleftlimelightname)) {
-            updateVisionFromLimelight(kleftlimelightname);
-        }
+        updateVisionFromLimelight(kRightLimelightName);
+        
+        updateVisionFromLimelight(kleftlimelightname);
     
         SmartDashboard.putNumber("Drive/PoseX", getState().Pose.getX());
         SmartDashboard.putNumber("Drive/PoseY", getState().Pose.getY());
         SmartDashboard.putNumber("Drive/PoseHeadingDeg", getState().Pose.getRotation().getDegrees());
+
+        m_field.setRobotPose(getState().Pose);
+
+        SmartDashboard.putData(m_field);
+
+        Pose2d robotPose = getState().Pose;
+        double rawDistanceMeters = robotPose.getTranslation().getDistance(target);
+        double rawDistanceInches = Units.metersToInches(rawDistanceMeters);
+
+        SmartDashboard.putNumber("Distance to target",rawDistanceInches);
     }
  
     private void updateVisionFromLimelight(String limelightName) {
         // Tell LL our current robot orientation before requesting MegaTag2
-        double yawDeg = getState().Pose.getRotation().getDegrees();
+        double pigeonDegrees = getPigeon2().getRotation2d().getDegrees();
+        //double yawDeg = getState().Pose.getRotation().getDegrees();
+
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
         // AFTER (fixed) — orientation set first, then estimate fetched
-        LimelightHelpers.SetRobotOrientation(limelightName, yawDeg, yawRateDegPerSec, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(limelightName, pigeonDegrees, 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+
+        LimelightHelpers.SetIMUMode(limelightName,4);
  
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
  
-        SmartDashboard.putBoolean("Vision/" + limelightName + "/Rejected", reject);
  
         if (reject) {
             SmartDashboard.putBoolean("Vision/" + limelightName + "/Accepted", false);
             return;
         }
  
-        SmartDashboard.putNumber("Vision/" + limelightName + "/TagCount", estimate.tagCount);
         SmartDashboard.putNumber("Vision/" + limelightName + "/AvgTagDist", estimate.avgTagDist);
         SmartDashboard.putNumber("Vision/" + limelightName + "/LatencyMs", estimate.latency);
  
         Matrix<N3, N1> stdDevs = getVisionStdDevs(estimate);
         addVisionMeasurement(estimate.pose, estimate.timestampSeconds, stdDevs);
- 
-        SmartDashboard.putBoolean("Vision/" + limelightName + "/Accepted", true);
-        SmartDashboard.putNumber("Vision/" + limelightName + "/PoseX", estimate.pose.getX());
-        //DriverStation.reportWarning("Pose X: "+estimate.pose.getX(), false);
-        SmartDashboard.putNumber("Vision/" + limelightName + "/PoseY", estimate.pose.getY());
-        //DriverStation.reportWarning("Pose X: "+estimate.pose.getY(), false);
-        SmartDashboard.putNumber("Vision/" + limelightName + "/PoseHeadingDeg", estimate.pose.getRotation().getDegrees());
-        //DriverStation.reportWarning("Pose X: "+estimate.pose.getRotation().getDegrees(), false);
+
     }
  
     private boolean shouldRejectVision(LimelightHelpers.PoseEstimate estimate, double yawRateDegPerSec) {

@@ -6,8 +6,6 @@ public final class ShooterTable {
     /**
      * Table format:
      * { distanceInches, flywheelRPS, hoodPosition }
-     *
-     * 
      */
     private static final double[][] TABLE = {
         // dist (in), flywheel (RPS), hood (rot) 
