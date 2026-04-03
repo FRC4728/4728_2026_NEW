@@ -250,10 +250,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         else if(LimelightHelpers.getTV(kleftlimelightname)){
             updateVisionFromLimelight(kleftlimelightname);
         }
-        else {
-            return;
-        }
-        
     
         SmartDashboard.putNumber("Drive/PoseX", getState().Pose.getX());
         SmartDashboard.putNumber("Drive/PoseY", getState().Pose.getY());
@@ -291,8 +287,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         SmartDashboard.putBoolean("Vision/" + limelightName + "/Accepted", true);
         SmartDashboard.putNumber("Vision/" + limelightName + "/PoseX", estimate.pose.getX());
+        DriverStation.reportWarning("Pose X: "+estimate.pose.getX(), false);
         SmartDashboard.putNumber("Vision/" + limelightName + "/PoseY", estimate.pose.getY());
+        DriverStation.reportWarning("Pose X: "+estimate.pose.getY(), false);
         SmartDashboard.putNumber("Vision/" + limelightName + "/PoseHeadingDeg", estimate.pose.getRotation().getDegrees());
+        DriverStation.reportWarning("Pose X: "+estimate.pose.getRotation().getDegrees(), false);
     }
 
     private boolean shouldRejectVision(LimelightHelpers.PoseEstimate estimate, double yawRateDegPerSec) {
