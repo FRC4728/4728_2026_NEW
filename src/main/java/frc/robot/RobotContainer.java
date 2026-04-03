@@ -90,7 +90,9 @@ public class RobotContainer {
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
-    public void periodic(){}
+    public void periodic(){
+        
+    }
 
     public RobotContainer() {
         configureDefaultCommands();

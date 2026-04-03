@@ -274,6 +274,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double rawDistanceInches = Units.metersToInches(rawDistanceMeters);
 
         SmartDashboard.putNumber("Distance to target",rawDistanceInches);
+
+        SmartDashboard.putNumber("Match Time",DriverStation.getMatchTime());
     }
  
     private void updateVisionFromLimelight(String limelightName) {
