@@ -22,7 +22,7 @@ public class SetTurretCenter extends Command {
 
   @Override
   public void execute(){
-    turret.moveTurretPosition(-17.7);
+    turret.moveTurretPosition(17.7);
   }
 
   @Override

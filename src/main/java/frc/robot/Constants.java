@@ -21,20 +21,20 @@ public final class Constants {
         public static final int m_flywheelMotor2 = 35;
         public static final int m_hoodMotor = 36;
 
-        public static final double k_turret_p = 4.8;
-        public static final double k_turret_i = 0.0;
-        public static final double k_turret_d = 0.1;
-        public static final double k_turret_s = 0.0675;
-        public static final double k_turret_v = 0.12;
-        public static final double k_turret_a = 0.01;
+        public static final double k_turret_p = 0.1; //4.8
+        public static final double k_turret_i = 0.0; //0
+        public static final double k_turret_d = 0.1; //0.1
+        public static final double k_turret_s = 0.0675; //0.0675
+        public static final double k_turret_v = 0.12; //0.12
+        public static final double k_turret_a = 0.01; //0.01
         public static final double k_turret_acceleration = 160;
         public static final double k_turret_velocity = 80;
         public static final double k_turret_jerk = 0;
 
         public static final double k_turret_gearRatio = 51.02;
 
-        public static final double k_turret_forwardSoftLimit = -34.5;
-        public static final double k_turret_reverseSoftLimit = -0.3;
+        public static final double k_turret_forwardSoftLimit = 34.5;
+        public static final double k_turret_reverseSoftLimit = 0.3;
 
         public static final double k_flywheel_p = 0.2;
         public static final double k_flywheel_i = 0.0;
@@ -66,7 +66,7 @@ public final class Constants {
     public static final class PoseAimConstants {
         // Turret angle relative to robot-forward when raw motor position is zero. 
         // Value of encoder when the turret is facing forward.
-        public static final double kRearShotEncoderPosition = 18.08;
+        public static final double kRearShotEncoderPosition = 17.7;
 
         // Raw motor-position calibration for a turret that travels 270 degrees across the soft limits.
         public static final double kTurretTravelDegrees = 270.0;
