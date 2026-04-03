@@ -150,10 +150,10 @@ public class RobotContainer {
         //driver.rightTrigger().whileTrue(new RunShooter(shooter));
         //driver.leftBumper().whileTrue(new RunIntakeIn(intake));
 
-        driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain));
-        driver.leftBumper().whileTrue(new EmergencyScore(intake, indexer, kicker, shooter, turret));
+        driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
+        driver.leftBumper().whileTrue(new EmergencyScore(intake, indexer, kicker, shooter, turret).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
         driver.a().whileTrue(new RunSpindexerRev(indexer));
-        driver.start().whileTrue(new ReverseAll(kicker, intake));
+        driver.start().whileTrue(new ReverseAll(kicker, intake, indexer));
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         //left bumper to toggle drvetrain to low speed
