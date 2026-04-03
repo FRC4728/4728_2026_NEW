@@ -119,7 +119,9 @@ public class Turret extends SubsystemBase {
 
         rearRelativeDeg = Math.max(-135.0, Math.min(135.0, rearRelativeDeg));
 
-        double encoderDelta = rearRelativeDeg + Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
+        //double encoderDelta = rearRelativeDeg + Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
+        // CORRECT — convert degrees to encoder units by multiplying
+        double encoderDelta = rearRelativeDeg * Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
 
         double desiredEncoderPosition = Constants.PoseAimConstants.kRearShotEncoderPosition + encoderDelta;
 

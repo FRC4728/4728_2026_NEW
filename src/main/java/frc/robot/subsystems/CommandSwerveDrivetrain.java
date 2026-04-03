@@ -260,16 +260,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // Tell LL our current robot orientation before requesting MegaTag2
         double yawDeg = getState().Pose.getRotation().getDegrees();
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
+        // AFTER (fixed) — orientation set first, then estimate fetched
+        LimelightHelpers.SetRobotOrientation(limelightName, yawDeg, yawRateDegPerSec, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
-        LimelightHelpers.SetRobotOrientation(
-            limelightName,
-            yawDeg,
-            yawRateDegPerSec,
-            0.0,
-            0.0,
-            0.0,
-            0.0
-        );
 
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
 
