@@ -69,7 +69,7 @@ public final class Constants {
         public static final double kRearShotEncoderPosition = 18.08;
 
         // Raw motor-position calibration for a turret that travels 270 degrees across the soft limits.
-        public static final double kTurretTravelDegrees = 275.0;
+        public static final double kTurretTravelDegrees = 270.0;
         public static final double kTurretMotorRotationsAcrossTravel =
             TurretConstants.k_turret_forwardSoftLimit - TurretConstants.k_turret_reverseSoftLimit;
         public static final double kTurretMotorRotationsPerDegree =

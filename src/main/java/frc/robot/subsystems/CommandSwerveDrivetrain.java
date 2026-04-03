@@ -244,9 +244,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        updateVisionFromLimelight(kRightLimelightName);
-        updateVisionFromLimelight(kleftlimelightname);
-
+        if(LimelightHelpers.getTV(kRightLimelightName)){
+            updateVisionFromLimelight(kRightLimelightName);
+        }
+        else if(LimelightHelpers.getTV(kleftlimelightname)){
+            updateVisionFromLimelight(kleftlimelightname);
+        }
+        else {
+            return;
+        }
+        
+    
         SmartDashboard.putNumber("Drive/PoseX", getState().Pose.getX());
         SmartDashboard.putNumber("Drive/PoseY", getState().Pose.getY());
         SmartDashboard.putNumber("Drive/PoseHeadingDeg", getState().Pose.getRotation().getDegrees());
