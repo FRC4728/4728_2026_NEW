@@ -12,16 +12,16 @@ import frc.robot.subsystems.TurretShooter;
 import frc.robot.subsystems.Turret;
 
 public class ScoreDyn extends SequentialCommandGroup {
-    public ScoreDyn(Intake intake, Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret) {
+    public ScoreDyn(Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret) {
         addCommands(
 
             // Step 2: Shooter spins up to distance-based setpoint, then feeding starts after 0.25s
             new ParallelCommandGroup(
                 new SetShooterDynamic(shooter),
+                new SetTurretCenter(turret),
                 new SequentialCommandGroup(
-                    new WaitCommand(1),
+                    new WaitCommand(0.75),
                     new ParallelCommandGroup(
-                        new RunIntakeIn(intake),
                         new RunSpindexer(indexer),
                         new RunKickerUp(kicker)
                     )

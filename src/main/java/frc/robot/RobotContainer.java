@@ -153,7 +153,7 @@ public class RobotContainer {
         //driver.leftBumper().whileTrue(new RunIntakeIn(intake));
 
         driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
-        driver.leftBumper().whileTrue(new ScoreDyn(intake, indexer, kicker, shooter, turret).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
+        driver.leftBumper().whileTrue(new ScoreDyn(indexer, kicker, shooter, turret).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
         driver.a().whileTrue(new RunSpindexerRev(indexer));
         driver.start().whileTrue(new ReverseAll(kicker, intake, indexer));
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));

@@ -22,14 +22,14 @@ public final class Constants {
         public static final int m_flywheelMotor2 = 35;
         public static final int m_hoodMotor = 36;
 
-        public static final double k_turret_p = 0.075; //4.8
+        public static final double k_turret_p = 10; //4.8, 50
         public static final double k_turret_i = 0.0; //0
         public static final double k_turret_d = 0.1; //0.1
         public static final double k_turret_s = 0.0675; //0.0675
         public static final double k_turret_v = 0.12; //0.12
         public static final double k_turret_a = 0.01; //0.01
-        public static final double k_turret_acceleration = 160;
-        public static final double k_turret_velocity = 90;
+        public static final double k_turret_acceleration = 120; //160
+        public static final double k_turret_velocity = 60;//90
         public static final double k_turret_jerk = 0;
 
         public static final double k_turret_gearRatio = 51.02;
@@ -84,7 +84,7 @@ public final class Constants {
         public static final double kEncoderUnitsPerTurretDegree = (kTurretMaxEncoderPosition - kTurretMinEncoderPosition) / kTurretTravelDegrees;
 
         // Alignment tolerance in raw turret motor rotations.
-        public static final double kTurretAlignToleranceMotorRotations = 0.1;
+        public static final double kTurretAlignToleranceMotorRotations = 0; //0.1
 
         // Distance filter settings for pose-derived range.
         public static final double kShooterDistanceDeadbandInches = 1.0;
