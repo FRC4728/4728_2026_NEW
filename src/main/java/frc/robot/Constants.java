@@ -84,7 +84,7 @@ public final class Constants {
         public static final double kEncoderUnitsPerTurretDegree = (kTurretMaxEncoderPosition - kTurretMinEncoderPosition) / kTurretTravelDegrees;
 
         // Alignment tolerance in raw turret motor rotations.
-        public static final double kTurretAlignToleranceMotorRotations = 0; //0.1
+        public static final double kTurretAlignToleranceMotorRotations = 0.01; //0.1
 
         // Distance filter settings for pose-derived range.
         public static final double kShooterDistanceDeadbandInches = 1.0;

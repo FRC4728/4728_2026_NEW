@@ -77,7 +77,7 @@ public class TurretShooter extends SubsystemBase {
     hood_velRequest = new VelocityVoltage(0).withSlot(0);
     
     targetPosition = -15;
-    targetVel = 45; //45
+    targetVel = 45;
     SmartDashboard.putNumber("InputFlywheelVelocity",targetVel);
     SmartDashboard.putNumber("InputHoodPosition", targetPosition);
 

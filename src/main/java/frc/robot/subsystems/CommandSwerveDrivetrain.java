@@ -49,9 +49,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
-
-
-    
  
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -72,10 +69,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         new SwerveRequest.SysIdSwerveRotation();
     
     private final Field2d m_field = new Field2d();
-
-    private final Turret turret = new Turret();
-
-    private final Translation2d target = turret.getAllianceTarget();
+ 
     /*
      * SysId routine for characterizing translation.
      * This is used to find PID gains for the drive motors.
@@ -264,17 +258,20 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putNumber("Drive/PoseX", getState().Pose.getX());
         SmartDashboard.putNumber("Drive/PoseY", getState().Pose.getY());
         SmartDashboard.putNumber("Drive/PoseHeadingDeg", getState().Pose.getRotation().getDegrees());
-
+ 
         m_field.setRobotPose(getState().Pose);
-
+ 
         SmartDashboard.putData(m_field);
-
+ 
         Pose2d robotPose = getState().Pose;
-        double rawDistanceMeters = robotPose.getTranslation().getDistance(target);
+        Translation2d scoringTarget = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
+            ? frc.robot.Constants.FieldConstants.kRedScoringTarget
+            : frc.robot.Constants.FieldConstants.kBlueScoringTarget;
+        double rawDistanceMeters = robotPose.getTranslation().getDistance(scoringTarget);
         double rawDistanceInches = Units.metersToInches(rawDistanceMeters);
-
-        SmartDashboard.putNumber("Distance to target",rawDistanceInches);
-
+ 
+        SmartDashboard.putNumber("Distance to target", rawDistanceInches);
+ 
         SmartDashboard.putNumber("Match Time",DriverStation.getMatchTime());
     }
  
@@ -282,12 +279,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // Tell LL our current robot orientation before requesting MegaTag2
         double pigeonDegrees = getPigeon2().getRotation2d().getDegrees();
         //double yawDeg = getState().Pose.getRotation().getDegrees();
-
+ 
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
         // AFTER (fixed) — orientation set first, then estimate fetched
+        LimelightHelpers.SetIMUMode(limelightName, 4); // must be set before pose estimate is fetched
         LimelightHelpers.SetRobotOrientation(limelightName, pigeonDegrees, 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
-        LimelightHelpers.SetIMUMode(limelightName,4);
  
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
  
@@ -302,7 +299,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
         Matrix<N3, N1> stdDevs = getVisionStdDevs(estimate);
         addVisionMeasurement(estimate.pose, estimate.timestampSeconds, stdDevs);
-
     }
  
     private boolean shouldRejectVision(LimelightHelpers.PoseEstimate estimate, double yawRateDegPerSec) {
