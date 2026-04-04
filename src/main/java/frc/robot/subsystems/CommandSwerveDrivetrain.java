@@ -144,7 +144,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
     // Simple distance-based trust tuning
     private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.7, 0.7, 0.25);
-    private static final Matrix<N3, N1> kSingleTagStdDevsClose = VecBuilder.fill(1.5, 1.5, 0.70);
+    private static final Matrix<N3, N1> kSingleTagStdDevsClose = VecBuilder.fill(1.5, 1.5, 0.50); //0.7
  
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -287,7 +287,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // AFTER (fixed) — orientation set first, then estimate fetched
         LimelightHelpers.SetRobotOrientation(limelightName, pigeonDegrees, 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
-
         LimelightHelpers.SetIMUMode(limelightName,4);
  
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
@@ -324,7 +323,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             if (estimate.rawFiducials[0].ambiguity > 0.7) {
                 return true;
             }
-            if (estimate.rawFiducials[0].distToCamera > 3.0) {
+            if (estimate.rawFiducials[0].distToCamera > 5.0) {
                 return true;
             }
         }
