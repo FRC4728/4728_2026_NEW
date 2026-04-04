@@ -215,6 +215,17 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
  
     /**
+     * Returns the robot's velocity in the field-relative frame (m/s).
+     * getState().Speeds is robot-centric, so we rotate it by the current heading
+     * to get field-relative vx/vy for shoot-on-the-move future pose projection.
+     */
+    public ChassisSpeeds getFieldRelativeSpeeds() {
+        ChassisSpeeds robotSpeeds = getState().Speeds;
+        Rotation2d heading = getState().Pose.getRotation();
+        return ChassisSpeeds.fromRobotRelativeSpeeds(robotSpeeds, heading);
+    }
+ 
+    /**
      * Returns a command that applies the specified control request to this swerve drivetrain.
      */
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {

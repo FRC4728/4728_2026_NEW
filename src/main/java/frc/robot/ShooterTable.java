@@ -1,8 +1,8 @@
 package frc.robot;
-
+ 
 public final class ShooterTable {
     private ShooterTable() {}
-
+ 
     /**
      * Table format:
      * { distanceInches, flywheelRPS, hoodPosition, airtimeSeconds }
@@ -27,34 +27,39 @@ public final class ShooterTable {
          { 200.0, 42.5, -11, 1.33 },
          { 210.0, 44, -11, 1.35 },
          { 220.0, 44.0, -11, 1.37 },
-
+ 
     };
-
+ 
     public static double getFlywheelRPS(double distanceInches) {
         return interpolate(distanceInches, 1);
     }
-
+ 
     public static double getHoodPosition(double distanceInches) {
         return interpolate(distanceInches, 2);
     }
-
+ 
+    /** Returns the ball airtime in seconds for the given distance. Used for shoot-on-the-move compensation. */
+    public static double getAirtime(double distanceInches) {
+        return interpolate(distanceInches, 3);
+    }
+ 
     private static double interpolate(double x, int column) {
         if (TABLE.length == 0) {
             throw new IllegalStateException("ShooterTable TABLE cannot be empty");
         }
-
+ 
         if (x <= TABLE[0][0]) {
             return TABLE[0][column];
         }
-
+ 
         if (x >= TABLE[TABLE.length - 1][0]) {
             return TABLE[TABLE.length - 1][column];
         }
-
+ 
         for (int i = 0; i < TABLE.length - 1; i++) {
             double x1 = TABLE[i][0];
             double x2 = TABLE[i + 1][0];
-
+ 
             if (x >= x1 && x <= x2) {
                 double y1 = TABLE[i][column];
                 double y2 = TABLE[i + 1][column];
@@ -62,7 +67,7 @@ public final class ShooterTable {
                 return y1 + t * (y2 - y1);
             }
         }
-
+ 
         return TABLE[TABLE.length - 1][column];
     }
 }
