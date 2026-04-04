@@ -1,7 +1,7 @@
 package frc.robot.subsystems;
-
+ 
 import java.util.Optional;
-
+ 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.NeutralOut;
@@ -10,7 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
-
+ 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -20,23 +20,23 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-
+ 
 public class Turret extends SubsystemBase {
     private final TalonFX m_turretMotor;
     private final VoltageOut voltReq;
     private final MotionMagicVoltage m_turretMotionMagic;
     private final NeutralOut m_brake;
-
+ 
     private double m_targetEncoderPosition = 0.0;
-
+ 
     public Turret() {
         m_turretMotor = new TalonFX(
             Constants.TurretConstants.m_turretMotorId,
             Constants.TurretConstants.ringGearCanbus
         );
-
+ 
         TalonFXConfiguration cfg = new TalonFXConfiguration();
-
+ 
         cfg.Slot0.kP = Constants.TurretConstants.k_turret_p;
         cfg.Slot0.kI = Constants.TurretConstants.k_turret_i;
         cfg.Slot0.kD = Constants.TurretConstants.k_turret_d;
@@ -44,37 +44,37 @@ public class Turret extends SubsystemBase {
         cfg.Slot0.kV = Constants.TurretConstants.k_turret_v;
         cfg.Slot0.kA = Constants.TurretConstants.k_turret_a;
         cfg.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
-
+ 
         cfg.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_turret_velocity;
         cfg.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_turret_acceleration;
         cfg.MotionMagic.MotionMagicJerk = Constants.TurretConstants.k_turret_jerk;
-
-        cfg.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+ 
+        cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
+ 
         cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
         cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
-
+ 
         m_turretMotor.getConfigurator().apply(cfg);
-
+ 
         // Startup hard stop is mechanical 0 deg
         m_turretMotor.setPosition(0);
-
+ 
         m_turretMotionMagic = new MotionMagicVoltage(0).withSlot(0);
         voltReq = new VoltageOut(0);
         m_brake = new NeutralOut();
     }
-
+ 
     public double getTurretPosition() {
         return m_turretMotor.getPosition().getValueAsDouble();
     }
-
+ 
     public double getTargetPosition() {
         return m_targetEncoderPosition;
     }
-
+ 
     public void setTargetPosition(double encoderPosition) {
         double clamped = clampEncoderPosition(encoderPosition);
         if(Math.abs(clamped - m_targetEncoderPosition)<0.08){
@@ -83,28 +83,28 @@ public class Turret extends SubsystemBase {
         m_targetEncoderPosition = clamped;
         m_turretMotor.setControl(m_turretMotionMagic.withPosition(m_targetEncoderPosition));
     }
-
+ 
     public boolean isAligned() {
         return Math.abs(getTurretPosition() - m_targetEncoderPosition)
             < Constants.PoseAimConstants.kTurretAlignToleranceMotorRotations;
     }
-
+ 
     public void moveTurretVoltage(double voltage) {
         m_turretMotor.setControl(voltReq.withOutput(voltage));
     }
-
+ 
     public void stopTurretVoltage() {
         m_turretMotor.setControl(voltReq.withOutput(0));
     }
-
+ 
     public void stopTurret() {
         m_turretMotor.setControl(m_brake);
     }
-
+ 
     public void moveTurretPosition(double position) {
         setTargetPosition(position);
     }
-
+ 
     public Translation2d getAllianceTarget() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
         if (alliance.isPresent() && alliance.get() == Alliance.Red) {
@@ -112,7 +112,15 @@ public class Turret extends SubsystemBase {
         }
         return Constants.FieldConstants.kBlueScoringTarget;
     }
-
+ 
+    public Translation2d getAlliancePassTarget() {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+            return Constants.FieldConstants.kRedPassTarget;
+        }
+        return Constants.FieldConstants.kBluePassTarget;
+    }
+ 
     public Pose2d getTurretPose(Pose2d robotPose){
         return robotPose.transformBy(
             new Transform2d(
@@ -124,13 +132,16 @@ public class Turret extends SubsystemBase {
             )
         );
     }
-
+ 
     public double calculateTargetEncoderPositionFromPose(Pose2d robotPose) {
+        return calculateTargetEncoderPositionFromPose(robotPose, getAllianceTarget());
+    }
+ 
+    public double calculateTargetEncoderPositionFromPose(Pose2d robotPose, Translation2d target) {
         Pose2d turretPose = getTurretPose(robotPose);
-        Translation2d target = getAllianceTarget();
         Translation2d delta = target.minus(turretPose.getTranslation());
-
         Rotation2d fieldAngleToTarget = new Rotation2d(delta.getX(),delta.getY());//delta.getAngle();
+
         Rotation2d turretRobotRelative = fieldAngleToTarget.minus(robotPose.getRotation());
 
         double rearRelativeDeg = normalizeDegrees(turretRobotRelative.getDegrees() - 180);
@@ -145,20 +156,20 @@ public class Turret extends SubsystemBase {
 
         return clampEncoderPosition(desiredEncoderPosition);
     }
-
+ 
     private double clampEncoderPosition(double encoderPosition) {
         return Math.max(
             Constants.PoseAimConstants.kTurretMinEncoderPosition,
             Math.min(Constants.PoseAimConstants.kTurretMaxEncoderPosition, encoderPosition)
         );
     }
-
+ 
     private static double normalizeDegrees(double deg){
         while (deg > 180.0) deg -= 360;
         while (deg < -180) deg += 360;
         return deg;
     }
-
+ 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Turret/Position", getTurretPosition());

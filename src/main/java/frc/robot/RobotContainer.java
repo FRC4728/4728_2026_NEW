@@ -27,6 +27,7 @@ import frc.robot.commands.DropIntake;
 import frc.robot.commands.EmergencyScore;
 import frc.robot.commands.JogTurretNegative;
 import frc.robot.commands.JogTurretPositive;
+import frc.robot.commands.Pass;
 import frc.robot.commands.ReverseAll;
 import frc.robot.commands.RunIntakeIn;
 import frc.robot.commands.RunIntakeOut;
@@ -154,6 +155,7 @@ public class RobotContainer {
 
         driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
         driver.leftBumper().whileTrue(new ScoreDyn(indexer, kicker, shooter, turret).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
+        driver.rightTrigger().whileTrue(new Pass (indexer, kicker, shooter, turret, drivetrain).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
         driver.a().whileTrue(new RunSpindexerRev(indexer));
         driver.start().whileTrue(new ReverseAll(kicker, intake, indexer));
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
