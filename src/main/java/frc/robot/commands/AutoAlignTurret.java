@@ -41,7 +41,7 @@ public class AutoAlignTurret extends Command {
             ? m_overrideTarget
             : m_turret.getAllianceTarget();
  
-        // --- Shoot-on-the-move: project robot to its future position ---
+        //Shoot-on-the-move: project robot to its future position
         double rawDistanceMeters = robotPose.getTranslation().getDistance(target);
         double rawDistanceInches = Units.metersToInches(rawDistanceMeters);
         double airtime = ShooterTable.getAirtime(rawDistanceInches);
@@ -52,7 +52,6 @@ public class AutoAlignTurret extends Command {
             robotPose.getY() + fieldSpeeds.vyMetersPerSecond * airtime
         );
         Pose2d futurePose = new Pose2d(futurePosition, robotPose.getRotation());
-        // ---------------------------------------------------------------
  
         double targetRotations = m_turret.calculateTargetEncoderPositionFromPose(futurePose, target);
         m_turret.setTargetPosition(targetRotations);

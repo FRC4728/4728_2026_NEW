@@ -324,13 +324,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Math.abs(yawRateDegPerSec) > kMaxVisionOmegaDegPerSec) {
             return true;
         }
- 
+
+        // Conservative single-tag rejection
+        if (estimate.tagCount == 2 && estimate.rawFiducials != null && estimate.rawFiducials.length == 1) {
+            if (estimate.rawFiducials[0].ambiguity > 0.7) {
+                return true;
+            }
+            if (estimate.rawFiducials[0].distToCamera > 2.5) {
+                return true;
+            }
+        }
+
         // Conservative single-tag rejection
         if (estimate.tagCount == 1 && estimate.rawFiducials != null && estimate.rawFiducials.length == 1) {
             if (estimate.rawFiducials[0].ambiguity > 0.7) {
                 return true;
             }
-            if (estimate.rawFiducials[0].distToCamera > 5.0) {
+            if (estimate.rawFiducials[0].distToCamera > 2.0) {
                 return true;
             }
         }
