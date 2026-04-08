@@ -54,6 +54,7 @@ public class TurretShooter extends SubsystemBase {
     m_flywheelConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.TurretConstants.k_flywheel_velocity;
     m_flywheelConfig.MotionMagic.MotionMagicAcceleration = Constants.TurretConstants.k_flywheel_acceleration;
     m_flywheelConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    m_flywheelConfig.CurrentLimits.StatorCurrentLimit = Constants.TurretConstants.k_flywheel_currentLimit;
 
     m_hoodConfig = new TalonFXConfiguration();
     m_hoodConfig.Slot0.kP = Constants.TurretConstants.k_hood_p;
@@ -70,6 +71,7 @@ public class TurretShooter extends SubsystemBase {
     m_hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     m_hoodConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_hood_forwardSoftLimit;
     m_hoodConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_hood_reverseSoftLimit;
+    m_hoodConfig.CurrentLimits.StatorCurrentLimit = Constants.TurretConstants.k_hood_currentLimit;
 
     hood_motionMagic = new MotionMagicVoltage(0).withSlot(0);
     m_hoodMotor.setPosition(0);

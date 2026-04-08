@@ -35,6 +35,7 @@ public class Kicker extends SubsystemBase {
     m_kickerConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.KickerConstants.k_kicker_velocity;
     m_kickerConfig.MotionMagic.MotionMagicAcceleration = Constants.KickerConstants.k_kicker_acceleration;
     m_kickerConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+    m_kickerConfig.CurrentLimits.StatorCurrentLimit = Constants.KickerConstants.k_kicker_currentLimit;
 
     m_kickerMotor.getConfigurator().apply(m_kickerConfig);
 

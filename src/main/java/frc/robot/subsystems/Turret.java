@@ -51,11 +51,12 @@ public class Turret extends SubsystemBase {
  
         cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
- 
+
         cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
         cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         cfg.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.TurretConstants.k_turret_reverseSoftLimit;
+        cfg.CurrentLimits.StatorCurrentLimit = Constants.TurretConstants.k_turret_currentLimit;
  
         m_turretMotor.getConfigurator().apply(cfg);
  
