@@ -325,12 +325,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             return true;
         }
 
-        // Conservative single-tag rejection
-        if (estimate.tagCount == 2 && estimate.rawFiducials != null && estimate.rawFiducials.length == 1) {
-            if (estimate.rawFiducials[0].ambiguity > 0.7) {
-                return true;
-            }
-            if (estimate.rawFiducials[0].distToCamera > 2.5) {
+        // Conservative double-tag rejection
+        if (estimate.tagCount >= 2) {
+            if (estimate.avgTagDist > 4.0) {  // tune this distance in meters
                 return true;
             }
         }

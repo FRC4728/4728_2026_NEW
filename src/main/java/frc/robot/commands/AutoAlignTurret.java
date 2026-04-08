@@ -13,18 +13,29 @@ import frc.robot.subsystems.Turret;
 public class AutoAlignTurret extends Command {
     private final Turret m_turret;
     private final CommandSwerveDrivetrain m_drivetrain;
-    private final Translation2d m_overrideTarget; // null = use alliance scoring target
- 
-    /** Standard constructor — aims at the alliance scoring target. */
+    private final Translation2d m_overrideTarget;
+    private final java.util.function.Supplier<Translation2d> m_overrideTargetSupplier;
+
+        //Standard constructor, aims at the alliance scoring target.
     public AutoAlignTurret(Turret turret, CommandSwerveDrivetrain drivetrain) {
-        this(turret, drivetrain, null);
+        this(turret, drivetrain, (Translation2d) null);
     }
- 
-    /** Pass constructor — aims at a specific field position instead. */
+
+        //Pass constructor, aims at a specific field position instead
     public AutoAlignTurret(Turret turret, CommandSwerveDrivetrain drivetrain, Translation2d target) {
         this.m_turret = turret;
         this.m_drivetrain = drivetrain;
         this.m_overrideTarget = target;
+        this.m_overrideTargetSupplier = null;
+        addRequirements(m_turret);
+    }
+
+        //Supplier constructor, evaluates the target fresh every loop
+    public AutoAlignTurret(Turret turret, CommandSwerveDrivetrain drivetrain, java.util.function.Supplier<Translation2d> targetSupplier) {
+        this.m_turret = turret;
+        this.m_drivetrain = drivetrain;
+        this.m_overrideTarget = null;
+        this.m_overrideTargetSupplier = targetSupplier;
         addRequirements(m_turret);
     }
  
@@ -37,11 +48,13 @@ public class AutoAlignTurret extends Command {
     public void execute() {
         Pose2d robotPose = m_drivetrain.getState().Pose;
  
-        Translation2d target = (m_overrideTarget != null)
+        Translation2d target = (m_overrideTargetSupplier != null)
+            ? m_overrideTargetSupplier.get()
+            : (m_overrideTarget != null)
             ? m_overrideTarget
             : m_turret.getAllianceTarget();
  
-        //Shoot-on-the-move: project robot to its future position
+        //Shoot-on-the-move
         double rawDistanceMeters = robotPose.getTranslation().getDistance(target);
         double rawDistanceInches = Units.metersToInches(rawDistanceMeters);
         double airtime = ShooterTable.getAirtime(rawDistanceInches);

@@ -20,11 +20,9 @@ import frc.robot.subsystems.TurretShooter;
 public class Pass extends SequentialCommandGroup {
     public Pass(Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret, CommandSwerveDrivetrain drivetrain)
      {
-        Translation2d passTarget = turret.getAlliancePassTarget();
- 
         addCommands(
             new ParallelCommandGroup(
-                new AutoAlignTurret(turret, drivetrain, passTarget),
+                new AutoAlignTurret(turret, drivetrain, turret::getAlliancePassTarget),
                 new SetShooterForPass(shooter),
                 new RunSpindexer(indexer),
                 new RunKickerUp(kicker)));
