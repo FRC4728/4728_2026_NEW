@@ -16,44 +16,30 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoAlignTurret;
-import frc.robot.commands.CheckHubStatus;
 import frc.robot.commands.DropIntake;
-import frc.robot.commands.EmergencyScore;
 import frc.robot.commands.JogTurretNegative;
 import frc.robot.commands.JogTurretPositive;
 import frc.robot.commands.Pass;
 import frc.robot.commands.ReverseAll;
 import frc.robot.commands.RunIntakeIn;
-import frc.robot.commands.RunIntakeOut;
-import frc.robot.commands.RunKickerUp;
-import frc.robot.commands.RunShooter;
-import frc.robot.commands.RunSpindexer;
 import frc.robot.commands.RunSpindexerRev;
 import frc.robot.commands.Score;
 import frc.robot.commands.ScoreDyn;
-import frc.robot.commands.SearchForTarget;
 import frc.robot.commands.SetHoodMax;
 import frc.robot.commands.SetHoodMid;
 import frc.robot.commands.SetHoodMin;
 import frc.robot.commands.SetTurretCenter;
 import frc.robot.commands.SetTurretZeroish;
-import frc.robot.commands.UnjamIndexer;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Kicker;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.TurretShooter;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 public class RobotContainer {
 
@@ -66,9 +52,9 @@ public class RobotContainer {
     //private final LED led = new LED();
 
     // Drive speed multipliers
-    private double translationMultiplier = 0.85;
-    private double strafeMultiplier = 0.85;
-    private double rotateMultiplier = 0.85;
+    private double translationMultiplier = 0.9;
+    private double strafeMultiplier = 0.9;
+    private double rotateMultiplier = 0.9;
 
     // Drivetrain speed limits
     private final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -92,7 +78,7 @@ public class RobotContainer {
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
     public void periodic(){
-
+        
     }
 
     public RobotContainer() {
@@ -187,8 +173,6 @@ public class RobotContainer {
     // ── Automated Triggers ────────────────────────────────────────────────────
 
     private void configureAutomation() {
-    // Auto-unjam indexer when jam is detected
-    indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
     }
 
     // ── Autonomous ───────────────────────────────────────────────────────────

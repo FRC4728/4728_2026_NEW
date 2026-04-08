@@ -14,9 +14,6 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,7 +30,7 @@ public class TurretShooter extends SubsystemBase {
   private final VelocityVoltage hood_velRequest;
   private final MotionMagicVoltage hood_motionMagic;
   private final NeutralOut m_coast = new NeutralOut();
-  private final NeutralOut m_brake = new NeutralOut();
+  //private final NeutralOut m_brake = new NeutralOut();
 
   private double targetVel,targetPosition;
   

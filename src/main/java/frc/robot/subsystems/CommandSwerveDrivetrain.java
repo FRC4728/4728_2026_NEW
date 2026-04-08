@@ -327,7 +327,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         // Conservative double-tag rejection
         if (estimate.tagCount >= 2) {
-            if (estimate.avgTagDist > 4.0) {  // tune this distance in meters
+            if (estimate.avgTagDist > 4.0) {
                 return true;
             }
         }
