@@ -31,7 +31,7 @@ public final class Constants {
         public static final double k_turret_acceleration = 120; //160
         public static final double k_turret_velocity = 60;//90
         public static final double k_turret_jerk = 0;
-        public static final double k_turret_currentLimit = 75;
+        public static final double k_turret_currentLimit = 60;
  
         public static final double k_turret_gearRatio = 51.02;
  
@@ -46,7 +46,7 @@ public final class Constants {
         public static final double k_flywheel_a = 0.01;
         public static final double k_flywheel_acceleration = 100;
         public static final double k_flywheel_velocity = 100;
-        public static final double k_flywheel_currentLimit = 75;
+        public static final double k_flywheel_currentLimit = 60;
  
         public static final double k_hood_p = 3.75;
         public static final double k_hood_i = 0.0;
@@ -58,7 +58,7 @@ public final class Constants {
         public static final double k_hood_velocity = 100;
         public static final double k_hood_forwardSoftLimit = -0.5;
         public static final double k_hood_reverseSoftLimit = -15;
-        public static final double k_hood_currentLimit = 75;
+        public static final double k_hood_currentLimit = 60;
     }
  
     public static final class FieldConstants {
@@ -119,6 +119,7 @@ public final class Constants {
         public static final double k_jam_current = 200.0; //130
         public static final double k_unjam_velocity = -100.0;
         public static final double k_unjam_duration = 1;
+        public static final double k_indexer_currentLimit = 60;
     }
  
     public static class intakeConstants {
@@ -132,7 +133,7 @@ public final class Constants {
         public static final double k_intake_a = 0.01;
         public static final double k_intake_acceleration = 100;
         public static final double k_intake_velocity = 100;
-        public static final double k_currentLimit = 75;
+        public static final double k_currentLimit = 60;
     }
 
     public static class ClimberConstants {
@@ -159,7 +160,7 @@ public final class Constants {
         public static final double k_kicker_a = 0.01;
         public static final double k_kicker_acceleration = 100;
         public static final double k_kicker_velocity = 100;
-        public static final double k_kicker_currentLimit = 75;
+        public static final double k_kicker_currentLimit = 60;
     }
  
     public static class CandleConstants {

@@ -165,7 +165,7 @@ public class RobotContainer {
         driver.rightBumper().whileFalse(new InstantCommand(() -> translationMultiplier = 0.85));
         driver.rightBumper().whileTrue(new InstantCommand(() -> strafeMultiplier = .15));
         driver.rightBumper().whileFalse(new InstantCommand(() -> strafeMultiplier = 0.85));
-        driver.rightBumper().whileTrue(new InstantCommand(() -> rotateMultiplier = .10));
+        driver.rightBumper().whileTrue(new InstantCommand(() -> rotateMultiplier = .2));
         driver.rightBumper().whileFalse(new InstantCommand(() -> rotateMultiplier = 0.85));
 
     }
