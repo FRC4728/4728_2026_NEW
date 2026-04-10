@@ -115,11 +115,23 @@ public class Turret extends SubsystemBase {
     }
  
     public Translation2d getAlliancePassTarget() {
+        return getAlliancePassTarget(1);
+    }
+
+     //Returns the pass target for the current alliance.
+     //1 = left, 2 = right
+
+    public Translation2d getAlliancePassTarget(int option) {
         Optional<Alliance> alliance = DriverStation.getAlliance();
-        if (alliance.isPresent() && alliance.get() == Alliance.Red) {
-            return Constants.FieldConstants.kRedPassTarget;
+        boolean isRed = alliance.isPresent() && alliance.get() == Alliance.Red;
+        if (option == 2) {
+            return isRed
+                ? Constants.FieldConstants.kRedPassTarget2
+                : Constants.FieldConstants.kBluePassTarget2;
         }
-        return Constants.FieldConstants.kBluePassTarget;
+        return isRed
+            ? Constants.FieldConstants.kRedPassTarget
+            : Constants.FieldConstants.kBluePassTarget;
     }
  
     public Pose2d getTurretPose(Pose2d robotPose){

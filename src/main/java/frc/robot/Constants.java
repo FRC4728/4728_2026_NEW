@@ -66,9 +66,13 @@ public final class Constants {
         public static final Translation2d kBlueScoringTarget = new Translation2d(4.60, 4.03);
         public static final Translation2d kRedScoringTarget  = new Translation2d(11.89, 4.03);
  
-        // Corner pass targets — tune X/Y to match your field
+        // Pass targets
         public static final Translation2d kBluePassTarget = new Translation2d(0.4, 5.7);
         public static final Translation2d kRedPassTarget  = new Translation2d(16, 2);
+
+        //Pass Targets 2
+        public static final Translation2d kBluePassTarget2 = new Translation2d(0.4, 2.3);
+        public static final Translation2d kRedPassTarget2  = new Translation2d(16, 5.7);
     }
  
     public static final class PoseAimConstants {

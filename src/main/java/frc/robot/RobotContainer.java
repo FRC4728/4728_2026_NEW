@@ -77,6 +77,9 @@ public class RobotContainer {
 
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
+
+    /** Selects which of the two pre-configured pass coordinates to aim at. */
+    private final SendableChooser<Integer> passTargetChooser = new SendableChooser<>();
     public void periodic(){
 
     }
@@ -99,7 +102,12 @@ public class RobotContainer {
  
         //create auto chooser in dashboard
         autoChooser = AutoBuilder.buildAutoChooser("Main"); 
-        SmartDashboard.putData("Auto Mode", autoChooser); 
+        SmartDashboard.putData("Auto Mode", autoChooser);
+
+        // Pass target chooser 
+        passTargetChooser.setDefaultOption("Pass Target Left", 1);
+        passTargetChooser.addOption("Pass Target Right", 2);
+        SmartDashboard.putData("Pass Target", passTargetChooser);
     }
 
     // ── Default Commands ─────────────────────────────────────────────────────
@@ -141,7 +149,8 @@ public class RobotContainer {
 
         driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
         driver.leftBumper().whileTrue(new ScoreDyn(indexer, kicker, shooter, turret).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
-        driver.rightTrigger().whileTrue(new Pass (indexer, kicker, shooter, turret, drivetrain).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
+        driver.rightTrigger().whileTrue(new Pass(indexer, kicker, shooter, turret, drivetrain,
+                () -> turret.getAlliancePassTarget(passTargetChooser.getSelected())).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
         driver.a().whileTrue(new RunSpindexerRev(indexer));
         driver.start().whileTrue(new ReverseAll(kicker, intake, indexer));
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));

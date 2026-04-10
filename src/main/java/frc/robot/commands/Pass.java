@@ -1,5 +1,8 @@
 package frc.robot.commands;
  
+import java.util.function.Supplier;
+
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -9,18 +12,13 @@ import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.TurretShooter;
  
-/**
- * Aims the turret at the alliance corner pass target, spins up the shooter
- * to pass settings, then feeds the ball.
- *
- * Bind with whileTrue() — turret and shooter return to their defaults on release.
- */
+//Pass command that is used to shoot across the field
 public class Pass extends SequentialCommandGroup {
-    public Pass(Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret, CommandSwerveDrivetrain drivetrain)
-     {
+    public Pass(Indexer indexer, Kicker kicker, TurretShooter shooter, Turret turret,
+                CommandSwerveDrivetrain drivetrain, Supplier<Translation2d> passTargetSupplier) {
         addCommands(
             new ParallelCommandGroup(
-                new AutoAlignTurret(turret, drivetrain, turret::getAlliancePassTarget),
+                new AutoAlignTurret(turret, drivetrain, passTargetSupplier),
                 new SetShooterForPass(shooter),
                 new SequentialCommandGroup(
                     new WaitCommand(0.4),
@@ -31,7 +29,5 @@ public class Pass extends SequentialCommandGroup {
                 )
             )
         );
-     }
-    }                    
-                
-    
+    }
+}
