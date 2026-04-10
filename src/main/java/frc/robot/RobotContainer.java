@@ -78,7 +78,7 @@ public class RobotContainer {
     /* Path follower */
     private final SendableChooser<Command> autoChooser;
     public void periodic(){
-        
+
     }
 
     public RobotContainer() {
@@ -119,7 +119,7 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        // Turret: always auto-aligning when no other command is running
+        // Turret always auto aligns
         turret.setDefaultCommand(new AutoAlignTurret(turret, drivetrain));
 
         // Intake: always running in unless interrupted
