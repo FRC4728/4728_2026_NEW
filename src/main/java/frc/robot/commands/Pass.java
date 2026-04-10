@@ -21,7 +21,7 @@ public class Pass extends SequentialCommandGroup {
                 new AutoAlignTurret(turret, drivetrain, passTargetSupplier),
                 new SetShooterForPass(shooter),
                 new SequentialCommandGroup(
-                    new WaitCommand(0.4),
+                    new WaitCommand(0.75),
                     new ParallelCommandGroup(
                         new RunSpindexer(indexer),
                         new RunKickerUp(kicker)
