@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
  
 public class Turret extends SubsystemBase {
     private final TalonFX m_turretMotor;
@@ -66,6 +67,11 @@ public class Turret extends SubsystemBase {
         m_turretMotionMagic = new MotionMagicVoltage(0).withSlot(0);
         voltReq = new VoltageOut(0);
         m_brake = new NeutralOut();
+
+        // Enable LL Rewind via API
+        LimelightHelpers.setRewindEnabled("limelight-left",true);
+        LimelightHelpers.setRewindEnabled("limelight-right",true);
+        
     }
  
     public double getTurretPosition() {
@@ -182,6 +188,7 @@ public class Turret extends SubsystemBase {
         while (deg < -180) deg += 360;
         return deg;
     }
+
  
     @Override
     public void periodic() {

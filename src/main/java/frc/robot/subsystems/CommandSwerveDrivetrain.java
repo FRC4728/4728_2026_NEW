@@ -327,7 +327,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
         // Conservative double-tag rejection
         if (estimate.tagCount >= 2) {
-            if (estimate.avgTagDist > 4.0) {
+            if (estimate.avgTagDist > 6.0) {
                 return true;
             }
         }
@@ -337,7 +337,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             if (estimate.rawFiducials[0].ambiguity > 0.7) {
                 return true;
             }
-            if (estimate.rawFiducials[0].distToCamera > 2.0) {
+            if (estimate.rawFiducials[0].distToCamera > 4.0) {
                 return true;
             }
         }
@@ -346,10 +346,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
  
     private Matrix<N3, N1> getVisionStdDevs(LimelightHelpers.PoseEstimate estimate) {
-        if (estimate.tagCount >= 2) {
+        /*if (estimate.tagCount >= 2) {
             return kMultiTagStdDevs;
         }
-        return kSingleTagStdDevsClose;
+        return kSingleTagStdDevsClose;*/
+        return kMultiTagStdDevs;
     }
  
     private void startSimThread() {

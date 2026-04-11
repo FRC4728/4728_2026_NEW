@@ -27,6 +27,7 @@ import frc.robot.commands.ReverseAll;
 import frc.robot.commands.RunIntakeIn;
 import frc.robot.commands.RunSpindexerRev;
 import frc.robot.commands.Score;
+import frc.robot.commands.ScoreCorner;
 import frc.robot.commands.ScoreDyn;
 import frc.robot.commands.SetHoodMax;
 import frc.robot.commands.SetHoodMid;
@@ -151,6 +152,7 @@ public class RobotContainer {
         driver.leftBumper().whileTrue(new ScoreDyn(indexer, kicker, shooter, turret).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
         driver.rightTrigger().whileTrue(new Pass(indexer, kicker, shooter, turret, drivetrain,
                 () -> turret.getAlliancePassTarget(passTargetChooser.getSelected())).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
+        driver.leftTrigger().whileTrue(new ScoreCorner(indexer, kicker, shooter, turret));
         driver.a().whileTrue(new RunSpindexerRev(indexer));
         driver.start().whileTrue(new ReverseAll(kicker, intake, indexer));
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
