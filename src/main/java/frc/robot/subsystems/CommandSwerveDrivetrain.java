@@ -137,8 +137,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final double kMaxVisionOmegaDegPerSec = 360.0;
  
     // Simple distance-based trust tuning
-    private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.7, 0.7, 99999999); //0.25
-    private static final Matrix<N3, N1> kSingleTagStdDevsClose = VecBuilder.fill(1.5, 1.5, 999999); //0.5
+    private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.4, 0.4, 99999999); //0.7, 0.7, 0.25
+    private static final Matrix<N3, N1> kSingleTagStdDevsClose = VecBuilder.fill(0.7, 0.7, 99999999); //1.5, 1.5, 0.5
  
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -350,7 +350,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             return kMultiTagStdDevs;
         }
         return kSingleTagStdDevsClose;
-        return kMultiTagStdDevs;
     }
  
     private void startSimThread() {
