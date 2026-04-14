@@ -138,7 +138,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
     // Simple distance-based trust tuning
     private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.4, 0.4, 99999999); //0.7, 0.7, 0.25
-    private static final Matrix<N3, N1> kSingleTagStdDevsClose = VecBuilder.fill(0.7, 0.7, 99999999); //1.5, 1.5, 0.5
+    private static final Matrix<N3, N1> kSingleTagStdDevsClose = VecBuilder.fill(0.7, 0.7, 999999999); //1.5, 1.5, 0.5
  
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -288,7 +288,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
     private void updateVisionFromLimelight(String limelightName) {
         // Tell LL our current robot orientation before requesting MegaTag2
-        double pigeonDegrees = getPigeon2().getRotation2d().getDegrees();
+        double pigeonDegrees = getState().Pose.getRotation().getDegrees();
         //double yawDeg = getState().Pose.getRotation().getDegrees();
  
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
