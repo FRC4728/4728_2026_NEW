@@ -137,8 +137,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final double kMaxVisionOmegaDegPerSec = 360.0;
  
     // Simple distance-based trust tuning
-    private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.7, 0.7, 0.25);
-    private static final Matrix<N3, N1> kSingleTagStdDevsClose = VecBuilder.fill(1.5, 1.5, 0.50); //0.7
+    private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.7, 0.7, 99999999); //0.25
+    private static final Matrix<N3, N1> kSingleTagStdDevsClose = VecBuilder.fill(1.5, 1.5, 999999); //0.5
  
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -295,7 +295,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // AFTER (fixed) — orientation set first, then estimate fetched
         LimelightHelpers.SetIMUMode(limelightName, 4); // must be set before pose estimate is fetched
         LimelightHelpers.SetRobotOrientation(limelightName, pigeonDegrees, 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
  
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
  
@@ -346,10 +346,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
  
     private Matrix<N3, N1> getVisionStdDevs(LimelightHelpers.PoseEstimate estimate) {
-        /*if (estimate.tagCount >= 2) {
+        if (estimate.tagCount >= 2) {
             return kMultiTagStdDevs;
         }
-        return kSingleTagStdDevsClose;*/
+        return kSingleTagStdDevsClose;
         return kMultiTagStdDevs;
     }
  
