@@ -273,8 +273,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         // Set the complementary filter alpha (optional, default is 0.001)
-            LimelightHelpers.SetIMUAssistAlpha("limelight-left", 0.05);
-            LimelightHelpers.SetIMUAssistAlpha("limelight-right", 0.05);
+            LimelightHelpers.SetIMUAssistAlpha(kRightLimelightName, 0.05);
+            LimelightHelpers.SetIMUAssistAlpha(kleftlimelightname, 0.05);
  
         updateVisionFromLimelight(kRightLimelightName);
         updateVisionFromLimelight(kleftlimelightname);
