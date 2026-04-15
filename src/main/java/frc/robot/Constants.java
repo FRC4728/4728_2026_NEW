@@ -80,7 +80,7 @@ public final class Constants {
         // Value of encoder when the turret is facing forward.
         public static final double kRearShotEncoderPosition = 17.7;
  
-        // Raw motor-position calibration for a turret that travels 270 degrees across the soft limits.
+        // Raw motor-position calibration for a turret that travels 275 degrees across the soft limits.
         public static final double kTurretTravelDegrees = 275.0;
         public static final double kTurretMotorRotationsAcrossTravel =
             TurretConstants.k_turret_forwardSoftLimit - TurretConstants.k_turret_reverseSoftLimit;
