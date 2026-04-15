@@ -173,7 +173,7 @@ public final class Constants {
  
     public static final class PassConstants {
         // Tune these on the field for your pass shot distance/angle
-        public static final double kPassFlywheelRPS  = 45.0;
+        public static final double kPassFlywheelRPS  = 60.0;
         public static final double kPassHoodPosition = -15.0;
     }
 }

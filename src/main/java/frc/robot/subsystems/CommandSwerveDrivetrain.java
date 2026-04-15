@@ -188,6 +188,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
     public void configureAutoBuilder() {
         try {
+
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
                 () -> getState().Pose,
@@ -262,8 +263,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
  
+        // Seed IMU while disabled, use fused IMU+external gyro while enabled
+        if (DriverStation.isDisabled()) {
+            LimelightHelpers.SetIMUMode(kRightLimelightName, 1);
+            LimelightHelpers.SetIMUMode(kleftlimelightname, 1);
+        } else {
+            LimelightHelpers.SetIMUMode(kRightLimelightName, 4);
+            LimelightHelpers.SetIMUMode(kleftlimelightname, 4);
+        }
+ 
         updateVisionFromLimelight(kRightLimelightName);
-        
         updateVisionFromLimelight(kleftlimelightname);
     
         SmartDashboard.putNumber("Drive/PoseX", getState().Pose.getX());
@@ -289,22 +298,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private void updateVisionFromLimelight(String limelightName) {
         // Tell LL our current robot orientation before requesting MegaTag2
         double pigeonDegrees = getState().Pose.getRotation().getDegrees();
-        //double yawDeg = getState().Pose.getRotation().getDegrees();
  
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
-        // AFTER (fixed) — orientation set first, then estimate fetched
-        LimelightHelpers.SetIMUMode(limelightName, 4); // must be set before pose estimate is fetched
         LimelightHelpers.SetRobotOrientation(limelightName, pigeonDegrees, 0, 0, 0, 0, 0);
         LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
  
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
- 
  
         if (reject) {
             SmartDashboard.putBoolean("Vision/" + limelightName + "/Accepted", false);
             return;
         }
  
+        SmartDashboard.putBoolean("Vision/" + limelightName + "/Accepted", true);
         SmartDashboard.putNumber("Vision/" + limelightName + "/AvgTagDist", estimate.avgTagDist);
         SmartDashboard.putNumber("Vision/" + limelightName + "/LatencyMs", estimate.latency);
  
@@ -324,14 +330,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Math.abs(yawRateDegPerSec) > kMaxVisionOmegaDegPerSec) {
             return true;
         }
-
+ 
         // Conservative double-tag rejection
         if (estimate.tagCount >= 2) {
             if (estimate.avgTagDist > 6.0) {
                 return true;
             }
         }
-
+ 
         // Conservative single-tag rejection
         if (estimate.tagCount == 1 && estimate.rawFiducials != null && estimate.rawFiducials.length == 1) {
             if (estimate.rawFiducials[0].ambiguity > 0.7) {
