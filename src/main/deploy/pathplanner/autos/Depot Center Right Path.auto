@@ -21,13 +21,19 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "Straight Left Path"
+                        "pathName": "Depot Center Path"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
                         "name": "Score"
+                      }
+                    },
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Depot to Center Area Right"
                       }
                     }
                   ]
