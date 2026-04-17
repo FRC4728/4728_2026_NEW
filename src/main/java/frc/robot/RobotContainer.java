@@ -151,6 +151,8 @@ public class RobotContainer {
         driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain)).onFalse(new SetShooterByDistance(shooter, drivetrain, turret).withTimeout(1.0));
         driver.leftBumper().whileTrue(new ScoreDyn(indexer, kicker, shooter, turret));
         driver.leftTrigger().whileTrue(new ScoreCorner(indexer, kicker, shooter, turret));
+        driver.rightTrigger().whileTrue(new Pass(indexer, kicker, shooter, turret, drivetrain,
+                () -> turret.getAutoPassTarget(drivetrain.getState().Pose)));
         driver.a().whileTrue(new RunSpindexerRev(indexer));
         driver.start().whileTrue(new ReverseAll(kicker, indexer));
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));

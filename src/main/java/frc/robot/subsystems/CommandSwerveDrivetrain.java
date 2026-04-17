@@ -352,10 +352,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
  
     private Matrix<N3, N1> getVisionStdDevs(LimelightHelpers.PoseEstimate estimate) {
+    double distanceScale = Math.max(estimate.avgTagDist, 0.1);
+
         if (estimate.tagCount >= 2) {
-            return kMultiTagStdDevs;
-        }
-        return kSingleTagStdDevsClose;
+            return kMultiTagStdDevs.times(distanceScale);
+            }
+            return kSingleTagStdDevsClose.times(distanceScale);
     }
  
     private void startSimThread() {
