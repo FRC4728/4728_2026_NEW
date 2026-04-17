@@ -149,11 +149,9 @@ public class RobotContainer {
 
         driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
         driver.leftBumper().whileTrue(new ScoreDyn(indexer, kicker, shooter, turret).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
-        driver.rightTrigger().whileTrue(new Pass(indexer, kicker, shooter, turret, drivetrain,
-                () -> turret.getAlliancePassTarget(passTargetChooser.getSelected())).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
         driver.leftTrigger().whileTrue(new ScoreCorner(indexer, kicker, shooter, turret));
         driver.a().whileTrue(new RunSpindexerRev(indexer));
-        driver.start().whileTrue(new ReverseAll(kicker, intake, indexer));
+        driver.start().whileTrue(new ReverseAll(kicker, indexer));
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         //SCORE _ right bumper to toggle drvetrain to low speed
@@ -183,6 +181,8 @@ public class RobotContainer {
 
         operator.rightBumper().whileTrue(new JogTurretPositive(turret));
         operator.leftBumper().whileTrue(new JogTurretNegative(turret));
+        operator.rightTrigger().whileTrue(new Pass(indexer, kicker, shooter, turret, drivetrain,
+                () -> turret.getAlliancePassTarget(passTargetChooser.getSelected())).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
 
         operator.y().onTrue(new SetTurretZeroish(turret));
         operator.start().onTrue(new SetTurretCenter(turret));
