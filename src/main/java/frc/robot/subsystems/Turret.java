@@ -52,7 +52,7 @@ public class Turret extends SubsystemBase {
  
         cfg.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         cfg.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-
+ 
         cfg.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         cfg.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.TurretConstants.k_turret_forwardSoftLimit;
         cfg.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
@@ -67,7 +67,7 @@ public class Turret extends SubsystemBase {
         m_turretMotionMagic = new MotionMagicVoltage(0).withSlot(0);
         voltReq = new VoltageOut(0);
         m_brake = new NeutralOut();
-
+ 
         // Enable LL Rewind via API
         LimelightHelpers.setRewindEnabled("limelight-left",true);
         LimelightHelpers.setRewindEnabled("limelight-right",true);
@@ -123,10 +123,9 @@ public class Turret extends SubsystemBase {
     public Translation2d getAlliancePassTarget() {
         return getAlliancePassTarget(1);
     }
-
-     //Returns the pass target for the current alliance.
-     //1 = left, 2 = right
-
+ 
+    // Returns the pass target for the current alliance.
+    // 1 = left, 2 = right
     public Translation2d getAlliancePassTarget(int option) {
         Optional<Alliance> alliance = DriverStation.getAlliance();
         boolean isRed = alliance.isPresent() && alliance.get() == Alliance.Red;
@@ -138,6 +137,34 @@ public class Turret extends SubsystemBase {
         return isRed
             ? Constants.FieldConstants.kRedPassTarget
             : Constants.FieldConstants.kBluePassTarget;
+    }
+ 
+    /**
+     * Automatically selects a pass target based on the robot's current field-side position.
+     * @param robotPose the current robot pose from odometry
+     * @return the appropriate pass target Translation2d
+     */
+    public Translation2d getAutoPassTarget(Pose2d robotPose) {
+        Optional<Alliance> alliance = DriverStation.getAlliance();
+        boolean isRed = alliance.isPresent() && alliance.get() == Alliance.Red;
+ 
+        // Field Y midpoint (~4.1 m for a standard 2025/2026 field)
+        final double kFieldMidY = 4.1;
+ 
+        boolean robotOnLeftSide = robotPose.getY() >= kFieldMidY;
+ 
+        // For Red alliance the "left" side in field coords is the right corner target
+        int option;
+        if (isRed) {
+            option = robotOnLeftSide ? 2 : 1;
+        } else {
+            option = robotOnLeftSide ? 1 : 2;
+        }
+ 
+        SmartDashboard.putString("Pass/AutoTargetSide", robotOnLeftSide ? "Left" : "Right");
+        SmartDashboard.putNumber("Pass/AutoTargetOption", option);
+ 
+        return getAlliancePassTarget(option);
     }
  
     public Pose2d getTurretPose(Pose2d robotPose){
@@ -160,19 +187,19 @@ public class Turret extends SubsystemBase {
         Pose2d turretPose = getTurretPose(robotPose);
         Translation2d delta = target.minus(turretPose.getTranslation());
         Rotation2d fieldAngleToTarget = new Rotation2d(delta.getX(),delta.getY());//delta.getAngle();
-
+ 
         Rotation2d turretRobotRelative = fieldAngleToTarget.minus(robotPose.getRotation());
-
+ 
         double rearRelativeDeg = normalizeDegrees(turretRobotRelative.getDegrees() - 180);
-
+ 
         rearRelativeDeg = Math.max(-135.0, Math.min(135.0, rearRelativeDeg));
-
+ 
         double encoderDelta = rearRelativeDeg * Constants.PoseAimConstants.kEncoderUnitsPerTurretDegree;
-
+ 
         double desiredEncoderPosition = Constants.PoseAimConstants.kRearShotEncoderPosition + encoderDelta;
-
+ 
         SmartDashboard.putNumber("Expected Position",desiredEncoderPosition);
-
+ 
         return clampEncoderPosition(desiredEncoderPosition);
     }
  

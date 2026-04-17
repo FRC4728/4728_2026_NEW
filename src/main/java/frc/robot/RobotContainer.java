@@ -32,6 +32,7 @@ import frc.robot.commands.ScoreDyn;
 import frc.robot.commands.SetHoodMax;
 import frc.robot.commands.SetHoodMid;
 import frc.robot.commands.SetHoodMin;
+import frc.robot.commands.SetShooterByDistance;
 import frc.robot.commands.SetTurretCenter;
 import frc.robot.commands.SetTurretZeroish;
 import frc.robot.generated.TunerConstants;
@@ -147,8 +148,8 @@ public class RobotContainer {
         //driver.rightTrigger().whileTrue(new RunShooter(shooter));
         //driver.leftBumper().whileTrue(new RunIntakeIn(intake));
 
-        driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
-        driver.leftBumper().whileTrue(new ScoreDyn(indexer, kicker, shooter, turret).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
+        driver.rightBumper().whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain)).onFalse(new SetShooterByDistance(shooter, drivetrain, turret).withTimeout(1.0));
+        driver.leftBumper().whileTrue(new ScoreDyn(indexer, kicker, shooter, turret));
         driver.leftTrigger().whileTrue(new ScoreCorner(indexer, kicker, shooter, turret));
         driver.a().whileTrue(new RunSpindexerRev(indexer));
         driver.start().whileTrue(new ReverseAll(kicker, indexer));
@@ -182,7 +183,7 @@ public class RobotContainer {
         operator.rightBumper().whileTrue(new JogTurretPositive(turret));
         operator.leftBumper().whileTrue(new JogTurretNegative(turret));
         operator.rightTrigger().whileTrue(new Pass(indexer, kicker, shooter, turret, drivetrain,
-                () -> turret.getAlliancePassTarget(passTargetChooser.getSelected())).withInterruptBehavior(Command.InterruptionBehavior.kCancelSelf));
+                () -> turret.getAutoPassTarget(drivetrain.getState().Pose)));
 
         operator.y().onTrue(new SetTurretZeroish(turret));
         operator.start().onTrue(new SetTurretCenter(turret));

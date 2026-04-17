@@ -6,7 +6,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Kicker;
 
 
@@ -15,11 +14,10 @@ import frc.robot.subsystems.Kicker;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ReverseAll extends ParallelCommandGroup {
   
-  public ReverseAll(Kicker kicker, Intake intake, Indexer indexer) {
+  public ReverseAll(Kicker kicker, Indexer indexer) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     super(
-      new RunIntakeOut(intake),
       new RunKickerDown(kicker), 
       new RunSpindexerRev(indexer));
   }
