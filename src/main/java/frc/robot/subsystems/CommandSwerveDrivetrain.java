@@ -269,8 +269,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         // Set the complementary filter alpha (optional, default is 0.001)
-            LimelightHelpers.SetIMUAssistAlpha(kRightLimelightName, 0.05);
-            LimelightHelpers.SetIMUAssistAlpha(kleftlimelightname, 0.05);
+            LimelightHelpers.SetIMUAssistAlpha(kRightLimelightName, 0.01);
+            LimelightHelpers.SetIMUAssistAlpha(kleftlimelightname, 0.01);
  
         updateVisionFromLimelight(kRightLimelightName);
         updateVisionFromLimelight(kleftlimelightname);
@@ -297,11 +297,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
     private void updateVisionFromLimelight(String limelightName) {
         // Tell LL our current robot orientation before requesting MegaTag2
-        double pigeonDegrees = getState().Pose.getRotation().getDegrees();
+        double pigeonDegrees = getPigeon2().getYaw().getValueAsDouble();
  
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
         LimelightHelpers.SetRobotOrientation(limelightName, pigeonDegrees, 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName); //_MegaTag2
  
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
  
@@ -319,37 +319,27 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
  
     private boolean shouldRejectVision(LimelightHelpers.PoseEstimate estimate, double yawRateDegPerSec) {
-        if (estimate == null) {
-            return true;
-        }
- 
-        if (estimate.tagCount <= 0) {
-            return true;
-        }
- 
-        if (Math.abs(yawRateDegPerSec) > kMaxVisionOmegaDegPerSec) {
-            return true;
-        }
- 
-        // Conservative double-tag rejection
-        if (estimate.tagCount >= 2) {
-            if (estimate.avgTagDist > 6.0) {
-                return true;
-            }
-        }
- 
-        // Conservative single-tag rejection
-        if (estimate.tagCount == 1 && estimate.rawFiducials != null && estimate.rawFiducials.length == 1) {
-            if (estimate.rawFiducials[0].ambiguity > 0.7) {
-                return true;
-            }
-            if (estimate.rawFiducials[0].distToCamera > 4.0) {
-                return true;
-            }
-        }
- 
-        return false;
+    if (estimate == null) return true;
+    if (estimate.tagCount <= 0) return true;
+
+    // Reject if spinning too fast
+    if (Math.abs(yawRateDegPerSec) > 30.0) return true;
+
+    // Reject if pose is wildly far from current odometry
+    Pose2d currentPose = getState().Pose;
+    if (currentPose.getTranslation().getDistance(estimate.pose.getTranslation()) > 1.0) return true;
+
+    // Multi-tag distance 
+    if (estimate.tagCount >= 2 && estimate.avgTagDist > 4.0) return true;
+
+    // Single tag
+    if (estimate.tagCount == 1 && estimate.rawFiducials != null && estimate.rawFiducials.length == 1) {
+        if (estimate.rawFiducials[0].ambiguity > 0.5) return true;  // tighten from 0.7
+        if (estimate.rawFiducials[0].distToCamera > 3.0) return true; // tighten from 4.0
     }
+
+    return false;
+}
  
     private Matrix<N3, N1> getVisionStdDevs(LimelightHelpers.PoseEstimate estimate) {
     double distanceScale = Math.max(estimate.avgTagDist, 0.1);
