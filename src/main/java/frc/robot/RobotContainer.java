@@ -158,11 +158,11 @@ public class RobotContainer {
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         //SCORE _ right bumper to toggle drvetrain to low speed
-        driver.rightBumper().whileTrue(new InstantCommand(() -> translationMultiplier = .15));
+        driver.rightBumper().whileTrue(new InstantCommand(() -> translationMultiplier = .2));
         driver.rightBumper().whileFalse(new InstantCommand(() -> translationMultiplier = 0.85));
-        driver.rightBumper().whileTrue(new InstantCommand(() -> strafeMultiplier = .15));
+        driver.rightBumper().whileTrue(new InstantCommand(() -> strafeMultiplier = .2));
         driver.rightBumper().whileFalse(new InstantCommand(() -> strafeMultiplier = 0.85));
-        driver.rightBumper().whileTrue(new InstantCommand(() -> rotateMultiplier = .2));
+        driver.rightBumper().whileTrue(new InstantCommand(() -> rotateMultiplier = .25));
         driver.rightBumper().whileFalse(new InstantCommand(() -> rotateMultiplier = 0.85));
 
         //PASS _ right trigger to toggle drvetrain to low speed
@@ -170,7 +170,7 @@ public class RobotContainer {
         driver.rightTrigger().whileFalse(new InstantCommand(() -> translationMultiplier = 0.85));
         driver.rightTrigger().whileTrue(new InstantCommand(() -> strafeMultiplier = .4));
         driver.rightTrigger().whileFalse(new InstantCommand(() -> strafeMultiplier = 0.85));
-        driver.rightTrigger().whileTrue(new InstantCommand(() -> rotateMultiplier = .2));
+        driver.rightTrigger().whileTrue(new InstantCommand(() -> rotateMultiplier = .35));
         driver.rightTrigger().whileFalse(new InstantCommand(() -> rotateMultiplier = 0.85));
 
     }
