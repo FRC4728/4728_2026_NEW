@@ -164,6 +164,12 @@
       "command": null
     },
     {
+      "name": "DropIntake",
+      "waypointRelativePos": 0.19454094292803198,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
       "name": "CenterTurret",
       "waypointRelativePos": 2.45,
       "endWaypointRelativePos": null,

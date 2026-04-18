@@ -25,6 +25,7 @@ import frc.robot.commands.JogTurretPositive;
 import frc.robot.commands.Pass;
 import frc.robot.commands.ReverseAll;
 import frc.robot.commands.RunIntakeIn;
+import frc.robot.commands.RunIntakeOut;
 import frc.robot.commands.RunSpindexerRev;
 import frc.robot.commands.Score;
 import frc.robot.commands.ScoreCorner;
@@ -93,10 +94,11 @@ public class RobotContainer {
         drivetrain.registerTelemetry(logger::telemeterize);
 
         new EventTrigger("AutoAlignTurret").whileTrue(new AutoAlignTurret(turret, drivetrain).withTimeout(20));
-        new EventTrigger("DropIntake").onTrue(new DropIntake(intake));
+        new EventTrigger("DropIntake").onTrue(new RunIntakeOut(intake).withTimeout(1));
         new EventTrigger("ZeroTurret").onTrue(new SetTurretZeroish(turret));
         new EventTrigger("CenterTurret").onTrue(new SetTurretCenter(turret));
         new EventTrigger("Score").whileTrue(new Score(indexer, kicker, shooter, turret, drivetrain).withTimeout(8));
+    
 
         NamedCommands.registerCommand("Score",new Score(indexer, kicker, shooter, turret, drivetrain).withTimeout(8));
         NamedCommands.registerCommand("RunIntake",new RunIntakeIn(intake).withTimeout(20));
@@ -153,7 +155,7 @@ public class RobotContainer {
         driver.leftTrigger().whileTrue(new ScoreCorner(indexer, kicker, shooter, turret));
         driver.rightTrigger().whileTrue(new Pass(indexer, kicker, shooter, turret, drivetrain,
                 () -> turret.getAutoPassTarget(drivetrain.getState().Pose)));
-        driver.a().whileTrue(new RunSpindexerRev(indexer));
+        driver.a().whileTrue(new RunIntakeOut(intake));
         driver.start().whileTrue(new ReverseAll(kicker, indexer));
         driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 

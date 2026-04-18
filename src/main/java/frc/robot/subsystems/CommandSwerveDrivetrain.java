@@ -316,12 +316,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (estimate == null) return true;
     if (estimate.tagCount <= 0) return true;
 
-    if (Math.abs(yawRateDegPerSec) > 30.0) return true;
+    if (Math.abs(yawRateDegPerSec) > 180.0) return true;
 
     // Only gate on odometry distance if we're enabled
     if (DriverStation.isEnabled()) {
         Pose2d currentPose = getState().Pose;
-        if (currentPose.getTranslation().getDistance(estimate.pose.getTranslation()) > 1.0) return true;
+        if (currentPose.getTranslation().getDistance(estimate.pose.getTranslation()) > 3.0) return true;
     }
 
     if (estimate.tagCount >= 2 && estimate.avgTagDist > 4.0) return true;
@@ -335,14 +335,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 }
  
     private Matrix<N3, N1> getVisionStdDevs(LimelightHelpers.PoseEstimate estimate) {
-        // Scale trust by distance — farther tag = less trust (larger stdDev)
-        // Floor at 0.5m to prevent division-by-zero / infinite trust at very close range
-        double distanceScale = Math.max(estimate.avgTagDist, 0.5);
- 
-        if (estimate.tagCount >= 2) {
-            return kMultiTagStdDevs.times(distanceScale);
-        }
-        return kSingleTagStdDevs.times(distanceScale);
+    if (estimate.tagCount >= 2) {
+        return kMultiTagStdDevs;
+    }
+        return kSingleTagStdDevs;
     }
  
     private void startSimThread() {
