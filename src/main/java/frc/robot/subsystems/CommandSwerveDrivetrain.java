@@ -129,12 +129,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final String kRightLimelightName = "limelight-right";
     private static final String kleftlimelightname = "limelight-left";
  
-    // Reject very fast spin; Limelight docs commonly gate vision while spinning hard
-    private static final double kMaxVisionOmegaDegPerSec = 360.0;
+    // Reject if spinning faster than this
+    private static final double kMaxVisionOmegaDegPerSec = 30.0;
  
-    // Simple distance-based trust tuning
-    private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.4, 0.4, 99999999); //0.7, 0.7, 0.25
-    private static final Matrix<N3, N1> kSingleTagStdDevsClose = VecBuilder.fill(0.7, 0.7, 99999999); //1.5, 1.5, 0.5
+    // Reject if vision pose jumps more than this far from current odometry (meters)
+    private static final double kMaxVisionPoseJumpMeters = 2.0;
+ 
+    // Base stdDevs — scaled by distance in getVisionStdDevs()
+    private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.4, 0.4, 99999999);
+    private static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(0.7, 0.7, 99999999);
  
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
@@ -184,7 +187,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
     public void configureAutoBuilder() {
         try {
-
+ 
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
                 () -> getState().Pose,
@@ -259,18 +262,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
  
-        // Seed IMU while disabled, use fused IMU+external gyro while enabled
-        if (DriverStation.isDisabled()) {
-            LimelightHelpers.SetIMUMode(kRightLimelightName, 1);
-            LimelightHelpers.SetIMUMode(kleftlimelightname, 1);
-        } else {
-            LimelightHelpers.SetIMUMode(kRightLimelightName, 4);
-            LimelightHelpers.SetIMUMode(kleftlimelightname, 4);
-        }
-
-        // Set the complementary filter alpha (optional, default is 0.001)
-            LimelightHelpers.SetIMUAssistAlpha(kRightLimelightName, 0.01);
-            LimelightHelpers.SetIMUAssistAlpha(kleftlimelightname, 0.01);
+        // IMU Mode 0 = use robot orientation fed via SetRobotOrientation (standard MegaTag2 usage)
+        LimelightHelpers.SetIMUMode(kRightLimelightName, 0);
+        LimelightHelpers.SetIMUMode(kleftlimelightname, 0);
  
         updateVisionFromLimelight(kRightLimelightName);
         updateVisionFromLimelight(kleftlimelightname);
@@ -296,12 +290,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
  
     private void updateVisionFromLimelight(String limelightName) {
-        // Tell LL our current robot orientation before requesting MegaTag2
+        // into SetRobotOrientation creates a feedback loop that makes MegaTag2 worse.
         double pigeonDegrees = getPigeon2().getYaw().getValueAsDouble();
  
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
         LimelightHelpers.SetRobotOrientation(limelightName, pigeonDegrees, 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName); //_MegaTag2
+        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
  
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
  
@@ -322,32 +316,33 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (estimate == null) return true;
     if (estimate.tagCount <= 0) return true;
 
-    // Reject if spinning too fast
     if (Math.abs(yawRateDegPerSec) > 30.0) return true;
 
-    // Reject if pose is wildly far from current odometry
-    Pose2d currentPose = getState().Pose;
-    if (currentPose.getTranslation().getDistance(estimate.pose.getTranslation()) > 1.0) return true;
+    // Only gate on odometry distance if we're enabled
+    if (DriverStation.isEnabled()) {
+        Pose2d currentPose = getState().Pose;
+        if (currentPose.getTranslation().getDistance(estimate.pose.getTranslation()) > 1.0) return true;
+    }
 
-    // Multi-tag distance 
     if (estimate.tagCount >= 2 && estimate.avgTagDist > 4.0) return true;
 
-    // Single tag
     if (estimate.tagCount == 1 && estimate.rawFiducials != null && estimate.rawFiducials.length == 1) {
-        if (estimate.rawFiducials[0].ambiguity > 0.5) return true;  // tighten from 0.7
-        if (estimate.rawFiducials[0].distToCamera > 3.0) return true; // tighten from 4.0
+        if (estimate.rawFiducials[0].ambiguity > 0.5) return true;
+        if (estimate.rawFiducials[0].distToCamera > 3.0) return true;
     }
 
     return false;
 }
  
     private Matrix<N3, N1> getVisionStdDevs(LimelightHelpers.PoseEstimate estimate) {
-    double distanceScale = Math.max(estimate.avgTagDist, 0.1);
-
+        // Scale trust by distance — farther tag = less trust (larger stdDev)
+        // Floor at 0.5m to prevent division-by-zero / infinite trust at very close range
+        double distanceScale = Math.max(estimate.avgTagDist, 0.5);
+ 
         if (estimate.tagCount >= 2) {
             return kMultiTagStdDevs.times(distanceScale);
-            }
-            return kSingleTagStdDevsClose.times(distanceScale);
+        }
+        return kSingleTagStdDevs.times(distanceScale);
     }
  
     private void startSimThread() {
