@@ -126,7 +126,7 @@
     },
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.6004962779156369,
+      "minWaypointRelativePos": 0.332506203473962,
       "maxWaypointRelativePos": 3.449131513647629,
       "constraints": {
         "maxVelocity": 1.5,
@@ -157,12 +157,6 @@
       "name": "ZeroTurret",
       "waypointRelativePos": 0.0,
       "endWaypointRelativePos": 0.1637717121588072,
-      "command": null
-    },
-    {
-      "name": "DropIntake",
-      "waypointRelativePos": 0.1538461538461479,
-      "endWaypointRelativePos": null,
       "command": null
     },
     {
