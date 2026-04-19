@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
  
-import frc.robot.LimelightHelpers; // adjust package if your helper lives elsewhere
+import frc.robot.LimelightHelpers;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
  
 /**
@@ -127,15 +127,48 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
     // ---------------- VISION CONFIG ----------------
     private static final String kRightLimelightName = "limelight-right";
-    private static final String kleftlimelightname = "limelight-left";
+    private static final String kleftlimelightname  = "limelight-left";
+    private static final String kBackLimelightName  = "limelight-back";
+
+    //Camera pose offsets — sourced directly from each Limelight's web UI ──
+    //setCameraPose_RobotSpace convention: forward(m), LEFT(m), up(m), roll(deg), pitch(deg), yaw(deg)
+
+    //limelight-right: Forward -0.35, Right 0.3 → Left -0.3, Up 0.22, Pitch 31.2, Yaw -90
+    private static final double kRightCamForwardM  = -0.35;
+    private static final double kRightCamLeftM     = -0.30;  // negated from LL Right = 0.3
+    private static final double kRightCamUpM       =  0.22;
+    private static final double kRightCamRollDeg   =  0.0;
+    private static final double kRightCamPitchDeg  =  31.2;
+    private static final double kRightCamYawDeg    = -90.0;
+
+    //limelight-left: Forward -0.35, Right -0.3 → Left 0.3, Up 0.22, Pitch 31.2, Yaw 90
+    private static final double kLeftCamForwardM   = -0.35;
+    private static final double kLeftCamLeftM      =  0.30;  // negated from LL Right = -0.3
+    private static final double kLeftCamUpM        =  0.22;
+    private static final double kLeftCamRollDeg    =  0.0;
+    private static final double kLeftCamPitchDeg   =  31.2;
+    private static final double kLeftCamYawDeg     =  90.0;
+
+    //limelight-back: Forward -0.335, Right -0.064 → Left 0.064, Up 0.459, Pitch 21, Yaw 180
+    private static final double kBackCamForwardM   = -0.335;
+    private static final double kBackCamLeftM      =  0.064; // negated from LL Right = -0.064
+    private static final double kBackCamUpM        =  0.459;
+    private static final double kBackCamRollDeg    =  0.0;
+    private static final double kBackCamPitchDeg   =  21.0;
+    private static final double kBackCamYawDeg     =  180.0;
+
+    //Post-pose-reset vision blackout ──
+    //Blocks vision updates for this many seconds after any pose reset to prevent
+    //stale pre-reset measurements from corrupting the new pose.
+    private static final double kVisionBlackoutAfterResetSeconds = 0.15;
+    private double m_lastPoseResetTimestamp = 0.0;
+
+    //Pose convergence / "stable" counter
+    private static final double kPoseAgreementToleranceMeters = 0.10;
+    private static final int    kPoseStableThreshold = 50;
+    private int m_consecutiveAgreeingVisionUpdates = 0;
  
-    // Reject if spinning faster than this
-    private static final double kMaxVisionOmegaDegPerSec = 30.0;
- 
-    // Reject if vision pose jumps more than this far from current odometry (meters)
-    private static final double kMaxVisionPoseJumpMeters = 2.0;
- 
-    // Base stdDevs — scaled by distance in getVisionStdDevs()
+    //Base stdDevs rotation column pinned to infinity so MT2 never corrects heading
     private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.4, 0.4, 99999999);
     private static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(0.7, 0.7, 99999999);
  
@@ -147,6 +180,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, modules);
+        configureVision();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -162,6 +196,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
+        configureVision();
         if (Utils.isSimulation()) {
             startSimThread();
         }
@@ -179,15 +214,45 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
+        configureVision();
         if (Utils.isSimulation()) {
             startSimThread();
         }
         configureAutoBuilder();
     }
+
+    /**
+     * - Sets IMU mode 4 on all three Limelights so MT2 uses ONLY the heading we
+     *   feed via SetRobotOrientation (our odometry pose heading) and ignores
+     *   each Limelight's internal IMU entirely. This eliminates the startup-angle
+     *   dependency that came from feeding raw Pigeon yaw.
+     */
+    private void configureVision() {
+        // IMU mode 4 = use external yaw only (what we send via SetRobotOrientation).
+        LimelightHelpers.SetIMUMode(kRightLimelightName, 4);
+        LimelightHelpers.SetIMUMode(kleftlimelightname,  4);
+        LimelightHelpers.SetIMUMode(kBackLimelightName,  4);
+
+        //Push each camera's mounting offset to its Limelight so MT2 knows exactly where the camera sits on the robot when solving the field pose.
+        LimelightHelpers.setCameraPose_RobotSpace(
+            kRightLimelightName,
+            kRightCamForwardM, kRightCamLeftM, kRightCamUpM,
+            kRightCamRollDeg,  kRightCamPitchDeg, kRightCamYawDeg
+        );
+        LimelightHelpers.setCameraPose_RobotSpace(
+            kleftlimelightname,
+            kLeftCamForwardM, kLeftCamLeftM, kLeftCamUpM,
+            kLeftCamRollDeg,  kLeftCamPitchDeg, kLeftCamYawDeg
+        );
+        LimelightHelpers.setCameraPose_RobotSpace(
+            kBackLimelightName,
+            kBackCamForwardM, kBackCamLeftM, kBackCamUpM,
+            kBackCamRollDeg,  kBackCamPitchDeg, kBackCamYawDeg
+        );
+    }
  
     public void configureAutoBuilder() {
         try {
- 
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
                 () -> getState().Pose,
@@ -213,6 +278,24 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             );
         }
     }
+
+    /**
+     * Override resetPose to record the timestamp so updateVisionFromLimelight
+     * can ignore stale measurements captured before the reset.
+     */
+    @Override
+    public void resetPose(Pose2d pose) {
+        super.resetPose(pose);
+        m_lastPoseResetTimestamp = Utils.getCurrentTimeSeconds();
+    }
+
+    /**
+     * Returns true once vision and odometry have agreed within
+     * kPoseAgreementToleranceMeters for kPoseStableThreshold consecutive loops.
+     */
+    public boolean isPoseStable() {
+        return m_consecutiveAgreeingVisionUpdates >= kPoseStableThreshold;
+    }
  
     /**
      * Returns the robot's velocity in the field-relative frame (m/s).
@@ -225,32 +308,28 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return ChassisSpeeds.fromRobotRelativeSpeeds(robotSpeeds, heading);
     }
  
-    /**
-     * Returns a command that applies the specified control request to this swerve drivetrain.
-     */
+    
+    //Returns a command that applies the specified control request to this swerve drivetrain.
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get()));
     }
  
-    /**
-     * Runs the SysId Quasistatic test in the given direction.
-     */
+    
+    //Runs the SysId Quasistatic test in the given direction.
     public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.quasistatic(direction);
     }
  
-    /**
-     * Runs the SysId Dynamic test in the given direction.
-     */
+    
+    //Runs the SysId Dynamic test in the given direction.
     public Command sysIdDynamic(SysIdRoutine.Direction direction) {
         return m_sysIdRoutineToApply.dynamic(direction);
     }
  
     @Override
     public void periodic() {
-        /*
-         * Periodically try to apply the operator perspective.
-         */
+        
+        //Periodically try to apply the operator perspective.
         if (!m_hasAppliedOperatorPerspective || DriverStation.isDisabled()) {
             DriverStation.getAlliance().ifPresent(allianceColor -> {
                 setOperatorPerspectiveForward(
@@ -261,20 +340,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
- 
-        // IMU Mode 0 = use robot orientation fed via SetRobotOrientation (standard MegaTag2 usage)
-        LimelightHelpers.SetIMUMode(kRightLimelightName, 0);
-        LimelightHelpers.SetIMUMode(kleftlimelightname, 0);
- 
+
+        //IMU mode is now set once in configureVision()
         updateVisionFromLimelight(kRightLimelightName);
         updateVisionFromLimelight(kleftlimelightname);
+        updateVisionFromLimelight(kBackLimelightName);
     
         SmartDashboard.putNumber("Drive/PoseX", getState().Pose.getX());
         SmartDashboard.putNumber("Drive/PoseY", getState().Pose.getY());
         SmartDashboard.putNumber("Drive/PoseHeadingDeg", getState().Pose.getRotation().getDegrees());
+
+        //Publish pose-stability state for driver/LED feedback.
+        SmartDashboard.putBoolean("Vision/PoseStable", isPoseStable());
+        SmartDashboard.putNumber("Vision/StableCount", m_consecutiveAgreeingVisionUpdates);
  
         m_field.setRobotPose(getState().Pose);
- 
         SmartDashboard.putData(m_field);
  
         Pose2d robotPose = getState().Pose;
@@ -285,22 +365,34 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double rawDistanceInches = Units.metersToInches(rawDistanceMeters);
  
         SmartDashboard.putNumber("Distance to target", rawDistanceInches);
- 
-        SmartDashboard.putNumber("Match Time",DriverStation.getMatchTime());
+        SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
     }
  
     private void updateVisionFromLimelight(String limelightName) {
-        // into SetRobotOrientation creates a feedback loop that makes MegaTag2 worse.
-        double pigeonDegrees = getPigeon2().getYaw().getValueAsDouble();
- 
+        //Skip vision updates briefly after any pose reset ──
+        // Prevents measurements captured before the reset from being fused against
+        // the new pose, which would cause a brief violent oscillation in the estimator.
+        if (Utils.getCurrentTimeSeconds() - m_lastPoseResetTimestamp < kVisionBlackoutAfterResetSeconds) {
+            return;
+        }
+
+        //Use odometry pose heading instead of raw Pigeon yaw
+        double odometryYawDegrees = getState().Pose.getRotation().getDegrees();
+
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
-        LimelightHelpers.SetRobotOrientation(limelightName, pigeonDegrees, 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName); //_MegaTag2
+
+        //Pass actual yaw rate as second argument
+        // Previously this was hardcoded to 0. Passing the real rate lets the Limelight internally reduce trust during high-spin moments.
+        LimelightHelpers.SetRobotOrientation(limelightName, odometryYawDegrees, yawRateDegPerSec, 0, 0, 0, 0);
+
+        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
  
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
  
         if (reject) {
             SmartDashboard.putBoolean("Vision/" + limelightName + "/Accepted", false);
+            //Reset stability counter when vision is rejected ──
+            m_consecutiveAgreeingVisionUpdates = 0;
             return;
         }
  
@@ -310,34 +402,44 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
         Matrix<N3, N1> stdDevs = getVisionStdDevs(estimate);
         addVisionMeasurement(estimate.pose, estimate.timestampSeconds, stdDevs);
+
+        //Track how many consecutive updates vision agrees with odometry
+        //Increment when the vision pose is close to where odometry thinks we are reset to 0 on any disagreement. isPoseStable() gates on this counter.
+        double poseError = getState().Pose.getTranslation()
+            .getDistance(estimate.pose.getTranslation());
+        if (poseError < kPoseAgreementToleranceMeters) {
+            m_consecutiveAgreeingVisionUpdates++;
+        } else {
+            m_consecutiveAgreeingVisionUpdates = 0;
+        }
     }
  
     private boolean shouldRejectVision(LimelightHelpers.PoseEstimate estimate, double yawRateDegPerSec) {
-    if (estimate == null) return true;
-    if (estimate.tagCount <= 0) return true;
+        if (estimate == null) return true;
+        if (estimate.tagCount <= 0) return true;
 
-    if (Math.abs(yawRateDegPerSec) > 180.0) return true;
+        if (Math.abs(yawRateDegPerSec) > 180.0) return true;
 
-    // Only gate on odometry distance if we're enabled
-    if (DriverStation.isEnabled()) {
-        Pose2d currentPose = getState().Pose;
-        if (currentPose.getTranslation().getDistance(estimate.pose.getTranslation()) > 3.0) return true;
+        //Only gate on odometry distance if we're enabled
+        if (DriverStation.isEnabled()) {
+            Pose2d currentPose = getState().Pose;
+            if (currentPose.getTranslation().getDistance(estimate.pose.getTranslation()) > 3.0) return true;
+        }
+
+        if (estimate.tagCount >= 2 && estimate.avgTagDist > 4.0) return true;
+
+        if (estimate.tagCount == 1 && estimate.rawFiducials != null && estimate.rawFiducials.length == 1) {
+            if (estimate.rawFiducials[0].ambiguity > 0.5) return true;
+            if (estimate.rawFiducials[0].distToCamera > 3.0) return true;
+        }
+
+        return false;
     }
-
-    if (estimate.tagCount >= 2 && estimate.avgTagDist > 4.0) return true;
-
-    if (estimate.tagCount == 1 && estimate.rawFiducials != null && estimate.rawFiducials.length == 1) {
-        if (estimate.rawFiducials[0].ambiguity > 0.5) return true;
-        if (estimate.rawFiducials[0].distToCamera > 3.0) return true;
-    }
-
-    return false;
-}
  
     private Matrix<N3, N1> getVisionStdDevs(LimelightHelpers.PoseEstimate estimate) {
-    if (estimate.tagCount >= 2) {
-        return kMultiTagStdDevs;
-    }
+        if (estimate.tagCount >= 2) {
+            return kMultiTagStdDevs;
+        }
         return kSingleTagStdDevs;
     }
  
@@ -354,9 +456,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_simNotifier.startPeriodic(kSimLoopPeriod);
     }
  
-    /**
-     * Adds a vision measurement to the Kalman Filter.
-     */
+    
+    //Adds a vision measurement to the Kalman Filter.
     @Override
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
