@@ -295,7 +295,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
         double yawRateDegPerSec = Math.toDegrees(getState().Speeds.omegaRadiansPerSecond);
         LimelightHelpers.SetRobotOrientation(limelightName, pigeonDegrees, 0, 0, 0, 0, 0);
-        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName); //_MegaTag2
  
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
  
