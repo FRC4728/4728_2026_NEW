@@ -167,6 +167,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final double kPoseAgreementToleranceMeters = 0.10;
     private static final int    kPoseStableThreshold = 50;
     private int m_consecutiveAgreeingVisionUpdates = 0;
+
+    //prevents the stability counter from being zeroed by a later camera in the same periodic() loop after an earlier camera already accepted and incremented it.
+    private boolean m_anyVisionAcceptedThisLoop = false;
  
     //Base stdDevs rotation column pinned to infinity so MT2 never corrects heading
     private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.4, 0.4, 99999999);
@@ -289,6 +292,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_lastPoseResetTimestamp = Utils.getCurrentTimeSeconds();
     }
 
+    
+    //Call this whenever seedFieldCentric() is used
+    public void markPoseReset() {
+        m_lastPoseResetTimestamp = Utils.getCurrentTimeSeconds();
+    }
+
     /**
      * Returns true once vision and odometry have agreed within
      * kPoseAgreementToleranceMeters for kPoseStableThreshold consecutive loops.
@@ -342,6 +351,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         //IMU mode is now set once in configureVision()
+        m_anyVisionAcceptedThisLoop = false;
         updateVisionFromLimelight(kRightLimelightName);
         updateVisionFromLimelight(kleftlimelightname);
         updateVisionFromLimelight(kBackLimelightName);
@@ -391,8 +401,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
  
         if (reject) {
             SmartDashboard.putBoolean("Vision/" + limelightName + "/Accepted", false);
-            //Reset stability counter when vision is rejected ──
-            m_consecutiveAgreeingVisionUpdates = 0;
+            //Only zero the stability counter if no other camera has already accepted
+            //a measurement this loop. Without this guard, a rejection from camera B
+            //would erase the increment that camera A just made in the same periodic().
+            if (!m_anyVisionAcceptedThisLoop) {
+                m_consecutiveAgreeingVisionUpdates = 0;
+            }
             return;
         }
  
@@ -409,6 +423,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             .getDistance(estimate.pose.getTranslation());
         if (poseError < kPoseAgreementToleranceMeters) {
             m_consecutiveAgreeingVisionUpdates++;
+            m_anyVisionAcceptedThisLoop = true;
         } else {
             m_consecutiveAgreeingVisionUpdates = 0;
         }

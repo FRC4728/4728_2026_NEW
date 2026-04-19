@@ -157,7 +157,7 @@ public class RobotContainer {
                 () -> turret.getAutoPassTarget(drivetrain.getState().Pose)));
         driver.a().whileTrue(new RunIntakeOut(intake));
         driver.start().whileTrue(new ReverseAll(kicker, indexer));
-        driver.y().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+        driver.y().onTrue(drivetrain.runOnce(() -> {drivetrain.seedFieldCentric(); drivetrain.markPoseReset();}));
 
         //SCORE _ right bumper to toggle drvetrain to low speed
         driver.rightBumper().whileTrue(new InstantCommand(() -> translationMultiplier = .2));
