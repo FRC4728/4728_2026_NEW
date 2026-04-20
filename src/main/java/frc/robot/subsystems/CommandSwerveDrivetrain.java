@@ -225,12 +225,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     /**
-     * - Sets IMU mode 4 on all three Limelights so MT2 uses ONLY the heading we
-     *   feed via SetRobotOrientation (our odometry pose heading) and ignores
-     *   each Limelight's internal IMU entirely. This eliminates the startup-angle
-     *   dependency that came from feeding raw Pigeon yaw.
+     * Complementary filter fuses internal IMU with external yaw from SetRobotOrientation()
      */
-    private void configureVision() {
+    private void configureVision() {    
         // IMU mode 4 = use external yaw only (what we send via SetRobotOrientation).
         LimelightHelpers.SetIMUMode(kRightLimelightName, 4);
         LimelightHelpers.SetIMUMode(kleftlimelightname,  4);
@@ -350,11 +347,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        //IMU mode is now set once in configureVision()
+        // IMU mode 4 = use external yaw only (what we send via SetRobotOrientation).
+        LimelightHelpers.SetIMUMode(kRightLimelightName, 4);
+        LimelightHelpers.SetIMUMode(kleftlimelightname,  4);
+        LimelightHelpers.SetIMUMode(kBackLimelightName,  4);
+
         m_anyVisionAcceptedThisLoop = false;
         updateVisionFromLimelight(kRightLimelightName);
         updateVisionFromLimelight(kleftlimelightname);
         updateVisionFromLimelight(kBackLimelightName);
+        if (!m_anyVisionAcceptedThisLoop) {
+            m_consecutiveAgreeingVisionUpdates = 0;
+        }
     
         SmartDashboard.putNumber("Drive/PoseX", getState().Pose.getX());
         SmartDashboard.putNumber("Drive/PoseY", getState().Pose.getY());
@@ -424,9 +428,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (poseError < kPoseAgreementToleranceMeters) {
             m_consecutiveAgreeingVisionUpdates++;
             m_anyVisionAcceptedThisLoop = true;
-        } else {
-            m_consecutiveAgreeingVisionUpdates = 0;
-        }
+        } 
     }
  
     private boolean shouldRejectVision(LimelightHelpers.PoseEstimate estimate, double yawRateDegPerSec) {
