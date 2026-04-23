@@ -108,19 +108,20 @@ public class LED extends SubsystemBase {
         currentState = LEDState.FLASH_BLUE;
 
         candle.setControl(
-            new SolidColor(START_LED, END_LED)
+            new StrobeAnimation(START_LED, END_LED)
+                .withSlot(ANIMATION_SLOT)
                 .withColor(new RGBWColor(0, 0, 255))
+                .withFrameRate(8)
         );
     }
 
     public void setGreen() {
         if (currentState == LEDState.GREEN) return;
         currentState = LEDState.GREEN;
+
         candle.setControl(
-            new StrobeAnimation(START_LED, END_LED)
-                .withSlot(ANIMATION_SLOT)
+            new SolidColor(START_LED, END_LED)
                 .withColor(new RGBWColor(0, 255, 0))
-                .withFrameRate(8)
         );
     }
 
