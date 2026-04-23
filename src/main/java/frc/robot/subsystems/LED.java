@@ -108,9 +108,18 @@ public class LED extends SubsystemBase {
         currentState = LEDState.FLASH_BLUE;
 
         candle.setControl(
+            new SolidColor(START_LED, END_LED)
+                .withColor(new RGBWColor(0, 0, 255))
+        );
+    }
+
+    public void setGreen() {
+        if (currentState == LEDState.GREEN) return;
+        currentState = LEDState.GREEN;
+        candle.setControl(
             new StrobeAnimation(START_LED, END_LED)
                 .withSlot(ANIMATION_SLOT)
-                .withColor(new RGBWColor(0, 0, 255))
+                .withColor(new RGBWColor(0, 255, 0))
                 .withFrameRate(8)
         );
     }
@@ -142,29 +151,30 @@ public class LED extends SubsystemBase {
 
         if (!RobotState.isAutonomous()) {
             if (alliance.isPresent() && alliance.get() == Alliance.Blue && HubTracker.isAllianceHubActive()) {
-                setBlue();
+                setGreen();
             }
             else if (alliance.isPresent() && alliance.get() == Alliance.Red && HubTracker.isAllianceHubActive()) {
-                setRed();
+                setGreen();
             }
             else if (alliance.isPresent() && !HubTracker.isAllianceHubActive()) {
                 off();
             }
             else {
-                setRainbow();
+                flashRed();
             }
         } else {
             if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-                flashBlue();
+                off();
             }
             else if (alliance.isPresent() && alliance.get() == Alliance.Red) {
-                flashRed();
+                off();
             }
             else {
-                setRainbow();
+                setRed();
             }
         }
     }
+
     public void checkHubStatusAndUpdateElastic() {
         Optional<Alliance> alliance = DriverStation.getAlliance();
 
