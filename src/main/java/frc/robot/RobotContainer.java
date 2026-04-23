@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import frc.robot.commands.AutoAlignTurret;
+import frc.robot.commands.CheckHubStatus;
 import frc.robot.commands.DropIntake;
 import frc.robot.commands.JogTurretNegative;
 import frc.robot.commands.JogTurretPositive;
@@ -41,6 +42,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Kicker;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.TurretShooter;
 
@@ -52,6 +54,7 @@ public class RobotContainer {
     private final TurretShooter shooter = new TurretShooter();
     private final Kicker kicker = new Kicker();
     private final Indexer indexer = new Indexer();
+    private final LED led = new LED();
     //private final LED led = new LED();
 
     // Drive speed multipliers
@@ -137,7 +140,7 @@ public class RobotContainer {
         intake.setDefaultCommand(new RunIntakeIn(intake));
 
         // LED: always check which hub is active
-        //led.setDefaultCommand(new CheckHubStatus(led));
+        led.setDefaultCommand(new CheckHubStatus(led));
     }
 
     // ── Driver Controller (port 0) ────────────────────────────────────────────

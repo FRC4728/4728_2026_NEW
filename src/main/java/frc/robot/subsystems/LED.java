@@ -28,7 +28,7 @@ public class LED extends SubsystemBase {
     private final CANdle candle = new CANdle(Constants.CandleConstants.canID);
 
     private static final int START_LED = 0;
-    private static final int END_LED = 7;
+    private static final int END_LED = 50;
     private static final int ANIMATION_SLOT = 0;
 
     private enum LEDState {

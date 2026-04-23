@@ -135,18 +135,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     //limelight-right: Forward -0.35, Right 0.3 → Left -0.3, Up 0.22, Pitch 31.2, Yaw -90
     private static final double kRightCamForwardM  = -0.35;
-    private static final double kRightCamLeftM     = -0.30;  // negated from LL Right = 0.3
+    private static final double kRightCamLeftM     =  0.30;  // negated from LL Right = 0.3
     private static final double kRightCamUpM       =  0.22;
     private static final double kRightCamRollDeg   =  0.0;
-    private static final double kRightCamPitchDeg  =  31.2;
+    private static final double kRightCamPitchDeg  =  35;
     private static final double kRightCamYawDeg    = -90.0;
 
     //limelight-left: Forward -0.35, Right -0.3 → Left 0.3, Up 0.22, Pitch 31.2, Yaw 90
     private static final double kLeftCamForwardM   = -0.35;
-    private static final double kLeftCamLeftM      =  0.30;  // negated from LL Right = -0.3
+    private static final double kLeftCamLeftM      = -0.30;  // negated from LL Right = -0.3
     private static final double kLeftCamUpM        =  0.22;
     private static final double kLeftCamRollDeg    =  0.0;
-    private static final double kLeftCamPitchDeg   =  31.2;
+    private static final double kLeftCamPitchDeg   =  35.0;
     private static final double kLeftCamYawDeg     =  90.0;
 
     //limelight-back: Forward -0.335, Right -0.064 → Left 0.064, Up 0.459, Pitch 21, Yaw 180
@@ -183,11 +183,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, modules);
-        configureVision();
         if (Utils.isSimulation()) {
             startSimThread();
         }
         configureAutoBuilder();
+        configureVision();
     }
  
     /**
@@ -199,11 +199,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, modules);
-        configureVision();
         if (Utils.isSimulation()) {
             startSimThread();
         }
         configureAutoBuilder();
+        configureVision();
     }
  
     /**
@@ -217,11 +217,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
         super(drivetrainConstants, odometryUpdateFrequency, odometryStandardDeviation, visionStandardDeviation, modules);
-        configureVision();
         if (Utils.isSimulation()) {
             startSimThread();
         }
         configureAutoBuilder();
+        configureVision();
     }
 
     /**
@@ -232,23 +232,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         LimelightHelpers.SetIMUMode(kRightLimelightName, 4);
         LimelightHelpers.SetIMUMode(kleftlimelightname,  4);
         LimelightHelpers.SetIMUMode(kBackLimelightName,  4);
-
-        //Push each camera's mounting offset to its Limelight so MT2 knows exactly where the camera sits on the robot when solving the field pose.
-        LimelightHelpers.setCameraPose_RobotSpace(
-            kRightLimelightName,
-            kRightCamForwardM, kRightCamLeftM, kRightCamUpM,
-            kRightCamRollDeg,  kRightCamPitchDeg, kRightCamYawDeg
-        );
-        LimelightHelpers.setCameraPose_RobotSpace(
-            kleftlimelightname,
-            kLeftCamForwardM, kLeftCamLeftM, kLeftCamUpM,
-            kLeftCamRollDeg,  kLeftCamPitchDeg, kLeftCamYawDeg
-        );
-        LimelightHelpers.setCameraPose_RobotSpace(
-            kBackLimelightName,
-            kBackCamForwardM, kBackCamLeftM, kBackCamUpM,
-            kBackCamRollDeg,  kBackCamPitchDeg, kBackCamYawDeg
-        );
     }
  
     public void configureAutoBuilder() {
@@ -355,7 +338,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_anyVisionAcceptedThisLoop = false;
         updateVisionFromLimelight(kRightLimelightName);
         updateVisionFromLimelight(kleftlimelightname);
-        updateVisionFromLimelight(kBackLimelightName);
+        //updateVisionFromLimelight(kBackLimelightName);
         if (!m_anyVisionAcceptedThisLoop) {
             m_consecutiveAgreeingVisionUpdates = 0;
         }
@@ -399,7 +382,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // Previously this was hardcoded to 0. Passing the real rate lets the Limelight internally reduce trust during high-spin moments.
         LimelightHelpers.SetRobotOrientation(limelightName, odometryYawDegrees, yawRateDegPerSec, 0, 0, 0, 0);
 
-        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+        LimelightHelpers.PoseEstimate estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
  
         boolean reject = shouldRejectVision(estimate, yawRateDegPerSec);
  
