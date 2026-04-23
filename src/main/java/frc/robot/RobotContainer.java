@@ -37,6 +37,7 @@ import frc.robot.commands.SetHoodMin;
 import frc.robot.commands.SetShooterByDistance;
 import frc.robot.commands.SetTurretCenter;
 import frc.robot.commands.SetTurretZeroish;
+import frc.robot.commands.TestLED;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
@@ -161,6 +162,7 @@ public class RobotContainer {
         driver.a().whileTrue(new RunIntakeOut(intake));
         driver.start().whileTrue(new ReverseAll(kicker, indexer));
         driver.y().onTrue(drivetrain.runOnce(() -> {drivetrain.seedFieldCentric(); drivetrain.markPoseReset();}));
+        driver.x().whileTrue(new TestLED(led));
 
         //SCORE _ right bumper to toggle drvetrain to low speed
         driver.rightBumper().whileTrue(new InstantCommand(() -> translationMultiplier = .2));

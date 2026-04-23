@@ -35,6 +35,7 @@ public class LED extends SubsystemBase {
         OFF,
         RED,
         BLUE,
+        GREEN,
         FLASH_RED,
         FLASH_BLUE,
         RAINBOW
