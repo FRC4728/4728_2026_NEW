@@ -423,7 +423,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         //Only gate on odometry distance if we're enabled
         if (DriverStation.isEnabled()) {
             Pose2d currentPose = getState().Pose;
-            if (currentPose.getTranslation().getDistance(estimate.pose.getTranslation()) > 3.0) return true;
         }
 
         if (estimate.tagCount >= 2 && estimate.avgTagDist > 4.0) return true;

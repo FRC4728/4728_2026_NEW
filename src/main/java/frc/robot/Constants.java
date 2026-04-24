@@ -67,12 +67,12 @@ public final class Constants {
         public static final Translation2d kRedScoringTarget  = new Translation2d(11.89, 4.03);
  
         // Pass Targets Left(1)
-        public static final Translation2d kBluePassTarget = new Translation2d(0.4, 6.7); //5.7
-        public static final Translation2d kRedPassTarget  = new Translation2d(16, 1.3); //2.3
+        public static final Translation2d kBluePassTarget = new Translation2d(0.4, 5.7); //5.7
+        public static final Translation2d kRedPassTarget  = new Translation2d(16, 2.3); //2.3
 
         //Pass Targets Right(2)
-        public static final Translation2d kBluePassTarget2 = new Translation2d(0.4, 1.3); //2.3
-        public static final Translation2d kRedPassTarget2  = new Translation2d(16, 6.7); //5.7
+        public static final Translation2d kBluePassTarget2 = new Translation2d(0.4, 2.3); //2.3
+        public static final Translation2d kRedPassTarget2  = new Translation2d(16, 5.7); //5.7
     }
  
     public static final class PoseAimConstants {
