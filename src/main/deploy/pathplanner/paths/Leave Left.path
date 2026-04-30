@@ -3,41 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.6766888888888887,
-        "y": 5.408966666666666
+        "x": 2.0530444444444447,
+        "y": 5.525899999999999
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.099377777777778,
-        "y": 5.369988888888888
+        "x": 6.818077777777779,
+        "y": 5.1068888888888875
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.533100000000001,
-        "y": 4.999700000000001
+        "x": 7.227344444444444,
+        "y": 6.549066666666667
       },
       "prevControl": {
-        "x": 8.523355555555558,
-        "y": 5.85721111111111
+        "x": 6.1764721565791385,
+        "y": 6.427812171912977
       },
       "nextControl": {
-        "x": 8.554471106033485,
-        "y": 3.119042669053133
+        "x": 7.987411111111111,
+        "y": 6.636766666666667
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 6.944755555555556,
-        "y": 4.463755555555554
+        "x": 7.860733333333334,
+        "y": 4.580688888888889
       },
       "prevControl": {
-        "x": 7.129900000000002,
-        "y": 3.1482555555555543
+        "x": 7.841244444444445,
+        "y": 4.921744444444444
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,19 +47,11 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.07136929460580838,
-      "rotationDegrees": 38.35632883172315
+      "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 0.436514522821577,
-      "rotationDegrees": 34.90256014455912
-    },
-    {
-      "waypointRelativePos": 0.6721991701244804,
-      "rotationDegrees": -23.709690625010843
-    },
-    {
-      "waypointRelativePos": 1.5385892116182511,
-      "rotationDegrees": 169.2254625089286
+      "waypointRelativePos": 0.44647302904564273,
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [],
@@ -68,12 +60,6 @@
     {
       "name": "AutoAlignTurret",
       "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": 1.0,
-      "command": null
-    },
-    {
-      "name": "RunIntake",
-      "waypointRelativePos": 1.45,
       "endWaypointRelativePos": 1.0,
       "command": null
     }
@@ -88,7 +74,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 120.46554491945983
+    "rotation": -94.63546342690273
   },
   "reversed": false,
   "folder": null,

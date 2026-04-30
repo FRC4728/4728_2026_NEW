@@ -164,7 +164,7 @@ public final class Constants {
         public static final double k_kicker_a = 0.01;
         public static final double k_kicker_acceleration = 100;
         public static final double k_kicker_velocity = 100;
-        public static final double k_kicker_currentLimit = 60;
+        public static final double k_kicker_currentLimit = 70;
     }
  
     public static class CandleConstants {
