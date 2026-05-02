@@ -19,27 +19,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
-                      "data": {
-                        "name": "ScoreDelay"
-                      }
-                    },
-                    {
                       "type": "path",
                       "data": {
-                        "pathName": "Delayed Right Path"
+                        "pathName": "Depot Center Path"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
                         "name": "Score"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "Leave Right"
                       }
                     }
                   ]
