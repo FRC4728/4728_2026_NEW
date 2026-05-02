@@ -175,5 +175,7 @@ public final class Constants {
         // Tune these on the field for your pass shot distance/angle
         public static final double kPassFlywheelRPS  = 60.0;
         public static final double kPassHoodPosition = -15.0;
+        public static final double kPassMinDistanceInches = 100.0;
+        public static final double kPassMaxDistanceInches = 750.0; 
     }
 }

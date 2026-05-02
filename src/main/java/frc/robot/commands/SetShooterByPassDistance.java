@@ -64,8 +64,8 @@ public class SetShooterByPassDistance extends Command {
         double futureDistanceInches = Units.metersToInches(futureDistanceMeters);
 
         // Sanity limits — fall back to locked values if out of range
-        if (futureDistanceInches < Constants.PoseAimConstants.kMinDistanceInches
-            || futureDistanceInches > Constants.PoseAimConstants.kMaxDistanceInches) {
+        if (futureDistanceInches < Constants.PassConstants.kPassMinDistanceInches
+            || futureDistanceInches > Constants.PassConstants.kPassMaxDistanceInches) {
             shooter.runFlywheel(lockedFlywheelRPS);
             shooter.runHood(lockedHoodPosition);
             return;
