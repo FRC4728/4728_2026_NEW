@@ -172,7 +172,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private boolean m_anyVisionAcceptedThisLoop = false;
  
     //Base stdDevs rotation column pinned to infinity so MT2 never corrects heading
-    private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.4, 0.4, 99999999);
+    private static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.4, 0.4, 0.5);
     private static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(0.7, 0.7, 99999999);
  
     /**
@@ -338,7 +338,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         m_anyVisionAcceptedThisLoop = false;
         updateVisionFromLimelight(kRightLimelightName);
         updateVisionFromLimelight(kleftlimelightname);
-        //updateVisionFromLimelight(kBackLimelightName);
+        updateVisionFromLimelight(kBackLimelightName);
         if (!m_anyVisionAcceptedThisLoop) {
             m_consecutiveAgreeingVisionUpdates = 0;
         }
