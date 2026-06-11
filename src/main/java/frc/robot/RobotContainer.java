@@ -38,6 +38,7 @@ import frc.robot.commands.SetShooterByDistance;
 import frc.robot.commands.SetTurretCenter;
 import frc.robot.commands.SetTurretZeroish;
 import frc.robot.commands.TestLED;
+import frc.robot.commands.UnjamIndexer;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Indexer;
@@ -203,6 +204,8 @@ public class RobotContainer {
     // ── Automated Triggers ────────────────────────────────────────────────────
 
     private void configureAutomation() {
+        // Auto-unjam indexer when jam is detected
+        indexer.getJamTrigger().onTrue(new UnjamIndexer(indexer));
     }
 
     // ── Autonomous ───────────────────────────────────────────────────────────

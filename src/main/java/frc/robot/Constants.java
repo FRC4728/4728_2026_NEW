@@ -122,7 +122,7 @@ public final class Constants {
         public static final double k_indexer_velocity = 500;
         public static final double k_jam_current = 200.0; //130
         public static final double k_unjam_velocity = -100.0;
-        public static final double k_unjam_duration = 1;
+        public static final double k_unjam_duration = 0.5;
         public static final double k_indexer_currentLimit = 60;
     }
  
